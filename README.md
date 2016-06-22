@@ -104,10 +104,10 @@ Allows IOS-XR to be configured using YANG models in JSON format.
 #### Parameters
 
 ##### `ensure`
-Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+Determines whether a certain configuration should be present or not on the device. Valid values are `present` and `absent`.
 
 ##### `target`
-The model path of the target node in YANG JSON format, or a reference to a local file containing the model path.  For example, to configure the list of vrfs in IOS-XR, you could specify a target of '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs": [null]}' or reference a file which contained the same JSON string.
+The model path of the target node in YANG JSON format, or a reference to a local file containing the model path.  For example, to configure the list of vrfs in IOS-XR, you could specify a `target` of '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs": [null]}' or reference a file which contained the same JSON string.
 
 ##### `mode`
 Determines which mode is used when setting configuration via ensure=>present. Valid values are `replace` and `merge` (which is the default). If `replace` is specified, the current configuration will be replaced by the configuration in the source property (corresponding to the ReplaceConfig gRPC operation). If `merge` is specified, the configuration in the source property will be merged into the current configuration (corresponding to the MergeConfig gRPC operation).
@@ -118,7 +118,7 @@ Valid values are `true` and `false` (which is the default). If `true` is specifi
 #### Properties
 
 ##### `source`
-The model data in YANG JSON format, or a reference to a local file containing the model data.  This property is only used when ensure=>present is used. In addition, if source is not specified when ensure=>present is used, source will default to the value of the target parameter. This removes some amount of redundancy when the source and target values are the same (or very similar).
+The model data in YANG JSON format, or a reference to a local file containing the model data.  This property is only used when ensure=>present is specified. In addition, if `source` is not specified when ensure=>present is used, `source` will default to the value of the `target` parameter. This removes some amount of redundancy when the `source` and `target` values are the same (or very similar).
 
 ## Limitations
 
