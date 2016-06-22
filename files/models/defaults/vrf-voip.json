@@ -1,0 +1,17 @@
+{
+   "Cisco-IOS-XR-infra-rsi-cfg:vrfs":{
+      "vrf":[
+         {
+            "vrf-name":"VOIP",
+            "description":"Voice over IP",
+            "vpn-id":{
+               "vpn-oui":875,
+               "vpn-index":3
+            },
+            "create":[
+               null
+            ]
+         }
+      ]
+   }
+}
