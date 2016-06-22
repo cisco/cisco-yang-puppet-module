@@ -110,10 +110,10 @@ Determines whether the config should be present or not on the device. Valid valu
 The model path of the target node in YANG JSON format, or a reference to a local file containing the model path.  For example, to configure the list of vrfs in IOS-XR, you could specify a target of '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs": [null]}' or reference a file which contained the same JSON string.
 
 ##### `mode`
-Determines which mode is used when setting configuration via ensure=>present. If :replace is specified, the current configuration will be replaced by the configuration in the source property (corresponding to the ReplaceConfig gRPC operation). If :merge is specified, the configuration in the source property will be merged into the current configuration (corresponding to the MergeConfig gRPC operation). Valid values are :replace and :merge (which is the default).
+Determines which mode is used when setting configuration via ensure=>present. Valid values are `replace` and `merge` (which is the default). If `replace` is specified, the current configuration will be replaced by the configuration in the source property (corresponding to the ReplaceConfig gRPC operation). If `merge` is specified, the configuration in the source property will be merged into the current configuration (corresponding to the MergeConfig gRPC operation).
 
 ##### `force`
-Valid values are `true` and `false` (which is the default). If true is specified, then the config in the source property is set on the device regardless of the current value. If `false` is specified (or no value is specified), the default behavior is to set the configuration only if it is different from the running configuration.
+Valid values are `true` and `false` (which is the default). If `true` is specified, then the config in the source property is set on the device regardless of the current value. If `false` is specified (or no value is specified), the default behavior is to set the configuration only if it is different from the running configuration.
 
 #### Properties
 
