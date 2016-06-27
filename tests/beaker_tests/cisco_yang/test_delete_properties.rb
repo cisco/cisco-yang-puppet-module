@@ -33,11 +33,17 @@ tests = {
 tests[:delete_property] = DELETE_PROPERTY
 
 step 'Setup' do
-  on(agent, puppet_resource('cisco_yang', '\'' + BLUE_VRF_W_PROPERTY12 + '\'', 'ensure=present'))
+  resource = {
+    name:     'cisco_yang',
+    title:    BLUE_VRF_W_PROPERTY12,
+    property: 'ensure',
+    value:    'present',
+  }
+  resource_set(agent, resource, "Create a VRF BLUE with properties.")
 end
 
 teardown do
-  on(agent, puppet_resource('cisco_yang', '\'' + ROOT_VRF + '\'', 'ensure=absent'))
+  resource_absent_by_title(agent, 'cisco_yang', BLUE_VRF_W_PROPERTY2)
 end
 
 #################################################################

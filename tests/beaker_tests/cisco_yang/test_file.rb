@@ -46,14 +46,12 @@ def dependency_manifest(_tests, _id)
 end
 
 step 'Setup' do
-  on(agent, puppet_resource('cisco_yang', '\'' + ROOT_VRF + '\'', 'ensure=absent'))
+  resource_absent_by_title(agent, 'cisco_yang', ROOT_VRF)
 end
 
 teardown do
-  on(agent, puppet_resource('cisco_yang', '\'' + ROOT_VRF + '\'', 'ensure=absent'))
-  on(agent, puppet_resource('file', \
-                            '/root/temp/vrfs.json', \
-                            'ensure=absent'))
+  resource_absent_by_title(agent, 'cisco_yang', ROOT_VRF)
+  resource_absent_by_title(agent, 'file', '/root/temp/vrfs.json')
 end
 
 #################################################################
@@ -63,5 +61,12 @@ test_name "TestCase :: read config from vrfs.json file"  do
   id = :file_merge
   tests[id][:ensure] = :present
   test_harness_run(tests, id)
+
+  resource_absent_by_title(agent, 'cisco_yang', ROOT_VRF)
+
+  id = :replace_merge
+  tests[id][:ensure] = :present
+  test_harness_run(tests, id)
+
   skipped_tests_summary(tests)
 end

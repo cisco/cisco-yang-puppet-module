@@ -34,11 +34,11 @@ tests[:replace_srlg] = REPLACE_SRLG
 tests[:create_srlg] = CREATE_SRLG
 
 step 'Setup' do
-  on(agent, puppet_resource('cisco_yang', '\'' + ROOT_SRLG + '\'', 'ensure=absent'))
+  resource_absent_by_title(agent, 'cisco_yang', ROOT_SRLG)
 end
 
 teardown do
-  on(agent, puppet_resource('cisco_yang', '\'' + ROOT_SRLG + '\'', 'ensure=absent'))
+  resource_absent_by_title(agent, 'cisco_yang', ROOT_SRLG)
 end
 
 #################################################################

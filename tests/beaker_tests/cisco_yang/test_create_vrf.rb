@@ -33,11 +33,11 @@ tests = {
 tests[:create] = CREATE
 
 step 'Setup' do
-  on(agent, puppet_resource('cisco_yang', '\'' + ROOT_VRF + '\'', 'ensure=absent'))
+  resource_absent_by_title(agent, 'cisco_yang', ROOT_VRF)
 end
 
 teardown do
-  on(agent, puppet_resource('cisco_yang', '\'' + BLUE_VRF_WO_PROPERTY + '\'', 'ensure=absent'))
+  resource_absent_by_title(agent, 'cisco_yang', BLUE_VRF_WO_PROPERTY)
 end
 
 #################################################################
