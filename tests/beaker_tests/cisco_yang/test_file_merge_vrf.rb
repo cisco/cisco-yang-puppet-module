@@ -31,10 +31,12 @@ tests = {
   resource_name: 'cisco_yang',
 }
 tests[:file_merge] = FILE_MERGE
+tests[:replace_merge] = FILE_REPLACE
 
 step 'Setup' do
   on(agent, puppet_resource('cisco_yang', '\'' + ROOT_VRF + '\'', 'ensure=absent'))
   on(agent, puppet_resource('file', '/root/temp/', 'ensure=directory'))
+  sleep 10
   on(agent, puppet_resource('file', \
                             '/root/temp/vrfs.json', \
                             'source="puppet:///modules/ciscoyang/models/defaults/vrfs.json"', \
@@ -51,7 +53,7 @@ end
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: read config from vrfs.json file and merge with current config" do
+test_name "TestCase :: read config from vrfs.json file"  do
   id = :file_merge
   tests[id][:ensure] = :present
   test_harness_run(tests, id)
