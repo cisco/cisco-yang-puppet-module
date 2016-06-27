@@ -33,14 +33,20 @@ tests = {
 tests[:file_merge] = FILE_MERGE
 tests[:replace_merge] = FILE_REPLACE
 
+def dependency_manifest(_tests, _id)
+  setup_manifest = \
+  "file {'/root/temp':
+    ensure => 'directory',
+  }
+
+  file { '/root/temp/vrfs.json':
+    source => 'puppet:///modules/ciscoyang/models/defaults/vrfs.json'
+  }"
+  setup_manifest
+end
+
 step 'Setup' do
   on(agent, puppet_resource('cisco_yang', '\'' + ROOT_VRF + '\'', 'ensure=absent'))
-  on(agent, puppet_resource('file', '/root/temp/', 'ensure=directory'))
-  sleep 10
-  on(agent, puppet_resource('file', \
-                            '/root/temp/vrfs.json', \
-                            'source="puppet:///modules/ciscoyang/models/defaults/vrfs.json"', \
-                            'ensure=present'))
 end
 
 teardown do
