@@ -5,7 +5,7 @@
             "vrf-name":"VOIP",
             "description":"Voice over IP",
             "vpn-id":{
-               "vpn-oui":875,
+               "vpn-oui":87,
                "vpn-index":3
             },
             "create":[
@@ -16,7 +16,7 @@
             "vrf-name":"INTERNET",
             "description":"Generic external traffic",
             "vpn-id":{
-               "vpn-oui":875,
+               "vpn-oui":85,
                "vpn-index":22
             },
             "create":[

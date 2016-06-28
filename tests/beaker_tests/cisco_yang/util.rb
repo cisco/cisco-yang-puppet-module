@@ -51,10 +51,7 @@ BLUE_VRF_W_PROPERTY1 = \
           {
             "vrf-name":"BLUE",
             "create":[null],
-            "vpn-id":{
-              "vpn-oui":9,
-              "vpn-index":9
-            }
+            "remote-route-filter-disable": [null]
           }
         ]
       }
@@ -85,10 +82,7 @@ BLUE_VRF_W_PROPERTY12 = \
             "vrf-name":"BLUE",
             "create":[null],
             "description":"Sample description",
-            "vpn-id":{
-              "vpn-oui":9,
-              "vpn-index":9
-            }
+            "remote-route-filter-disable": [null]
           }
         ]
       }
@@ -136,7 +130,7 @@ INTERNET_VOIP_VRF = \
             ],
             "description":"Voice over IP",
             "vpn-id":{
-               "vpn-oui":875,
+               "vpn-oui":87,
                "vpn-index":3
             }
          },
@@ -147,7 +141,7 @@ INTERNET_VOIP_VRF = \
             ],
             "description":"Generic external traffic",
             "vpn-id":{
-               "vpn-oui":875,
+               "vpn-oui":85,
                "vpn-index":22
             }
          }
@@ -368,8 +362,7 @@ MERGE12 = {
   desc:           'Merge VRF BLUE with BLUE',
   title_pattern:  ROOT_VRF,
   manifest_props: {
-    # merge BLUE_VRF_W_PROPERTY2 with existing configuration.
-    # Expecting existing configuration to be BLUE_VRF_W_PROPERTY1
+    # merge BLUE_VRF_W_PROPERTY2 with existing configuration (BLUE_VRF_W_PROPERTY1)
     # resulting BLUE_VRF_W_PROPERTY12
     source: BLUE_VRF_W_PROPERTY2,
     mode: 'merge'
