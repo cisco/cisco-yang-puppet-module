@@ -1,4 +1,6 @@
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# January 2016, Glenn F. Matthews
+#
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,21 +13,32 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
-puppet_version = ENV['PUPPET_VERSION'] || '>= 4.0'
-gem 'puppet', puppet_version
+# Shared constants for the Cisco module
+module Cisco
+  PLATFORMS = [
+    # Cisco IOS XR
+    :ios_xr,
+  ]
 
-beaker_version = ENV['BEAKER_VERSION'] || '>= 2.38.1'
-gem 'beaker', beaker_version
+  DATA_FORMATS = [
+    # Cisco CLI. Indentation is significant.
+    :cli,
+    # Netconf xml
+    :xml,
+    # YANG JSON
+    :yang_json,
+  ]
 
-facter_version = ENV['FACTER_VERSION'] || '>= 1.7.0'
-gem 'facter', facter_version
+  NETCONF_SET_MODE = [
+    :merge,
+    :replace,
+    :delete
+    ]
 
-gem 'puppetlabs_spec_helper', '>= 0.8.2'
-gem 'puppet-lint', '>= 1.0.0'
-gem 'rubocop', '= 0.35.1', require: false
-gem 'rake', '~> 10.1.0', require: false
-gem 'metadata-json-lint'
-
-# vim:ft=ruby
+  YANG_SET_MODE = [
+    :merge_config,
+    :replace_config,
+    :delete_config,
+  ]
+end

@@ -1,3 +1,5 @@
+# March 2016, Glenn F. Matthews
+#
 # Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,21 +13,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
-puppet_version = ENV['PUPPET_VERSION'] || '>= 4.0'
-gem 'puppet', puppet_version
+require_relative '../puppet/node_utils/environment'
 
-beaker_version = ENV['BEAKER_VERSION'] || '>= 2.38.1'
-gem 'beaker', beaker_version
+# Add environment option to minitest
+module Minitest
+  def self.plugin_environment_options(opts, options)
+    opts.on('-e', '--environment NAME', 'Select environment by name') do |name|
+      options[:environment] = name
+    end
+  end
 
-facter_version = ENV['FACTER_VERSION'] || '>= 1.7.0'
-gem 'facter', facter_version
-
-gem 'puppetlabs_spec_helper', '>= 0.8.2'
-gem 'puppet-lint', '>= 1.0.0'
-gem 'rubocop', '= 0.35.1', require: false
-gem 'rake', '~> 10.1.0', require: false
-gem 'metadata-json-lint'
-
-# vim:ft=ruby
+  def self.plugin_environment_init(options)
+    name = options[:environment]
+    Cisco::Environment.default_environment_name = name unless name.nil?
+  end
+end

@@ -1,5 +1,5 @@
 require 'puppet/property'
-require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
+require 'node_utils'
 
 # This subclass of {Puppet::Property} manages YANG content.
 #

@@ -1,4 +1,4 @@
-require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
+require 'puppet/node_utils'
 require 'json' if Puppet.features.json?
 require 'rubygems'
 
