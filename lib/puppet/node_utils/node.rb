@@ -1,6 +1,5 @@
 # Cisco node helper class. Abstracts away the details of the underlying
-# transport (whether NXAPI or some other future transport) and provides
-# various convenient helper methods.
+# transport (grpc/netconf) and provides various convenient helper methods.
 #
 # December 2014, Glenn F. Matthews
 #

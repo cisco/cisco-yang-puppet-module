@@ -160,28 +160,53 @@ class Cisco::Client::NETCONF < Cisco::Client
     @chas_inventory
   end
 
+  def ip_domain
+    if !@ip_domain
+      filter = '<ip-domain xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ip-domain-oper"/>'
+      reply = @client.get(filter)
+      if !reply.errors?
+        @ip_domain = reply.response
+      end
+    end
+    @ip_domain
+  end
+
   def get_domain_name
-    "foo"
-    #later
+    return "" if !ip_domain
+    domain_name = ""
+    ip_domain.elements.each("rpc-reply/data/ip-domain/vrfs/vrf/server/domain-name") do |e|
+      domain_name = e.text
+    end
+    domain_name
+  end
+
+  def system_time
+    if !@system_time
+      filter = '<system-time xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-shellutil-oper"/>'
+      reply = @client.get(filter)
+      if !reply.errors?
+        @system_time = reply.response
+      end
+    end
+    @system_time
   end
 
   def get_host_name
-    filter = '<host-name xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-shellutil-cfg"/>'
-    reply = @client.get_config(filter)
-    if reply.errors?
-      ""
-    else
-      name = ""
-      reply.response.elements.each("rpc-reply/data/host-name") do |e|
-        name = e.text
-      end
-      name
+    return "" if !system_time
+      host_name = ""
+      system_time.elements.each("rpc-reply/data/system-time/uptime/host-name") do |e|
+        host_name = e.text
     end
+    host_name
   end
 
   def get_system
-    "foo"
-    #later
+    return "" if !inventory
+    software_revision = ""
+    inventory.elements.each("rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/software-revision") do |e|
+      software_revision = e.text
+    end
+    software_revision
   end
 
   def get_product_serial_number
