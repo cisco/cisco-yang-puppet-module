@@ -243,11 +243,7 @@ class Cisco::Client
 
   def get_product_id
     # We use this function to *find* the appropriate CommandReference
-    if platform == :nexus
-      entries = get(command:     'show inventory',
-                    data_format: :nxapi_structured)
-      return entries['TABLE_inv']['ROW_inv'][0]['productid']
-    elsif platform == :ios_xr
+    if platform == :ios_xr
       # No support for structured output for this command yet
       output = get(command:     'show inventory',
                    data_format: :cli)

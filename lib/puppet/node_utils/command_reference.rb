@@ -434,7 +434,7 @@ module Cisco
       puts "DEBUG: #{text}" if @@debug
     end
 
-    KNOWN_PLATFORMS = %w(C3064 C3132 C3172 N3k N5k N6k N7k N8k N9k XRv9k)
+    KNOWN_PLATFORMS = %w(C3064 C3132 C3172 XRv9k)
 
     def self.platform_to_filter(platform)
       if KNOWN_PLATFORMS.include?(platform)
@@ -449,7 +449,7 @@ module Cisco
       end
     end
 
-    KNOWN_FILTERS = %w(nexus ios_xr cli nxapi_structured)
+    KNOWN_FILTERS = %w(ios_xr cli)
 
     def self.key_match(key, platform, product_id, data_formats)
       if KNOWN_PLATFORMS.include?(key)

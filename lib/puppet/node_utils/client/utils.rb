@@ -124,34 +124,6 @@ class Cisco::Client
     end
   end
 
-  # Helper method for get(data_format: :nxapi_structured).
-  #
-  # @param data [Array, Hash] structured output from node
-  # @param keys [Array] lookup sequence
-  def self.filter_data(data: nil,
-                       keys: nil)
-    return nil if data.nil?
-    keys ||= []
-    keys.each do |filter|
-      # if filter is a Hash and data is an array, check each
-      # array index (which should return another hash) to see if
-      # it contains the matching key/value pairs specified in token,
-      # and return the first match (or nil)
-      if filter.kind_of?(Hash)
-        fail "Expected Array, got #{data.class}" unless data.is_a? Array
-        data = data.select { |x| filter.all? { |k, v| x[k] == v } }
-        fail "Multiple matches found for #{filter}" if data.length > 1
-        fail "No match found for #{filter}" if data.length == 0
-        data = data[0]
-      else # data is array or hash
-        filter = filter.to_i if data.is_a? Array
-        fail "No key \"#{filter}\" in #{data}" if data[filter].nil?
-        data = data[filter]
-      end
-    end
-    data
-  end
-
   # Helper method for calls into third-party code - suppresses Ruby warnings
   # for the given block since we have no control over that code.
   def self.silence_warnings(&block)
