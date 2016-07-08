@@ -18,7 +18,6 @@
 # limitations under the License.
 
 require_relative 'client'
-require_relative 'command_reference'
 require_relative 'exceptions'
 require_relative 'logger'
 
@@ -30,111 +29,6 @@ module Cisco
   # it doesn't exist until some client requests it (with Node.instance())
   class Node
     @instance = nil
-
-    # Convenience wrapper for get()
-    # Uses CommandReference to look up the given show command and key
-    # of interest, executes that command, and returns the value corresponding
-    # to that key.
-    #
-    # @raise [IndexError] if the given (feature, name) pair is not in the
-    #        CommandReference data or if the data doesn't have values defined
-    #        for the 'get_command' and (optional) 'get_value' fields.
-    # @raise [Cisco::UnsupportedError] if the (feature, name) pair is flagged
-    #        in the YAML as unsupported on this device.
-    # @raise [Cisco::RequestFailed] if the command is rejected by the device.
-    #
-    # @param feature [String]
-    # @param name [String]
-    # @return [String, Hash, Array]
-    # @example config_get("show_version", "system_image")
-    # @example config_get("ospf", "router_id",
-    #                     {name: "green", vrf: "one"})
-    def config_get(feature, property, *args)
-      ref = @cmd_ref.lookup(feature, property)
-
-      # If we have a default value but no getter, just return the default
-      return ref.default_value if ref.default_value? && !ref.getter?
-
-      get_args = ref.getter(*args)
-      massage(get(command:     ref.get_command,
-                  data_format: get_args[:data_format],
-                  context:     get_args[:context],
-                  value:       get_args[:value]),
-              ref)
-    end
-
-    # Attempt to massage the given value into the format specified by the
-    # given CmdRef object.
-    def massage(value, ref)
-      Cisco::Logger.debug "Massaging '#{value}' (#{value.inspect})"
-      if value.is_a?(Array) && !ref.multiple
-        fail "Expected zero/one value but got '#{value}'" if value.length > 1
-        value = value[0]
-      end
-      if (value.nil? || value.empty?) && ref.default_value? && ref.auto_default
-        Cisco::Logger.debug "Default: #{ref.default_value}"
-        return ref.default_value
-      end
-      return value unless ref.kind
-      case ref.kind
-      when :boolean
-        if value.nil? || value.empty?
-          value = false
-        elsif /^no / =~ value
-          value = false
-        elsif /disable$/ =~ value
-          value = false
-        else
-          value = true
-        end
-      when :int
-        value = value.to_i unless value.nil?
-      when :string
-        value = '' if value.nil?
-        value = value.to_s.strip
-      when :symbol
-        value = value.to_sym unless value.nil?
-      end
-      Cisco::Logger.debug "Massaged to '#{value}'"
-      value
-    end
-
-    # Uses CommandReference to lookup the default value for a given
-    # feature and feature property.
-    #
-    # @raise [IndexError] if the given (feature, name) pair is not in the
-    #        CommandReference data or if the data doesn't have values defined
-    #        for the 'default_value' field.
-    # @param feature [String]
-    # @param name [String]
-    # @return [String]
-    # @return [nil] if this feature/name pair is marked as unsupported
-    # @example config_get_default("vtp", "file")
-    def config_get_default(feature, property)
-      ref = @cmd_ref.lookup(feature, property)
-      ref.default_value
-    end
-
-    # Uses CommandReference to look up the given config command(s) of interest
-    # and then applies the configuration.
-    #
-    # @raise [IndexError] if no relevant cmd_ref config_set exists
-    # @raise [ArgumentError] if too many or too few args are provided.
-    # @raise [Cisco::UnsupportedError] if this feature/name is unsupported
-    # @raise [Cisco::RequestFailed] if any command is rejected by the device.
-    #
-    # @param feature [String]
-    # @param name [String]
-    # @param args [*String] zero or more args to be substituted into the cmdref.
-    # @example config_set("vtp", "domain", "example.com")
-    # @example config_set("ospf", "router_id",
-    #  {:name => "green", :vrf => "one", :state => "",
-    #   :router_id => "192.0.0.1"})
-    def config_set(feature, property, *args)
-      ref = @cmd_ref.lookup(feature, property)
-      set_args = ref.setter(*args)
-      set(**set_args)
-    end
 
     # Clear the cache of CLI output results.
     #
@@ -148,7 +42,7 @@ module Cisco
     # Here and below are implementation details and private APIs that most
     # providers shouldn't need to know about or use.
 
-    attr_reader :cmd_ref, :client
+    attr_reader :client
 
     def self.instance
       @instance ||= new
@@ -156,12 +50,6 @@ module Cisco
 
     def initialize
       @client = Cisco::Client.create
-      @cmd_ref = nil
-      if @client.wants_cmd_ref
-        @cmd_ref = CommandReference.new(product:      product_id,
-                                        platform:     @client.platform,
-                                        data_formats: @client.data_formats)
-      end
       cache_flush
     end
 
@@ -170,7 +58,7 @@ module Cisco
     end
 
     def inspect
-      "Node: client:'#{client.inspect}' cmd_ref:'#{cmd_ref.inspect}'"
+      "Node: client:'#{client.inspect}'"
     end
 
     def cache_enable?
@@ -254,104 +142,74 @@ module Cisco
 
     # @return [String] such as "Cisco Nexus Operating System (NX-OS) Software"
     def os
-      o = config_get('show_version', 'header')
-      fail 'failed to retrieve operating system information' if o.nil?
-      o.split("\n")[0]
+      @client.get_os
     end
 
     # @return [String] such as "6.0(2)U5(1) [build 6.0(2)U5(0.941)]"
     def os_version
-      config_get('show_version', 'version')
+      @client.get_os_version
     end
 
     # @return [String] such as "Nexus 3048 Chassis"
     def product_description
-      config_get('show_version', 'description')
+      @client.get_product_description
     end
 
     # @return [String] such as "N3K-C3048TP-1GE"
     def product_id
-      if @cmd_ref
-        return config_get('inventory', 'productid')
-      else
-        @client.get_product_id
-      end
+      @client.get_product_id
     end
 
     # @return [String] such as "V01"
     def product_version_id
-      config_get('inventory', 'versionid')
+      @client.get_product_version_id
     end
 
     # @return [String] such as "FOC1722R0ET"
     def product_serial_number
-      if @cmd_ref
-        config_get('inventory', 'serialnum')
-      else
-        @client.get_product_serial_number
-      end
+      @client.get_product_serial_number
     end
 
     # @return [String] such as "bxb-oa-n3k-7"
     def host_name
-      if @cmd_ref
-        config_get('show_version', 'host_name')
-      else
-        @client.get_host_name
-      end
+      @client.get_host_name
     end
 
     # @return [String] such as "example.com"
     def domain_name
-      if @cmd_ref
-        config_get('dnsclient', 'domain_name')
-      else
-        @client.get_domain_name
-      end
+      @client.get_domain_name
     end
 
     # @return [Integer] System uptime, in seconds
     def system_uptime
-      cache_flush
-      t = config_get('show_system', 'uptime')
-      fail 'failed to retrieve system uptime' if t.nil?
-      # time units: t = ["0", "23", "15", "49"]
-      t.map!(&:to_i)
-      d, h, m, s = t
-      (s + 60 * (m + 60 * (h + 24 * (d))))
+      @client.get_system_uptime
     end
 
     # @return [String] timestamp of last reset time
     def last_reset_time
-      config_get('show_version', 'last_reset_time')
+      @client.get_last_reset_time
     end
 
     # @return [String] such as "Reset Requested by CLI command reload"
     def last_reset_reason
-      config_get('show_version', 'last_reset_reason')
+      @client.get_last_reset_reason
     end
 
     # @return [Float] combined user/kernel CPU utilization
     def system_cpu_utilization
-      output = config_get('system', 'resources')
-      return output if output.nil?
-      output['cpu_state_user'].to_f + output['cpu_state_kernel'].to_f
+      @client.get_system_cpu_utilization
     end
 
     # @return [String] such as
     #   "bootflash:///n3000-uk9-kickstart.6.0.2.U5.0.941.bin"
     def boot
-      config_get('show_version', 'boot_image')
+      @client.get_boot
     end
 
     # @return [String] such as
     #   "bootflash:///n3000-uk9.6.0.2.U5.0.941.bin"
     def system
-      if @cmd_ref
-        config_get('show_version', 'system_image')
-      else
-        @client.get_system
-      end
+      @client.get_system
     end
   end
 end

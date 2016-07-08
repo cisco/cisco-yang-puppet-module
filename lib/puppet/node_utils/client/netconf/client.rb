@@ -171,15 +171,6 @@ class Cisco::Client::NETCONF < Cisco::Client
     @ip_domain
   end
 
-  def get_domain_name
-    return "" if !ip_domain
-    domain_name = ""
-    ip_domain.elements.each("rpc-reply/data/ip-domain/vrfs/vrf/server/domain-name") do |e|
-      domain_name = e.text
-    end
-    domain_name
-  end
-
   def system_time
     if !@system_time
       filter = '<system-time xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-shellutil-oper"/>'
@@ -191,22 +182,92 @@ class Cisco::Client::NETCONF < Cisco::Client
     @system_time
   end
 
-  def get_host_name
-    return "" if !system_time
-      host_name = ""
-      system_time.elements.each("rpc-reply/data/system-time/uptime/host-name") do |e|
-        host_name = e.text
+  def software_install
+    if !@software_install
+      filter = '<software-install xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-spirit-install-instmgr-oper"/>'
+      reply = @client.get(filter)
+      if !reply.errors?
+        @software_install = reply.response
+      end
     end
-    host_name
+    @software_install
   end
 
-  def get_system
+  def diag
+    if !@diag
+      filter = '<diag xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-sdr-invmgr-diag-oper"/>'
+      reply = @client.get(filter)
+      if !reply.errors?
+        @diag = reply.response
+      end
+    end
+    @diag
+  end
+
+  def redundancy
+    if !@redundancy
+      filter = '<redundancy xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rmf-oper"/>'
+      reply = @client.get(filter)
+      if !reply.errors?
+        @redundancy = reply.response
+      end
+    end
+    @redundancy
+  end
+
+  def get_software_revision
     return "" if !inventory
     software_revision = ""
     inventory.elements.each("rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/software-revision") do |e|
       software_revision = e.text
     end
     software_revision
+  end
+
+  def get_os
+    return "" if !software_install
+    os = ""
+    software_install.elements.each("rpc-reply/data/software-install/version/log") do |e|
+      os = /Cisco.*Software/.match(e.text).to_s
+    end
+    os
+  end
+
+  def get_os_version
+    return "" if !inventory
+    software_revision = ""
+    inventory.elements.each("rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/software-revision") do |e|
+      software_revision = e.text
+    end
+    software_revision
+  end
+
+  def get_product_description
+    return "" if !diag
+    product_description = ""
+    diag.elements.each("rpc-reply/data/diag/racks/rack/chassis/udi-description") do |e|
+      product_description = e.text
+    end
+    product_description
+  end
+
+  def get_product_id
+    return "" if !diag
+    product_id = ""
+    diag.elements.each("rpc-reply/data/diag/racks/rack/chassis/pid") do |e|
+      product_id = e.text
+    end
+    product_id
+  end
+
+
+  def get_product_version_id
+    return "" if !inventory
+    vid = ""
+    inventory.elements.each("rpc-reply/data/inventory/racks/rack/entity/slot/tsi1s/tsi1/attributes/inv-eeprom-info/eeprom/vid") do |e|
+      vid = e.text
+    end
+    vid
   end
 
   def get_product_serial_number
@@ -218,16 +279,81 @@ class Cisco::Client::NETCONF < Cisco::Client
     product_id
   end
 
-  def get_product_id
-    return "" if !inventory
-    product_id = ""
-    inventory.elements.each("rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/model-name") do |e|
-      product_id = e.text
+  def get_host_name
+    return "" if !system_time
+      host_name = ""
+      system_time.elements.each("rpc-reply/data/system-time/uptime/host-name") do |e|
+        host_name = e.text
     end
-    product_id
+    host_name
   end
 
-  def get_software_revision
+  def get_domain_name
+    return "" if !ip_domain
+    domain_name = ""
+    ip_domain.elements.each("rpc-reply/data/ip-domain/vrfs/vrf/server/domain-name") do |e|
+      domain_name = e.text
+    end
+    domain_name
+  end
+
+  def get_system_uptime
+    return "" if !software_install
+    uptime = ""
+    software_install.elements.each("rpc-reply/data/software-install/version/log") do |e|
+      output = /Cisco.*Software/.match(e.text).to_s
+      t = /.*System uptime is (?:(\d+) day)?s?,?\s?(?:(\d+) hour)?s?,?\s?(?:(\d+) minute)?s?,?\s?(?:(\d+) second)?s?/.match(output).to_a
+      fail 'failed to retrieve system uptime' if t.nil?
+      t.shift
+      # time units: t = ["0", "23", "15", "49"]
+      t.map!(&:to_i)
+      d, h, m, s = t
+      uptime = (s + 60 * (m + 60 * (h + 24 * (d))))
+    end
+   uptime
+  end
+
+  def get_last_reset_time
+    return "" if !redundancy
+    last_reset_time = ""
+    redundancy.elements.each("rpc-reply/data/redundancy/nodes/node/log") do |e|
+      output = e.text
+      t = /^Active.*:\s*(?:(\d+) day)?s?,?\s?(?:(\d+) hour)?s?,?\s?(?:(\d+) minute)?s?,?\s?(?:(\d+) second)?s?,?\s?/.match(output).to_a
+      fail 'failed to retrieve system uptime' if t.nil?
+      t.shift
+      # time units: t = ["0", "23", "15", "49"]
+      t.map!(&:to_i)
+      d, h, m, s = t
+      last_reset_time = (s + 60 * (m + 60 * (h + 24 * (d))))
+    end
+    last_reset_time
+  end
+
+  def get_last_reset_reason
+    return "" if !redundancy
+    reason = ""
+    redundancy.elements.each("rpc-reply/data/redundancy/nodes/node/active-reboot-reason") do |e|
+      reason = e.text
+    end
+    reason
+  end
+
+  def get_system_cpu_utilization
+    "foo"
+    #<system-monitoring xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-wdsysmon-fd-oper"/>
+    #rpc-reply/data/system-monitoring/cpu-utilization/total-cpu-fifteen-minute
+  end
+
+  def get_boot
+    return "" if !software_install
+    boot_image = ""
+    software_install.elements.each("rpc-reply/data/software-install/committed/committed-package-info/committed-packages") do |e|
+      boot_image = /^\s*(.*)version=.*\[Boot image\]$/.match(e.text)[1]
+    end
+    boot_image
+  end
+
+  def get_system
     return "" if !inventory
     software_revision = ""
     inventory.elements.each("rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/software-revision") do |e|
@@ -235,5 +361,6 @@ class Cisco::Client::NETCONF < Cisco::Client
     end
     software_revision
   end
+
 
 end

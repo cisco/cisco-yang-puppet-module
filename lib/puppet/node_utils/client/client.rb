@@ -221,11 +221,6 @@ class Cisco::Client
     true
   end
 
-  def get_host_name
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
   def get_system
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
@@ -241,16 +236,74 @@ class Cisco::Client
     # to be implemented by subclasses
   end
 
+  def get_os
+    fail Cisco::RequestNotSupported
+    # to be implemented by subclasses
+  end
+
+  def get_os_version
+    fail Cisco::RequestNotSupported
+    # to be implemented by subclasses
+  end
+
+  def get_product_description
+    fail Cisco::RequestNotSupported
+    # to be implemented by subclasses
+  end
+
   def get_product_id
-    # We use this function to *find* the appropriate CommandReference
-    if platform == :ios_xr
-      # No support for structured output for this command yet
-      output = get(command:     'show inventory',
-                   data_format: :cli)
-      return /NAME: "Rack 0".*\nPID: (\S+)/.match(output)[1]
-    else
-      return ""
-    end
+    fail Cisco::RequestNotSupported
+    # to be implemented by subclasses
+  end
+
+  def get_product_version_id
+    fail Cisco::RequestNotSupported
+    # to be implemented by subclasses
+  end
+
+  def get_product_serial_number
+    fail Cisco::RequestNotSupported
+    # to be implemented by subclasses
+  end
+
+  def get_host_name
+    fail Cisco::RequestNotSupported
+    # to be implemented by subclasses
+  end
+
+  def get_domain_name
+    fail Cisco::RequestNotSupported
+    # to be implemented by subclasses
+  end
+
+  def get_system_uptime
+    fail Cisco::RequestNotSupported
+    # to be implemented by subclasses
+  end
+
+  def get_last_reset_time
+    fail Cisco::RequestNotSupported
+    # to be implemented by subclasses
+  end
+
+  def get_last_reset_reason
+    fail Cisco::RequestNotSupported
+    # to be implemented by subclasses
+  end
+
+  def get_system_cpu_utilization
+    fail Cisco::RequestNotSupported
+    # to be implemented by subclasses
+  end
+
+  def get_boot
+    fail Cisco::RequestNotSupported
+    # to be implemented by subclasses
+  end
+
+  def get_system
+    fail Cisco::RequestNotSupported
+    # to be implemented by subclasses
   end
 
   private

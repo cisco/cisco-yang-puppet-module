@@ -394,4 +394,88 @@ class Cisco::Client::GRPC < Cisco::Client
       end
     end
   end
+
+  def get_os
+    output = get(command:     'show version',
+                 data_format: :cli)
+    return /Cisco.*Software/.match(output).to_s
+  end
+
+  def get_os_version
+    output = get(command:     'show version',
+                 data_format: :cli)
+    return /IOS XR.*Version (.*)$/.match(output)[1]
+  end
+
+  def get_product_description
+    output = get(command:     'show inventory',
+                  data_format: :cli)
+    return /NAME: "Rack 0".*DESCR: "(.*)"/.match(output)[1]
+  end
+
+  def get_product_id
+    output = get(command:     'show inventory',
+                  data_format: :cli)
+    return /NAME: "Rack 0".*\nPID: (\S+)/.match(output)[1]
+  end
+
+  def get_product_version_id
+    output = get(command:     'show inventory',
+                  data_format: :cli)
+    return /"Rack 0".*\n.*VID: ([^ ,]+)/.match(output)[1]
+  end
+
+  def get_product_serial_number
+    output = get(command:     'show inventory',
+                  data_format: :cli)
+    return /Rack 0".*\n.*SN: ([^ ,]+)/.match(output)[1]
+  end
+
+  def get_host_name
+    output = get(command:     'show running | i hostname',
+                  data_format: :cli)
+    return /^hostname (.*)$/.match(output)[1]
+  end
+
+  def get_domain_name
+    output = get(command:     'show running-config all',
+                  data_format: :cli)
+    return /^domain name (\S+)$/.match(output)[1]
+  end
+
+  def get_system_uptime
+    output = get(command:     'show version',
+                  data_format: :cli)
+    t = /.*System uptime is (?:(\d+) days)?,?\s?(?:(\d+) hours)?,?\s?(?:(\d+) minutes)?,?\s?(?:(\d+) seconds)?/.match(output).to_a
+    fail 'failed to retrieve system uptime' if t.nil?
+    t.shift
+    # time units: t = ["0", "23", "15", "49"]
+    t.map!(&:to_i)
+    d, h, m, s = t
+    (s + 60 * (m + 60 * (h + 24 * (d))))
+  end
+
+  # show_version.yaml last_reset_time excludes ios_xr. Not supported ?
+  #def get_last_reset_time
+  #end
+
+  # show_version.yaml last_reset_reason excludes ios_xr. Not supported ?
+  #def get_last_reset_reason
+  #end
+
+  # system.yaml resources excludes ios_xr. Not supported ?
+  #def get_system_cpu_utilization
+  #end
+
+  # show_version.yaml boot_image excludes ios_xr. Not supported ?
+  #def get_boot
+  #end
+
+  def get_system
+    output = get(command:     'show version',
+                  data_format: :cli)
+    return /IOS XR.*Version (.*)$/.match(output)[1]
+  end
+
+
 end
