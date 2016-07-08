@@ -78,18 +78,12 @@ module Cisco
     end
 
     # Send a config command to the device.
-    # In general, clients should use config_set() rather than calling
-    # this function directly.
-    #
     # @raise [Cisco::RequestFailed] if any command is rejected by the device.
     def set(**kwargs)
       @client.set(**kwargs)
     end
 
     # Send a show command to the device.
-    # In general, clients should use config_get() rather than calling
-    # this function directly.
-    #
     # @raise [Cisco::RequestFailed] if any command is rejected by the device.
     def get(**kwargs)
       @client.get(**kwargs)
