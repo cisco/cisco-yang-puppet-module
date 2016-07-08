@@ -32,7 +32,6 @@ require 'minitest/autorun'
 require 'net/telnet'
 require_relative '../../lib/puppet/node_utils/client'
 require_relative '../../lib/puppet/node_utils/environment'
-require_relative '../../lib/puppet/node_utils/command_reference'
 require_relative '../../lib/puppet/node_utils/logger'
 
 # rubocop:disable Style/ClassVars
