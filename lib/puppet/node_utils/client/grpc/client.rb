@@ -65,6 +65,10 @@ class Cisco::Client::GRPC < Cisco::Client
     @timeout = 120
   end
 
+  def wants_cmd_ref
+    false
+  end
+
   def self.validate_args(**kwargs)
     super
     base_msg = 'gRPC client creation failure: '
