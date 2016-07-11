@@ -16,7 +16,7 @@ require 'ipaddr'
 require 'resolv'
 require_relative 'basetest'
 require_relative 'platform_info'
-require_relative '../../lib/puppet/node_utils/node'
+require_relative '../../lib/util/node'
 
 include Cisco
 

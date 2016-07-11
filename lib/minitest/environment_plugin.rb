@@ -1,5 +1,3 @@
-# March 2016, Glenn F. Matthews
-#
 # Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../puppet/node_utils/environment'
+require_relative '../util/environment'
 
 # Add environment option to minitest
 module Minitest

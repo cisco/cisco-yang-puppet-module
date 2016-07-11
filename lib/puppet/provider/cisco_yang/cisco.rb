@@ -1,4 +1,4 @@
-require 'puppet/node_utils/node_util'
+require 'util/node_util'
 require 'json' if Puppet.features.json?
 require 'rubygems'
 
