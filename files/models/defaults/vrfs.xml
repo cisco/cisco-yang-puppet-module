@@ -1,0 +1,20 @@
+<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
+  <vrf>
+    <vrf-name>VOIP</vrf-name>
+    <create/>
+    <description>Voice over IP</description>
+    <vpn-id>
+      <vpn-oui>875</vpn-oui>
+      <vpn-index>3</vpn-index>
+    </vpn-id>
+  </vrf>
+  <vrf>
+    <vrf-name>INTERNET</vrf-name>
+    <create/>
+    <description>Generic external traffic</description>
+    <vpn-id>
+      <vpn-oui>875</vpn-oui>
+      <vpn-index>22</vpn-index>
+    </vpn-id>
+  </vrf>
+</vrfs>
