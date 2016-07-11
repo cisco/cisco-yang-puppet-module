@@ -1,6 +1,6 @@
 gem 'minitest', '~> 5.0'
 require 'minitest/autorun'
-require_relative '../../lib/puppet/node_utils/client/netconf/netconf'
+require_relative '../../lib/util/client/netconf/netconf'
 
 # Two elts in Current, one will be deleted by operation=delete clause
 CURRENT_BLUE_RED_VRF =

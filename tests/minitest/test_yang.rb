@@ -18,7 +18,7 @@
 # limitations under the License.
 
 require_relative 'ciscotest'
-require_relative '../../lib/puppet/node_utils/yang'
+require_relative '../../lib/util/yang'
 
 # TestYang - Minitest for Yang class
 class TestYang < CiscoTestCase

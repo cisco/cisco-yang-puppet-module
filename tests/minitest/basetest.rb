@@ -1,9 +1,8 @@
 #!/usr/bin/env ruby
 #
 # Basic unit test case class.
-# December 2014, Glenn F. Matthews
 #
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Minitest needs to have this path in order to discover our logging plugin
-$LOAD_PATH.push File.expand_path('../../lib', __FILE__)
+# Minitest needs to have this path in order to discover our plugins
+$LOAD_PATH.push File.expand_path('../../../lib', __FILE__)
 
 require 'simplecov'
 SimpleCov.start do
@@ -30,9 +29,9 @@ require 'rubygems'
 gem 'minitest', '~> 5.0'
 require 'minitest/autorun'
 require 'net/telnet'
-require_relative '../../lib/puppet/node_utils/client'
-require_relative '../../lib/puppet/node_utils/environment'
-require_relative '../../lib/puppet/node_utils/logger'
+require_relative '../../lib/util/client'
+require_relative '../../lib/util/environment'
+require_relative '../../lib/util/logger'
 
 # rubocop:disable Style/ClassVars
 # We *want* the address/username/password class variables to be shared

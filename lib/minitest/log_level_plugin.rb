@@ -1,5 +1,3 @@
-# March 2016, Glenn F. Matthews
-#
 # Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +13,7 @@
 # limitations under the License.
 
 require 'logger'
-require_relative '../puppet/node_utils/logger'
+require_relative '../util/logger'
 
 # Add logging level option to minitest
 module Minitest
