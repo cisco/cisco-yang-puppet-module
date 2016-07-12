@@ -1,9 +1,7 @@
 # Cisco node helper class. Abstracts away the details of the underlying
 # transport (grpc/netconf) and provides various convenient helper methods.
-#
-# December 2014, Glenn F. Matthews
-#
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+
+# Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
