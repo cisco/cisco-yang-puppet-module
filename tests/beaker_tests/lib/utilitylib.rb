@@ -126,9 +126,10 @@ end
 def search_pattern_in_output(output, patarr, inverse, testcase,\
                              logger)
   patarr = hash_to_patterns(patarr) if patarr.instance_of?(Hash)
-  output.delete!("\n")
-  output.gsub!(/\s*{\s*/,'{').gsub!(/\s*}\s*/,'}')
-  output.gsub!(/\s*\[\s*/,'[').gsub!(/\s*\]\s*/,']').gsub!(/\s*,\s*/,',').gsub!(/\s*:\s*/,':')
+  output = output.delete!("\n")
+  output = output.gsub(/\s*{\s*/,'{').gsub(/\s*}\s*/,'}')
+  output = output.gsub(/\s*\[\s*/,'[').gsub(/\s*\]\s*/,']').gsub(/\s*,\s*/,',').gsub(/\s*:\s*/,':')
+  #output = output.gsub(/\s*<\s*/,'<').gsub(/\s*>\s*/,'>')
   patarr.each do |pattern|
     inverse ? (match = (output !~ pattern)) : (match = (output =~ pattern))
     match_kind = inverse ? 'Inverse ' : ''
