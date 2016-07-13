@@ -1,5 +1,5 @@
 require 'puppet/property'
-require_relative '../../util/node_util'
+require_relative '../../util/node_util' if Puppet.features.node_util?
 
 # This subclass of {Puppet::Property} manages YANG content.
 #
