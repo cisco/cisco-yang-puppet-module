@@ -97,7 +97,6 @@ class TestGRPC < TestCase
   int gi0/0/0/0 wark
   int gi0/0/0/0 bark bark
 with error:
-
 !! SYNTAX/AUTHORIZATION ERRORS: This configuration failed due to
 !! one or more of the following reasons:
 !!  - the entered commands do not exist,
@@ -105,11 +104,9 @@ with error:
 !!  - the software packages containing the commands are not active,
 !!  - the current user is not a member of a task-group that has
 !!    permissions to use the commands.
-
 int gi0/0/0/0 wark
 int gi0/0/0/0 bark bark
-
-', e.message)
+', e.message.gsub(/\s+\n+/,"\n"))
     # rubocop:enable Style/TrailingWhitespace
     # Unlike NXAPI, a gRPC config command is always atomic
     assert_empty(e.successful_input)
