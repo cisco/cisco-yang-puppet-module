@@ -13,12 +13,14 @@
 # limitations under the License.
 
 require 'json' if Puppet.features.json?
-require 'util/node_util'
+require_relative '../../../util/node_util' if Puppet.features.node_util?
 require 'rubygems'
 
 Puppet::Type.type(:cisco_yang).provide(:cisco) do
   desc "IOS-XR configuration management via YANG."
   defaultfor operatingsystem: [:ios_xr]
+
+  confine feature: :node_util
 
   def initialize(value={})
     super(value)
