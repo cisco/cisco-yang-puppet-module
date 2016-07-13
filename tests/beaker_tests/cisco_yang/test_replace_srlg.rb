@@ -44,7 +44,7 @@ end
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: Replace GE0 by GE0 updated" do
+test_name 'TestCase :: Replace GE0 by GE0 updated' do
   id = :create_srlg
   tests[id][:ensure] = :present
   test_harness_run(tests, id)

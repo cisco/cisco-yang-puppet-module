@@ -21,17 +21,18 @@ require_relative 'basetest'
 # Test case for Cisco::Client::NETCONF::Client class
 class TestNetconf < TestCase
   @@client = nil # rubocop:disable Style/ClassVars
-  @@red_vrf = \
+
+  RED_VRF = \
     "<vrfs xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg\">\n  <vrf>\n    <vrf-name>\n      red\n    </vrf-name>\n    <create/>\n  </vrf>\n</vrfs>"
-  @@blue_vrf = \
+  BLUE_VRF = \
       "<vrfs xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg\">\n  <vrf>\n    <vrf-name>\n      blue\n    </vrf-name>\n    <create/>\n  </vrf>\n</vrfs>"
-  @@root_vrf = '<infra-rsi-cfg:vrfs xmlns:infra-rsi-cfg="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>'
-  @@invalid = '<infra-rsi-cfg:vrfs-invalid xmlns:infra-rsi-cfg-invalid="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg-invalid"/>'
+  ROOT_VRF = '<infra-rsi-cfg:vrfs xmlns:infra-rsi-cfg="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>'
+  INVALID_VRF = '<infra-rsi-cfg:vrfs-invalid xmlns:infra-rsi-cfg-invalid="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg-invalid"/>'
 
   def self.runnable_methods
     # If we're pointed to an Netconf node (as evidenced by a port num 830)
     # then these tests don't apply
-    return [:all_skipped] unless (Cisco::Environment.environment[:port] == 830)
+    return [:all_skipped] unless Cisco::Environment.environment[:port] == 830
     super
   end
 
@@ -54,8 +55,8 @@ class TestNetconf < TestCase
     e = assert_raises Cisco::AuthenticationFailed do
       Cisco::Client::NETCONF.new(**env)
     end
-    assert_equal('Netconf client creation failure: Authentication failed for user ' + Cisco::Environment.environment[:username] + '@' + Cisco::Environment.environment[:host],
-                 e.message)
+    assert_equal('Netconf client creation failure: Authentication failed for user ' \
+      + Cisco::Environment.environment[:username] + '@' + Cisco::Environment.environment[:host], e.message)
   end
 
   def test_connection_failure
@@ -70,19 +71,19 @@ class TestNetconf < TestCase
 
   def test_set_string
     client.set(context: nil,
-               values: @@red_vrf,
-               mode: :replace)
-    run = client.get(command: @@root_vrf)
-    assert_match(@@red_vrf, run)
+               values:  RED_VRF,
+               mode:    :replace)
+    run = client.get(command: ROOT_VRF)
+    assert_match(RED_VRF, run)
   end
 
   def test_set_invalid
     e = assert_raises Cisco::YangError do
       client.set(context: nil,
-                 values:  @@invalid)
+                 values:  INVALID_VRF)
     end
-    # rubocop:disable Style/TrailingWhitespace
-    assert_equal('The config \'apply of <infra-rsi-cfg:vrfs-invalid xmlns:infra-rsi-cfg-invalid="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg-invalid"/>\' was rejected with error:
+    assert_equal('The config \'apply of <infra-rsi-cfg:vrfs-invalid ' \
+      'xmlns:infra-rsi-cfg-invalid="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg-invalid"/>\' was rejected with error:
 error-type => rpc
 error-tag => malformed-message
 error-severity => error
@@ -95,18 +96,18 @@ error-severity => error
 
   def test_get_invalid
     assert_raises Cisco::YangError do
-      client.get(command: @@invalid)
+      client.get(command: INVALID_VRF)
     end
   end
 
   def test_get_incomplete
     assert_raises Cisco::YangError do
-      client.get(command: @@invalid)
+      client.get(command: INVALID_VRF)
     end
   end
 
   def test_get_empty
-    result = client.get(command: @@blue_vrf)
+    result = client.get(command: BLUE_VRF)
     assert_empty(result)
   end
 

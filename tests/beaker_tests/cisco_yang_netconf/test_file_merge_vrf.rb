@@ -44,15 +44,15 @@ end
 
 teardown do
   on(agent, puppet_resource('cisco_yang_netconf', '\'' + ROOT_VRF + '\'', 'mode=replace'))
-  #on(agent, puppet_resource('file', \
-                            #'/root/temp/vrfs.xml', \
-                            #'ensure=absent'))
+  # on(agent, puppet_resource('file', \
+  # '/root/temp/vrfs.xml', \
+  # 'ensure=absent'))
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: read config from vrfs.xml file and merge with current config" do
+test_name 'TestCase :: read config from vrfs.xml file and merge with current config' do
   id = :file_merge
   test_harness_run(tests, id)
   skipped_tests_summary(tests)

@@ -51,7 +51,7 @@ end
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: read config from vrfs.xml file and replace current config with it" do
+test_name 'TestCase :: read config from vrfs.xml file and replace current config with it' do
   id = :replace_merge
   test_harness_run(tests, id)
   skipped_tests_summary(tests)

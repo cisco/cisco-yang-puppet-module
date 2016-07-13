@@ -46,7 +46,7 @@ class TestGRPC < TestCase
 
   def test_auth_failure
     env = Cisco::Environment.environment.merge(password: 'wrong password')
-    #Cisco::Client::GRPC.new(**env)
+    # Cisco::Client::GRPC.new(**env)
     e = assert_raises Cisco::AuthenticationFailed do
       Cisco::Client::GRPC.new(**env)
     end
@@ -91,8 +91,6 @@ class TestGRPC < TestCase
       client.set(context: ['int gi0/0/0/0'],
                  values:  ['wark', 'bark bark'])
     end
-    # rubocop:disable Style/TrailingWhitespace
-    puts e.message.inspect
     assert_equal('The following commands were rejected:
   int gi0/0/0/0 wark
   int gi0/0/0/0 bark bark
@@ -106,7 +104,7 @@ with error:
 !!    permissions to use the commands.
 int gi0/0/0/0 wark
 int gi0/0/0/0 bark bark
-', e.message.gsub(/\s+\n+/,"\n"))
+', e.message.gsub(/\s+\n+/, "\n"))
     # rubocop:enable Style/TrailingWhitespace
     # Unlike NXAPI, a gRPC config command is always atomic
     assert_empty(e.successful_input)

@@ -43,7 +43,7 @@ end
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: VRF Present" do
+test_name 'TestCase :: VRF Present' do
   id = :create
   tests[id][:ensure] = :present
   test_harness_run(tests, id)

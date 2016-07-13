@@ -149,12 +149,12 @@ INTERNET_VOIP_VRF = \
    }
 }'
 
-ROOT_SRLG= \
+ROOT_SRLG = \
    '{
       "Cisco-IOS-XR-infra-rsi-cfg:srlg": [null]
     }'
 
-SRLG_GE_01= \
+SRLG_GE_01 = \
 '{
  "Cisco-IOS-XR-infra-rsi-cfg:srlg": {
   "interfaces": {
@@ -207,7 +207,7 @@ SRLG_GE_01= \
  }
 }'
 
-SRLG_GE_01_UPDATE= \
+SRLG_GE_01_UPDATE = \
 '{
  "Cisco-IOS-XR-infra-rsi-cfg:srlg": {
   "interfaces": {
@@ -262,26 +262,26 @@ SRLG_GE_01_UPDATE= \
 
 def massage_path(str)
   ret = str.clone
-  ret.delete!("\n").gsub!(/\s*{\s*/,'{').gsub!(/\s*}\s*/,'}').gsub!(/\s*:\s*/,':')
-  ret.gsub!(/\s*\[\s*/,'[').gsub!(/\s*\]\s*/,']').gsub!(/\s*,\s*/,',')
+  ret.delete!("\n").gsub!(/\s*{\s*/, '{').gsub!(/\s*}\s*/, '}').gsub!(/\s*:\s*/, ':')
+  ret.gsub!(/\s*\[\s*/, '[').gsub!(/\s*\]\s*/, ']').gsub!(/\s*,\s*/, ',')
 end
 
 def create_pattern(str)
   ret = str.clone
-  ret.delete!("\n").gsub!(/\s*{\s*/,'{').gsub!(/\s*}\s*/,'}').gsub!(/\s*:\s*/,':')
-  ret.gsub!(/\s*\[\s*/,'\[').gsub!(/\s*\]\s*/,'\]').gsub!(/\s*,\s*/,',')
+  ret.delete!("\n").gsub!(/\s*{\s*/, '{').gsub!(/\s*}\s*/, '}').gsub!(/\s*:\s*/, ':')
+  ret.gsub!(/\s*\[\s*/, '\[').gsub!(/\s*\]\s*/, '\]').gsub!(/\s*,\s*/, ',')
 end
 
 DELETE = {
-    desc:           'Delete VRF BLUE',
-    title_pattern:  BLUE_VRF_WO_PROPERTY,
-    manifest_props: {
-    },
-    resource:       {
-      'source' => create_pattern(BLUE_VRF_WO_PROPERTY),
-      'ensure' => 'absent'
-    },
-  }
+  desc:           'Delete VRF BLUE',
+  title_pattern:  BLUE_VRF_WO_PROPERTY,
+  manifest_props: {
+  },
+  resource:       {
+    'source' => create_pattern(BLUE_VRF_WO_PROPERTY),
+    'ensure' => 'absent',
+  },
+}
 
 DELETE_PROPERTY = {
   desc:           'Delete VRF BLUE description',
@@ -290,7 +290,7 @@ DELETE_PROPERTY = {
   },
   resource:       {
     'source' => create_pattern(BLUE_VRF_W_PROPERTY1),
-    'ensure' => 'present'
+    'ensure' => 'present',
   },
 }
 
@@ -298,11 +298,11 @@ CREATE = {
   desc:           'Create VRF BLUE',
   title_pattern:  ROOT_VRF,
   manifest_props: {
-    source: BLUE_VRF_WO_PROPERTY,
+    source: BLUE_VRF_WO_PROPERTY
   },
   resource:       {
     'source' => create_pattern(BLUE_VRF_WO_PROPERTY),
-    'ensure' => 'present'
+    'ensure' => 'present',
   },
 }
 
@@ -310,11 +310,11 @@ CREATE_SRLG = {
   desc:           'CREATE SRLG GE0 and GE1',
   title_pattern:  ROOT_SRLG,
   manifest_props: {
-    source: SRLG_GE_01,
+    source: SRLG_GE_01
   },
   resource:       {
     'source' => create_pattern(SRLG_GE_01),
-    'ensure' => 'present'
+    'ensure' => 'present',
   },
 }
 
@@ -323,11 +323,11 @@ REPLACE = {
   title_pattern:  ROOT_VRF,
   manifest_props: {
     source: BLUE_VRF_WO_PROPERTY,
-		mode: 'replace',
+    mode:   'replace',
   },
   resource:       {
-  'source' => create_pattern(BLUE_VRF_WO_PROPERTY),
-	'ensure' => 'present',
+    'source' => create_pattern(BLUE_VRF_WO_PROPERTY),
+    'ensure' => 'present',
   },
 }
 
@@ -337,11 +337,11 @@ REPLACE12 = {
   manifest_props: {
     # Replace BLUE_VRF_W_PROPERTY1 by BLUE_VRF_W_PROPERTY2.
     source: BLUE_VRF_W_PROPERTY2,
-    mode: 'replace',
+    mode:   'replace',
   },
   resource:       {
-  'source' => create_pattern(BLUE_VRF_W_PROPERTY2),
-  'ensure' => 'present',
+    'source' => create_pattern(BLUE_VRF_W_PROPERTY2),
+    'ensure' => 'present',
   },
 }
 
@@ -350,11 +350,11 @@ MERGE = {
   title_pattern:  ROOT_VRF,
   manifest_props: {
     source: BLUE_VRF_WO_PROPERTY,
-    mode: 'merge'
+    mode:   'merge',
   },
   resource:       {
     'source' => create_pattern(BLUE_GREEN_VRF_WO_PROPERTY),
-    'ensure' => 'present'
+    'ensure' => 'present',
   },
 }
 
@@ -365,11 +365,11 @@ MERGE12 = {
     # merge BLUE_VRF_W_PROPERTY2 with existing configuration (BLUE_VRF_W_PROPERTY1)
     # resulting BLUE_VRF_W_PROPERTY12
     source: BLUE_VRF_W_PROPERTY2,
-    mode: 'merge'
+    mode:   'merge',
   },
   resource:       {
     'source' => create_pattern(BLUE_VRF_W_PROPERTY12),
-    'ensure' => 'present'
+    'ensure' => 'present',
   },
 }
 
@@ -378,11 +378,11 @@ REPLACE_SRLG = {
   title_pattern:  ROOT_SRLG,
   manifest_props: {
     source: SRLG_GE_01_UPDATE,
-    mode: 'replace'
+    mode:   'replace',
   },
   resource:       {
     'source' => create_pattern(SRLG_GE_01_UPDATE),
-    'ensure' => 'present'
+    'ensure' => 'present',
   },
 }
 
@@ -391,11 +391,11 @@ FILE_MERGE = {
   title_pattern:  ROOT_VRF,
   manifest_props: {
     source: '/root/temp/vrfs.json',
-    mode: 'merge'
+    mode:   'merge',
   },
   resource:       {
     'source' => create_pattern(INTERNET_VOIP_VRF),
-    'ensure' => 'present'
+    'ensure' => 'present',
   },
 }
 
@@ -404,10 +404,10 @@ FILE_REPLACE = {
   title_pattern:  ROOT_VRF,
   manifest_props: {
     source: '/root/temp/vrfs.json',
-    mode: 'replace'
+    mode:   'replace',
   },
   resource:       {
     'source' => create_pattern(INTERNET_VOIP_VRF),
-    'ensure' => 'present'
+    'ensure' => 'present',
   },
 }

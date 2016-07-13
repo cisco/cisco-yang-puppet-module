@@ -45,7 +45,7 @@ end
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: Merge VRF BLUE" do
+test_name 'TestCase :: Merge VRF BLUE' do
   id = :merge
   test_harness_run(tests, id)
   skipped_tests_summary(tests)

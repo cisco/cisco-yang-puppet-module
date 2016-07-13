@@ -44,7 +44,6 @@ TARGET_BLUE_GREEN_VRF =
    </infra-rsi-cfg:vrf>
 </infra-rsi-cfg:vrfs>'
 
-
 # Single elt in Current, operation=delete in target results in no-op
 CURRENT_DELETE_DELETED_VRF =
 '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
@@ -121,65 +120,77 @@ TARGET_BLUE_VRF_DELETE_DESCRIPTION =
   </infra-rsi-cfg:vrf>
 </infra-rsi-cfg:vrfs>'
 
+# TestNetconfOffline - Offline Minitest for Netconf class
 class TestNetconfOffline < Minitest::Test
   def test_netconf_prefix_merge
-    assert(Cisco::Netconf::insync_for_merge(TARGET_BLUE_VRF,
-                                            CURRENT_BLUE_VRF),
-           "expected in-sync")
+    assert(Cisco::Netconf.insync_for_merge(TARGET_BLUE_VRF,
+                                           CURRENT_BLUE_VRF),
+           'expected in-sync')
   end
+
   def test_netconf_prefix_replace
-    assert(Cisco::Netconf::insync_for_replace(TARGET_BLUE_VRF,
-                                              CURRENT_BLUE_VRF),
-           "expected in-sync")
+    assert(Cisco::Netconf.insync_for_replace(TARGET_BLUE_VRF,
+                                             CURRENT_BLUE_VRF),
+           'expected in-sync')
   end
+
   def test_netconf_delete_vrf_description_merge
-    refute(Cisco::Netconf::insync_for_merge(TARGET_BLUE_VRF_DELETE_DESCRIPTION,
-                                            CURRENT_BLUE_VRF_DELETE_DESCRIPTION),
-           "expected not in-sync")
+    refute(Cisco::Netconf.insync_for_merge(TARGET_BLUE_VRF_DELETE_DESCRIPTION,
+                                           CURRENT_BLUE_VRF_DELETE_DESCRIPTION),
+           'expected not in-sync')
   end
+
   def test_netconf_delete_vrf_description_replace
-    refute(Cisco::Netconf::insync_for_replace(TARGET_BLUE_VRF_DELETE_DESCRIPTION,
-                                              CURRENT_BLUE_VRF_DELETE_DESCRIPTION),
-           "expected not in-sync")
+    refute(Cisco::Netconf.insync_for_replace(TARGET_BLUE_VRF_DELETE_DESCRIPTION,
+                                             CURRENT_BLUE_VRF_DELETE_DESCRIPTION),
+           'expected not in-sync')
   end
+
   def test_netconf_delete_red_vrf_merge
-    refute(Cisco::Netconf::insync_for_merge(TARGET_BLUE_RED_VRF,
-                                            CURRENT_BLUE_RED_VRF),
-           "expected not in-sync")
+    refute(Cisco::Netconf.insync_for_merge(TARGET_BLUE_RED_VRF,
+                                           CURRENT_BLUE_RED_VRF),
+           'expected not in-sync')
   end
+
   def test_netconf_delete_red_vrf_replace
-    refute(Cisco::Netconf::insync_for_replace(TARGET_BLUE_RED_VRF,
-                                              CURRENT_BLUE_RED_VRF),
-           "expected not in-sync")
+    refute(Cisco::Netconf.insync_for_replace(TARGET_BLUE_RED_VRF,
+                                             CURRENT_BLUE_RED_VRF),
+           'expected not in-sync')
   end
+
   def test_netconf_delete_missing_vrf_merge
-    assert(Cisco::Netconf::insync_for_merge(TARGET_DELETE_DELETED_VRF,
-                                            CURRENT_DELETE_DELETED_VRF),
-           "expected in-sync")
+    assert(Cisco::Netconf.insync_for_merge(TARGET_DELETE_DELETED_VRF,
+                                           CURRENT_DELETE_DELETED_VRF),
+           'expected in-sync')
   end
+
   def test_netconf_delete_missing_vrf_replace
-    assert(Cisco::Netconf::insync_for_replace(TARGET_DELETE_DELETED_VRF,
-                                              CURRENT_DELETE_DELETED_VRF),
-           "expected in-sync")
+    assert(Cisco::Netconf.insync_for_replace(TARGET_DELETE_DELETED_VRF,
+                                             CURRENT_DELETE_DELETED_VRF),
+           'expected in-sync')
   end
+
   def test_netconf_delete_missing_vrf_2_merge
-    assert(Cisco::Netconf::insync_for_merge(TARGET_DELETE_DELETED_VRF_2,
-                                            CURRENT_DELETE_DELETED_VRF_2),
-           "expected in-sync")
+    assert(Cisco::Netconf.insync_for_merge(TARGET_DELETE_DELETED_VRF_2,
+                                           CURRENT_DELETE_DELETED_VRF_2),
+           'expected in-sync')
   end
+
   def test_netconf_delete_missing_vrf_2_replace
-    assert(Cisco::Netconf::insync_for_replace(TARGET_DELETE_DELETED_VRF_2,
-                                              CURRENT_DELETE_DELETED_VRF_2),
-           "expected in-sync")
+    assert(Cisco::Netconf.insync_for_replace(TARGET_DELETE_DELETED_VRF_2,
+                                             CURRENT_DELETE_DELETED_VRF_2),
+           'expected in-sync')
   end
+
   def test_netconf_delete_combo_merge
-    assert(Cisco::Netconf::insync_for_merge(TARGET_BLUE_GREEN_VRF,
-                                            CURRENT_BLUE_GREEN_VRF),
-           "expected in-sync")
+    assert(Cisco::Netconf.insync_for_merge(TARGET_BLUE_GREEN_VRF,
+                                           CURRENT_BLUE_GREEN_VRF),
+           'expected in-sync')
   end
+
   def test_netconf_delete_combo_replace
-    refute(Cisco::Netconf::insync_for_replace(TARGET_BLUE_GREEN_VRF,
-                                              CURRENT_BLUE_GREEN_VRF),
-           "expected not in-sync")
+    refute(Cisco::Netconf.insync_for_replace(TARGET_BLUE_GREEN_VRF,
+                                             CURRENT_BLUE_GREEN_VRF),
+           'expected not in-sync')
   end
 end

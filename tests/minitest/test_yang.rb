@@ -264,10 +264,6 @@ class TestYang < CiscoTestCase
   end
 
   def test_replace_diff
-    # ensure we think that a merge is needed (in-sinc = false)
-    refute(Yang.insync_for_replace?(BLUE_VRF, node.get_yang(PATH_VRFS)),
-           'Expected not in-sync')
-
     node.replace_yang(BLUE_VRF) # create the blue VRF
     # ensure we think that a replace is NOT needed (in-sinc = true)
     assert(Yang.insync_for_replace?(BLUE_VRF, node.get_yang(PATH_VRFS)),
@@ -284,7 +280,6 @@ class TestYang < CiscoTestCase
            'Expected in-sync')
 
     node.merge_yang(BLUE_VRF)
-
     # ensure we think that a replace is NOT needed (in-sinc = true)
     assert(Yang.insync_for_replace?(BLUE_GREEN_VRF, node.get_yang(PATH_VRFS)),
            'Expected in sync')

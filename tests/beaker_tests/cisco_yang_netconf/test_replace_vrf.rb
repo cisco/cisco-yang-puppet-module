@@ -46,7 +46,7 @@ end
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: VRF Present" do
+test_name 'TestCase :: VRF Present' do
   id = :replace
   test_harness_run(tests, id)
   skipped_tests_summary(tests)
