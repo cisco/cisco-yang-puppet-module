@@ -1,6 +1,6 @@
 require_relative 'yang_netconf_property'
 
-# This subclass of {YangProperty} manages YANG JSON content.
+# This subclass of {YangProperty} manages YANG XML Netconf content.
 #
 class YangNetconf < YangNetconfProperty
 

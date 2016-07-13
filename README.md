@@ -7,10 +7,9 @@
 1. [Setup](#setup)
 1. [Usage](#usage)
 1. [The `cisco_yang` Puppet Type](#cisco-yang-type)
+1. [The `cisco_yang_netconf` Puppet Type](#cisco-yang-netconf-type)
 1. [Limitations](#limitations)
 1. [Learning Resources](#learning-resources)
-
-
 
 ## Overview
 
@@ -37,10 +36,6 @@ The `ciscoyang` module must be installed on the Puppet Master server. Please see
 
 ### Puppet Agent
 The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco IOS-XR devices.
-
-### `cisco_node_utils` Ruby gem
-
-This module has dependencies on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. After installing the Puppet Agent software, use Puppet's built-in [`Package`](examples/install.pp) provider to install the gem.
 
 ## Usage
 
@@ -96,6 +91,38 @@ the agent and then reference it from the manifest.
 }
 ~~~
 
+The following example shows how to use `ciscoyang` to configure two VRF instances on a Cisco IOS-XR device using the Yang Netconf type.
+
+~~~puppet
+node 'default' {
+  cisco_yang_netconf { 'my-config':
+    target => '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>',
+    source => '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
+                 <vrf>
+                   <vrf-name>VOIP</vrf-name>
+                   <create/>
+                   <description>Voice over IP</description>
+                   <vpn-id>
+                     <vpn-oui>875</vpn-oui>
+                     <vpn-index>3</vpn-index>
+                   </vpn-id>
+                 </vrf>
+                 <vrf>
+                   <vrf-name>INTERNET</vrf-name>
+                   <create/>
+                   <description>Generic external traffic</description>
+                   <vpn-id>
+                     <vpn-oui>875</vpn-oui>
+                     <vpn-index>22</vpn-index>
+                   </vpn-id>
+                 </vrf>
+              </vrfs>',
+    mode => replace,
+    force => false,
+  }
+}
+~~~
+
 --
 ## <a name="cisco-yang-type">The ``cisco_yang`` Puppet Type<a>
 
@@ -120,6 +147,27 @@ Valid values are `true` and `false` (which is the default). If `true` is specifi
 ##### `source`
 The model data in YANG JSON format, or a reference to a local file containing the model data.  This property is only used when ensure=>present is specified. In addition, if `source` is not specified when ensure=>present is used, `source` will default to the value of the `target` parameter. This removes some amount of redundancy when the `source` and `target` values are the same (or very similar).
 
+--
+## <a name="cisco-yang-netconf-type">The ``cisco_yang_netconf`` Puppet Type<a>
+
+The Netconf protocol does not allow deletion of configuration subtrees, but instead requires addition of 'operation="delete"' attributes.  Thus, this is required of the source
+
+#### Parameters
+
+##### `target`
+The Yang Netconf XML formatted string or file location containing the filter used to query the existing configuration.  For example, to configure the list of vrfs in IOS-XR, you could specify a `target` of '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>' or reference a file which contained the equivalent Netconf XML string.
+
+##### `mode`
+Determines which mode is used when setting configuration. Valid values are `replace` and `merge` (which is the default). If `replace` is specified, the current configuration will be replaced by the configuration in the source property. If `merge` is specified, the configuration in the source property will be merged into the current configuration.
+
+##### `force`
+Valid values are `true` and `false` (which is the default). If `true` is specified, then the config in the source property is set on the device regardless of the current value. If `false` is specified (or no value is specified), the default behavior is to set the configuration only if it is different from the running configuration.
+
+#### Properties
+
+##### `source`
+The model data in YANG XML Netconf format, or a reference to a local file containing the model data. 
+
 ## Limitations
 
 Minimum Requirements:
@@ -142,9 +190,6 @@ Minimum Requirements:
 * Ruby Gems
   * [http://guides.rubygems.org/](http://guides.rubygems.org/)
   * [https://en.wikipedia.org/wiki/RubyGems](https://en.wikipedia.org/wiki/RubyGems)
-* YAML
-  * [https://en.wikipedia.org/wiki/YAML](https://en.wikipedia.org/wiki/YAML)
-  * [http://www.yaml.org/start.html](http://www.yaml.org/start.html)
 * Yum
   * [https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified](https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified)
   * [https://www.centos.org/docs/5/html/yum/](https://www.centos.org/docs/5/html/yum/)
