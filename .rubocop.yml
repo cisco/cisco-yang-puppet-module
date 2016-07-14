@@ -31,7 +31,6 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 20
 
-
 # We like table alignment for readability
 Style/AlignHash:
   EnforcedHashRocketStyle: table

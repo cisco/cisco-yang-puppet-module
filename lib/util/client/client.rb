@@ -221,62 +221,62 @@ class Cisco::Client
     true
   end
 
-  def get_system
+  def system
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
 
-  def get_domain_name
+  def domain_name
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
 
-  def get_product_serial_number
+  def product_serial_number
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
 
-  def get_os
+  def os
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
 
-  def get_os_version
+  def os_version
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
 
-  def get_product_description
+  def product_description
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
 
-  def get_product_id
+  def product_id
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
 
-  def get_product_version_id
+  def product_version_id
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
 
-  def get_product_serial_number
+  def product_serial_number
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
 
-  def get_host_name
+  def host_name
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
 
-  def get_domain_name
+  def domain_name
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
 
-  def get_system_uptime
+  def system_uptime
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
@@ -291,7 +291,7 @@ class Cisco::Client
     # to be implemented by subclasses
   end
 
-  def get_system_cpu_utilization
+  def system_cpu_utilization
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
@@ -301,7 +301,7 @@ class Cisco::Client
     # to be implemented by subclasses
   end
 
-  def get_system
+  def system
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
