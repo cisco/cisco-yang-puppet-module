@@ -224,7 +224,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     software_revision
   end
 
-  def get_os
+  def os
     return "" if !software_install
     os = ""
     software_install.elements.each("rpc-reply/data/software-install/version/log") do |e|
@@ -233,7 +233,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     os
   end
 
-  def get_os_version
+  def os_version
     return "" if !inventory
     software_revision = ""
     inventory.elements.each("rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/software-revision") do |e|
@@ -242,7 +242,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     software_revision
   end
 
-  def get_product_description
+  def product_description
     return "" if !diag
     product_description = ""
     diag.elements.each("rpc-reply/data/diag/racks/rack/chassis/udi-description") do |e|
@@ -251,7 +251,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     product_description
   end
 
-  def get_product_id
+  def product_id
     return "" if !diag
     product_id = ""
     diag.elements.each("rpc-reply/data/diag/racks/rack/chassis/pid") do |e|
@@ -261,7 +261,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   end
 
 
-  def get_product_version_id
+  def product_version_id
     return "" if !inventory
     vid = ""
     inventory.elements.each("rpc-reply/data/inventory/racks/rack/entity/slot/tsi1s/tsi1/attributes/inv-eeprom-info/eeprom/vid") do |e|
@@ -270,7 +270,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     vid
   end
 
-  def get_product_serial_number
+  def product_serial_number
     return "" if !chas_inventory
     product_id = ""
     chas_inventory.elements.each("rpc-reply/data/platform-inventory/racks/rack/attributes/basic-info/serial-number") do |e|
@@ -279,7 +279,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     product_id
   end
 
-  def get_host_name
+  def host_name
     return "" if !system_time
       host_name = ""
       system_time.elements.each("rpc-reply/data/system-time/uptime/host-name") do |e|
@@ -288,7 +288,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     host_name
   end
 
-  def get_domain_name
+  def domain_name
     return "" if !ip_domain
     domain_name = ""
     ip_domain.elements.each("rpc-reply/data/ip-domain/vrfs/vrf/server/domain-name") do |e|
@@ -297,7 +297,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     domain_name
   end
 
-  def get_system_uptime
+  def system_uptime
     return "" if !software_install
     uptime = ""
     software_install.elements.each("rpc-reply/data/software-install/version/log") do |e|
@@ -338,7 +338,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     reason
   end
 
-  def get_system_cpu_utilization
+  def system_cpu_utilization
     "foo"
     #<system-monitoring xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-wdsysmon-fd-oper"/>
     #rpc-reply/data/system-monitoring/cpu-utilization/total-cpu-fifteen-minute
@@ -353,7 +353,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     boot_image
   end
 
-  def get_system
+  def system
     return "" if !inventory
     software_revision = ""
     inventory.elements.each("rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/software-revision") do |e|

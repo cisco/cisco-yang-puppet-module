@@ -17,7 +17,7 @@ require_relative '../../../util/node_util' if Puppet.features.node_util?
 require 'rubygems'
 
 Puppet::Type.type(:cisco_yang).provide(:cisco) do
-  desc "IOS-XR configuration management via YANG."
+  desc 'IOS-XR configuration management via YANG.'
   defaultfor operatingsystem: [:ios_xr]
 
   confine feature: :node_util
@@ -38,7 +38,7 @@ Puppet::Type.type(:cisco_yang).provide(:cisco) do
   end
 
   def destroy
-    @source = nil   # clear the cached value
+    @source = nil # clear the cached value
     src = @resource[:source] || @resource[:target]
     debug '**************** REMOVING CONFIG ****************'
     @node.delete_yang(src)
@@ -55,7 +55,7 @@ Puppet::Type.type(:cisco_yang).provide(:cisco) do
 
   # Return the current source YANG
   def source
-    return @source if @source   # return the cached value, if it's there
+    return @source if @source # return the cached value, if it's there
 
     if resource_force
       # If instructed to force the configuration, then there is no reason
@@ -79,7 +79,7 @@ Puppet::Type.type(:cisco_yang).provide(:cisco) do
   end
 
   def setyang(value)
-    @source = nil   # clear the cached value
+    @source = nil # clear the cached value
     debug '**************** SETTING CONFIG ****************'
     debug "Value: #{value}"
     debug "Resource Mode #{resource_mode}"
@@ -100,7 +100,6 @@ Puppet::Type.type(:cisco_yang).provide(:cisco) do
   end
 
   def active?
-    !!@active
+    !@active.nil?
   end
-
 end

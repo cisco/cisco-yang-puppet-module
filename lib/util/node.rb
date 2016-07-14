@@ -134,47 +134,47 @@ module Cisco
 
     # @return [String] such as "Cisco Nexus Operating System (NX-OS) Software"
     def os
-      @client.get_os
+      @client.os
     end
 
     # @return [String] such as "6.0(2)U5(1) [build 6.0(2)U5(0.941)]"
     def os_version
-      @client.get_os_version
+      @client.os_version
     end
 
     # @return [String] such as "Nexus 3048 Chassis"
     def product_description
-      @client.get_product_description
+      @client.product_description
     end
 
     # @return [String] such as "N3K-C3048TP-1GE"
     def product_id
-      @client.get_product_id
+      @client.product_id
     end
 
     # @return [String] such as "V01"
     def product_version_id
-      @client.get_product_version_id
+      @client.product_version_id
     end
 
     # @return [String] such as "FOC1722R0ET"
     def product_serial_number
-      @client.get_product_serial_number
+      @client.product_serial_number
     end
 
     # @return [String] such as "bxb-oa-n3k-7"
     def host_name
-      @client.get_host_name
+      @client.host_name
     end
 
     # @return [String] such as "example.com"
     def domain_name
-      @client.get_domain_name
+      @client.domain_name
     end
 
     # @return [Integer] System uptime, in seconds
     def system_uptime
-      @client.get_system_uptime
+      @client.system_uptime
     end
 
     # @return [String] timestamp of last reset time
@@ -189,7 +189,7 @@ module Cisco
 
     # @return [Float] combined user/kernel CPU utilization
     def system_cpu_utilization
-      @client.get_system_cpu_utilization
+      @client.system_cpu_utilization
     end
 
     # @return [String] such as
@@ -201,7 +201,7 @@ module Cisco
     # @return [String] such as
     #   "bootflash:///n3000-uk9.6.0.2.U5.0.941.bin"
     def system
-      @client.get_system
+      @client.system
     end
   end
 end

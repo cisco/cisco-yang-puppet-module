@@ -4,9 +4,8 @@ require_relative '../../util/node_util' if Puppet.features.node_util?
 # This subclass of {Puppet::Property} manages YANG content.
 #
 class YangNetconfProperty < Puppet::Property
-
   # Determine if the specified value is inline YANG or a file path
-  def inline_yang?(yang_or_file)
+  def inline_yang?(_yang_or_file)
     false
   end
 
@@ -15,15 +14,15 @@ class YangNetconfProperty < Puppet::Property
 
     # If it's not inline YANG, then assume it's a file, so read it in.
     if !inline_yang?(yang_or_file)
-#          begin
-        content = File.read(yang_or_file)
-        debug "-----> read YANG from file #{yang_or_file}:"
-        debug content
-#          rescue Exception => e
-#            puts "**************** ERROR DETECTED WHILE READING YANG FILE #{yang_or_file} ****************"
-#            puts e.message
-#            content = nil
-#          end
+      #          begin
+      content = File.read(yang_or_file)
+      debug "-----> read YANG from file #{yang_or_file}:"
+      debug content
+      #          rescue Exception => e
+      #            puts "**************** ERROR DETECTED WHILE READING YANG FILE #{yang_or_file} ****************"
+      #            puts e.message
+      #            content = nil
+      #          end
       content
     else
       debug "-----> value is inline YANG: #{yang_or_file}"
@@ -55,15 +54,16 @@ class YangNetconfProperty < Puppet::Property
       # if the current config is unknown, assume configs are not in-sync
       insync = false
     else
-      insync = replace ?
-          Cisco::Netconf.insync_for_replace(should_yang, is) :
-          Cisco::Netconf.insync_for_merge(should_yang, is)
+      if replace
+        insync = Cisco::Netconf.insync_for_replace(should_yang, is)
+      else
+        insync = Cisco::Netconf.insync_for_merge(should_yang, is)
+      end
     end
 
     if insync
       debug '**************** IDEMPOTENT -- NO CHANGES DETECTED ****************'
-    elsif
-      debug '**************** IS vs SHOULD CHANGES DETECTED ****************'
+    elsif debug '**************** IS vs SHOULD CHANGES DETECTED ****************'
     end
 
     insync
