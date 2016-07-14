@@ -16,11 +16,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'basetest'
+require_relative 'ciscotest'
 
 # Test case for Cisco::Client::NETCONF::Client class
-class TestNetconf < TestCase
-  @@client = nil # rubocop:disable Style/ClassVars
+class TestNetconf < CiscoTestCase
+  def client_class
+    Cisco::Client::NETCONF
+  end
 
   RED_VRF = \
     "<vrfs xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg\">\n  <vrf>\n    <vrf-name>\n      red\n    </vrf-name>\n    <create/>\n  </vrf>\n</vrfs>"
@@ -30,38 +32,27 @@ class TestNetconf < TestCase
   INVALID_VRF = '<infra-rsi-cfg:vrfs-invalid xmlns:infra-rsi-cfg-invalid="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg-invalid"/>'
 
   def self.runnable_methods
-    # If we're pointed to an Netconf node (as evidenced by a port num 830)
-    # then these tests don't apply
-    return [:all_skipped] unless Cisco::Environment.environment[:port] == 830
+    # TODO: Skip all tests if the netconf client did not load
+    #return [:all_skipped] unless environment[:port] == 830
     super
   end
 
   def all_skipped
-    skip 'Node under test does not appear to use the Netconf client'
-  end
-
-  def client
-    unless @@client
-      client = Cisco::Client::NETCONF.new(Cisco::Environment.environment)
-      client.cache_enable = true
-      client.cache_auto = true
-      @@client = client # rubocop:disable Style/ClassVars
-    end
-    @@client
+    skip 'No Netconf client was loaded.'
   end
 
   def test_auth_failure
-    env = Cisco::Environment.environment.merge(password: 'wrong password')
+    env = environment.merge(password: 'wrong password')
     e = assert_raises Cisco::AuthenticationFailed do
       Cisco::Client::NETCONF.new(**env)
     end
     assert_equal('Netconf client creation failure: Authentication failed for user ' \
-      + Cisco::Environment.environment[:username] + '@' + Cisco::Environment.environment[:host], e.message)
+      + environment[:username] + '@' + environment[:host], e.message)
   end
 
   def test_connection_failure
     # Failure #1: connecting to a host that's listening for a non-Netconf protocol
-    env = Cisco::Environment.environment.merge(host: '1.1.1.1')
+    env = environment.merge(host: '1.1.1.1')
     e = assert_raises Cisco::YangError do
       Cisco::Client::NETCONF.new(**env)
     end
@@ -111,12 +102,9 @@ error-severity => error
     assert_empty(result)
   end
 
-  # TODO: add structured output test cases (when supported on XR)
-  def test_smart_create
-    autoclient = Cisco::Client.create
-    assert_equal(Cisco::Client::NETCONF, autoclient.class)
-    assert(autoclient.supports?(:xml))
-    refute(autoclient.supports?(:nxapi_structured))
-    assert_equal(:ios_xr, autoclient.platform)
+  def test_supports
+    assert(client.supports?(:xml))
+    refute(client.supports?(:cli))
+    refute(client.supports?(:yang_json))
   end
 end

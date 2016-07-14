@@ -1,7 +1,4 @@
-#!/usr/bin/env ruby
 # Yang Unit Tests
-#
-# Jason Young, June 2016
 #
 # Copyright (c) 2016 Cisco and/or its affiliates.
 #
@@ -23,6 +20,10 @@ require_relative '../../lib/util/client/netconf/netconf'
 
 # TestNetconf- Minitest for Netconf class
 class TestNetconf < CiscoTestCase
+  def client_class
+    Cisco::Client::NETCONF
+  end
+
   BLUE_VRF = '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
   <vrf>
     <vrf-name>BLUE</vrf-name>

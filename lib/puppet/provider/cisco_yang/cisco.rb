@@ -12,19 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'json' if Puppet.features.json?
 require_relative '../../../util/node_util' if Puppet.features.node_util?
-require 'rubygems'
 
 Puppet::Type.type(:cisco_yang).provide(:cisco) do
   desc 'IOS-XR configuration management via YANG.'
   defaultfor operatingsystem: [:ios_xr]
 
+  confine feature: :json
   confine feature: :node_util
 
   def initialize(value={})
     super(value)
-    @node = Cisco::Node.instance
+    @node = Cisco::Node.instance(Cisco::Client::GRPC)
     debug 'Created provider instance of cisco_yang.'
   end
 

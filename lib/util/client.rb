@@ -29,7 +29,7 @@ extensions.each do |ext|
   begin
     require_relative ext
   rescue LoadError => e
-    # ignore missing client-(grpc), they're not always required
+    # ignore missing clients, they're not always required
     raise unless e.message =~ /#{Regexp.escape(ext)}/
   end
 end

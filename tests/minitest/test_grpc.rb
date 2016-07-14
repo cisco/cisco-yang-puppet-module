@@ -16,36 +16,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'basetest'
+require_relative 'ciscotest'
 
 # Test case for Cisco::Client::GRPC::Client class
-class TestGRPC < TestCase
-  @@client = nil # rubocop:disable Style/ClassVars
+class TestGRPC < CiscoTestCase
 
-  def self.runnable_methods
-    # If we're pointed to an NXAPI node (as evidenced by lack of a port num)
-    # then these tests don't apply
-    return [:all_skipped] unless Cisco::Environment.environment[:port]
-    puts Cisco::Environment.environment
-    super
-  end
-
-  def all_skipped
-    skip 'Node under test does not appear to use the gRPC client'
-  end
-
-  def client
-    unless @@client
-      client = Cisco::Client::GRPC.new(Cisco::Environment.environment)
-      client.cache_enable = true
-      client.cache_auto = true
-      @@client = client # rubocop:disable Style/ClassVars
-    end
-    @@client
+  def client_class
+    Cisco::Client::GRPC
   end
 
   def test_auth_failure
-    env = Cisco::Environment.environment.merge(password: 'wrong password')
+    env = environment.merge(password: 'wrong password')
     # Cisco::Client::GRPC.new(**env)
     e = assert_raises Cisco::AuthenticationFailed do
       Cisco::Client::GRPC.new(**env)
@@ -56,14 +37,14 @@ class TestGRPC < TestCase
 
   def test_connection_failure
     # Failure #1: connecting to a port that's listening for a non-gRPC protocol
-    env = Cisco::Environment.environment.merge(port: 23)
+    env = environment.merge(port: 23)
     e = assert_raises Cisco::ConnectionRefused do
       Cisco::Client::GRPC.new(**env)
     end
     assert_equal('gRPC client creation failure: Connection refused: ',
                  e.message)
     # Failure #2: Connecting to a port that's not listening at all
-    env = Cisco::Environment.environment.merge(port: 0)
+    env = environment.merge(port: 0)
     e = assert_raises Cisco::ConnectionRefused do
       Cisco::Client::GRPC.new(**env)
     end
@@ -114,7 +95,7 @@ int gi0/0/0/0 bark bark
 
   def test_get_cli_default
     result = client.get(command: 'show debug')
-    s = @device.cmd('show debug')
+    s = device.cmd('show debug')
     # Strip the leading timestamp and trailing prompt from the telnet output
     s = s.split("\n")[2..-2].join("\n")
     assert_equal(s, result)
@@ -134,7 +115,7 @@ int gi0/0/0/0 bark bark
 
   def test_get_cli_explicit
     result = client.get(command: 'show debug', data_format: :cli)
-    s = @device.cmd('show debug')
+    s = device.cmd('show debug')
     # Strip the leading timestamp and trailing prompt from the telnet output
     s = s.split("\n")[2..-2].join("\n")
     assert_equal(s, result)
@@ -152,13 +133,9 @@ int gi0/0/0/0 bark bark
     assert_equal(result, client.get(command: 'show clock', data_format: :cli))
   end
 
-  # TODO: add structured output test cases (when supported on XR)
-
-  def test_smart_create
-    autoclient = Cisco::Client.create
-    assert_equal(Cisco::Client::GRPC, autoclient.class)
-    assert(autoclient.supports?(:cli))
-    refute(autoclient.supports?(:nxapi_structured))
-    assert_equal(:ios_xr, autoclient.platform)
+  def test_supports
+    assert(client.supports?(:cli))
+    assert(client.supports?(:yang_json))
+    refute(client.supports?(:xml))
   end
 end

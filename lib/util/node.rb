@@ -16,6 +16,7 @@
 # limitations under the License.
 
 require_relative 'client'
+require_relative 'client/client'
 require_relative 'exceptions'
 require_relative 'logger'
 
@@ -26,6 +27,7 @@ module Cisco
   # running this code. The singleton is lazily instantiated, meaning that
   # it doesn't exist until some client requests it (with Node.instance())
   class Node
+    @instance_hash = {}
     @instance = nil
 
     # Clear the cache of CLI output results.
@@ -42,12 +44,16 @@ module Cisco
 
     attr_reader :client
 
-    def self.instance
-      @instance ||= new
+    def self.instance(client_class)
+      @instance_hash[client_class] ||= new(client_class)
     end
 
-    def initialize
-      @client = Cisco::Client.create
+    def self.instance_exists(client_class)
+      !@instance_hash[client_class].nil?
+    end
+
+    def initialize(client_class)
+      @client = Cisco::Client.create(client_class)
       cache_flush
     end
 

@@ -37,7 +37,7 @@ class Cisco::Client
     @@clients << client
   end
 
-  attr_reader :data_formats, :platform
+  attr_reader :data_formats, :platform, :host, :port, :address, :username, :password
 
   def initialize(data_formats: [],
                  platform:     nil,
@@ -81,8 +81,32 @@ class Cisco::Client
     data_formats.include?(data_format)
   end
 
+  def self.environment(client_class)
+    environment_name = "default_#{client_class.name.split('::').last.downcase}"
+    Cisco::Environment.environment(environment_name)
+  end
+
+  # Try to create an instance of the specified subclass
+  def self.create(client_class)
+    environment = environment(client_class)
+    host = environment[:host]
+    port = environment[:port]
+    debug "Trying to connect to #{host}:#{port} as #{client_class}"
+    errors = []
+    begin
+      client = client_class.new(**environment)
+      debug "#{client_class} connected successfully"
+      return client
+    rescue Cisco::ClientError, TypeError, ArgumentError => e
+      debug "Unable to connect to #{host} as #{client_class}: #{e.message}"
+      debug e.backtrace.join("\n  ")
+      errors << e
+    end
+    handle_errors(errors)
+  end
+
   # Try to create an instance of an appropriate subclass
-  def self.create(environment_name=nil)
+  def self.old_create(environment_name=nil)
     fail 'No client implementations available!' if clients.empty?
     debug "Trying to establish client connection. clients = #{clients}"
     environment = Cisco::Environment.environment(environment_name)
@@ -302,6 +326,11 @@ class Cisco::Client
   end
 
   def system
+    fail Cisco::RequestNotSupported
+    # to be implemented by subclasses
+  end
+
+  def yang_target(module_name, namespace, container)
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end

@@ -22,6 +22,11 @@ require_relative '../../lib/util/yang'
 
 # TestYang - Minitest for Yang class
 class TestYang < CiscoTestCase
+
+  def client_class
+    Cisco::Client::GRPC # this test suite is meant for the GRPC client
+  end
+
   BLUE_VRF = '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs":{
       "vrf":[
          {
@@ -128,15 +133,6 @@ class TestYang < CiscoTestCase
 
   NO_VRFS = '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs": [null]}'
   PATH_VRFS = '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs": [null]}'
-
-  def self.runnable_methods
-    return [:all_skipped] unless platform == :ios_xr
-    super
-  end
-
-  def all_skipped
-    skip 'Node under test does not appear to use the gRPC client'
-  end
 
   def setup
     super

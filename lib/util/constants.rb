@@ -20,12 +20,9 @@ module Cisco
   ]
 
   DATA_FORMATS = [
-    # Cisco CLI. Indentation is significant.
-    :cli,
-    # Netconf xml
-    :xml,
-    # YANG JSON
-    :yang_json,
+    :cli, # Cisco CLI. Indentation is significant.
+    :xml, # Netconf XML
+    :yang_json, # YANG JSON
   ]
 
   NETCONF_SET_MODE = [

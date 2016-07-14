@@ -1,8 +1,4 @@
-#!/usr/bin/env ruby
-#
-# October 2015, Glenn F. Matthews
-#
-# Copyright (c) 2015-2016 Cisco and/or its affiliates.
+# Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -458,21 +454,9 @@ module Cisco
         (s + 60 * (m + 60 * (h + 24 * (d))))
       end
 
-      # show_version.yaml last_reset_time excludes ios_xr. Not supported ?
-      # def get_last_reset_time
-      # end
-
-      # show_version.yaml last_reset_reason excludes ios_xr. Not supported ?
-      # def get_last_reset_reason
-      # end
-
-      # system.yaml resources excludes ios_xr. Not supported ?
-      # def system_cpu_utilization
-      # end
-
-      # show_version.yaml boot_image excludes ios_xr. Not supported ?
-      # def get_boot
-      # end
+      def yang_target(module_name, namespace, container)
+        "<#{container} xmlns=\"#{namespace}\" />"
+      end
 
       def system
         output = get(command:     'show version',

@@ -22,7 +22,7 @@ Puppet::Type.type(:cisco_yang_netconf).provide(:cisco) do
   def initialize(value={})
     super(value)
     activate
-    @node = Cisco::Node.instance
+    @node = Cisco::Node.instance(Cisco::Client::NETCONF)
   end
 
   def create
