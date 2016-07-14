@@ -94,6 +94,8 @@ Puppet::Type.newtype(:cisco_yang_netconf) do
   #
   validate do
     fail("The 'target' parameter must be set in the manifest.") if self[:target].nil?
-    fail("The 'source' property must be set in the manifest.") if self[:source].nil?
+    if self[:source].nil?
+      self[:source] = self[:target]
+    end
   end
 end
