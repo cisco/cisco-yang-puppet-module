@@ -78,6 +78,8 @@ netconf-yang agent
 commit
 end
 ~~~
+
+Refer to the [Netconf configuration guide](http://www.cisco.com/c/en/us/td/docs/iosxr/ncs5500/DataModels/b-Datamodels-cg-ncs5500/b-Datamodels-cg-ncs5500_chapter_010.html#concept_36F5E732AF894862AC57FDC5FEBFA170) for more options.
  
 After applying the correct config, you need to validate that there is an RSA key generated
 ~~~
