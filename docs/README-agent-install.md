@@ -66,6 +66,51 @@ end
 
 Refer to the [gRPC configuration guide](http://www.cisco.com/c/en/us/td/docs/iosxr/ncs5500/DataModels/b-Datamodels-cg-ncs5500/b-Datamodels-cg-ncs5500_chapter_010.html#concept_700172ED7CF44313B0D7E521B2983F32) for more options.
 
+#### Enable Netconf SSH server
+~~~
+config
+!
+ssh server v2
+ssh server netconf vrf default
+netconf-yang agent
+ ssh
+!
+commit
+end
+~~~
+
+Refer to the [Netconf configuration guide](http://www.cisco.com/c/en/us/td/docs/iosxr/ncs5500/DataModels/b-Datamodels-cg-ncs5500/b-Datamodels-cg-ncs5500_chapter_010.html#concept_36F5E732AF894862AC57FDC5FEBFA170) for more options.
+ 
+After applying the correct config, you need to validate that there is an RSA key generated
+~~~
+show crypto key mypubkey rsa
+~~~
+If the above show command indicates that there is no RSA key, generate one.  Use 2048 bits when prompted.
+~~~
+crypto key generate rsa
+~~~
+
+You should now be able to connect to the Netconf service via an external device, using a management interface address.
+
+#### Enable access to Netconf inside the third-party namespace
+To enable access to Netconf from the puppet module, you will need to enable a few loopback interfaces.
+Create loopback 0 and loopback 1.  Give them both addresses, and use the address for loopback 1 when using netconf from inside the third-party namespace.
+~~~
+config
+!
+interface loopback 0
+ ipv4 address 1.1.1.1 255.255.255.255
+ no shutdown
+!
+interface loopback 1
+ ipv4 address 10.10.10.10 255.255.255.255
+ no shutdown
+!
+end
+~~~
+
+
+
 ## <a name="env-bs">Puppet Agent Environment: bash-shell</a>
 
 **Example:**
@@ -117,10 +162,6 @@ Update PATH var:
 ~~~bash
 export PATH=/opt/puppetlabs/puppet/bin:/opt/puppetlabs/puppet/lib:$PATH
 ~~~
-
-#### Install the cisco_node_utils gem
-
-If you wish to make use of this Puppet module, you will need to install (and configure) the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem. Refer to [README-gem-install.md](README-gem-install.md) for detailed steps.
 
 #### Edit the Puppet config file:
 
