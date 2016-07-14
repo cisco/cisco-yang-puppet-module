@@ -54,7 +54,7 @@ Puppet::Type.newtype(:cisco_yang_netconf) do
   ~~~
   "
 
-  newparam(:target, :parent => YangNetconf) do
+  newparam(:target, parent: YangNetconf) do
     isnamevar
     desc 'XML formatted string or file location of an XML formatted string ' \
          'that contains the filter text used in a netconf query.'
@@ -84,7 +84,7 @@ Puppet::Type.newtype(:cisco_yang_netconf) do
     end
   end
 
-  newproperty(:source, :parent => YangNetconf) do
+  newproperty(:source, parent: YangNetconf) do
     desc 'The model data in YANG XML Netconf format, or a reference to a local file '\
          'containing the model data.'
   end
@@ -94,8 +94,6 @@ Puppet::Type.newtype(:cisco_yang_netconf) do
   #
   validate do
     fail("The 'target' parameter must be set in the manifest.") if self[:target].nil?
-    if self[:source].nil?
-      self[:source] = self[:target]
-    end
+    self[:source] = self[:target] if self[:source].nil?
   end
 end
