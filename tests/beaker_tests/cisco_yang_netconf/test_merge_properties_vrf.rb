@@ -34,12 +34,12 @@ tests = {
 tests[:merge12] = MERGE12
 
 step 'Setup' do
-  on(agent, puppet_resource('cisco_yang_netconf', '\'' + ROOT_VRF + '\'', 'mode=replace'))
+  clear_vrf
   on(agent, puppet_resource('cisco_yang_netconf', '\'' + BLUE_VRF_W_PROPERTY1 + '\'', 'mode=merge'))
 end
 
 teardown do
-  on(agent, puppet_resource('cisco_yang_netconf', '\'' + ROOT_VRF + '\'', 'mode=replace'))
+  clear_vrf
 end
 
 #################################################################

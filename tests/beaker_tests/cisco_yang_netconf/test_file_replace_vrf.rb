@@ -34,6 +34,7 @@ tests = {
 tests[:replace_merge] = FILE_REPLACE
 
 step 'Setup' do
+  clear_vrf
   on(agent, puppet_resource('file', '/root/temp/', 'ensure=directory'))
   on(agent, puppet_resource('file', \
                             '/root/temp/vrfs.xml', \
@@ -42,7 +43,7 @@ step 'Setup' do
 end
 
 teardown do
-  on(agent, puppet_resource('cisco_yang_netconf', '\'' + ROOT_VRF + '\'', 'mode=replace'))
+  clear_vrf
   on(agent, puppet_resource('file', \
                             '/root/temp/vrfs.xml', \
                             'ensure=absent'))

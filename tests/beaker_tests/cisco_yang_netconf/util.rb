@@ -221,6 +221,15 @@ SRLG_GE_01_UPDATE = \
 
 DELETE_SRLG = '<srlg xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg" xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0" xc:operation="delete"/>'
 
+
+def clear_vrf
+  on(agent, puppet_resource('cisco_yang_netconf', '\'' + ROOT_VRF + '\'', 'source=' + '\'' + ROOT_VRF + '\'', 'mode=replace'))
+end
+
+def clear_srlg
+  on(agent, puppet_resource('cisco_yang_netconf', '\'' + ROOT_SRLG + '\'', 'source=' + '\'' + ROOT_SRLG + '\'', 'mode=replace'))
+end
+
 def massage_path(str)
   ret = str.clone
   ret.delete!("\n").gsub!(/\s*{\s*/, '{').gsub!(/\s*}\s*/, '}').gsub!(/\s*:\s*/, ':')
