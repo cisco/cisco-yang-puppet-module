@@ -9,11 +9,11 @@ Puppet::Type.newtype(:cisco_yang_netconf) do
   }
   ~~~
   `<title>` is the title of the yang resource.
-  This example demonstrates changing the VRF table to contain only the vrf with name "blue".
+  This example demonstrates changing the VRF table to contain only the vrf with name \"blue\".
   ~~~puppet
     cisco_yang_netconf { 'blue vrf':
-      target => '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>',
-      source => '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
+      target => '<vrfs xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg\"/>',
+      source => '<vrfs xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg\">
                    <vrf>
                      <vrf-name>blue</vrf-name>
                      <create/>
@@ -26,10 +26,10 @@ Puppet::Type.newtype(:cisco_yang_netconf) do
       mode => replace
     }
   ~~~
-  This example demonstrates inserting the vrf with name "blue" into the table, with the values provided.
+  This example demonstrates inserting the vrf with name \"blue\" into the table, with the values provided.
   ~~~puppet
-    cisco_yang_netconf { '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>':
-      source => '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
+    cisco_yang_netconf { '<vrfs xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg\"/>':
+      source => '<vrfs xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg\">
                    <vrf>
                      <vrf-name>blue</vrf-name>
                      <create/>
@@ -41,11 +41,11 @@ Puppet::Type.newtype(:cisco_yang_netconf) do
                 </vrfs>'
     }
   ~~~
-  This example demonstrates removing the vrf with name "red" from the vrf table.
+  This example demonstrates removing the vrf with name \"red\" from the vrf table.
   ~~~puppet
-    cisco_yang_netconf { '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>':
-      source => '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
-                   <vrf xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0" xc:operation="delete">
+    cisco_yang_netconf { '<vrfs xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg\"/>':
+      source => '<vrfs xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg\">
+                   <vrf xmlns:xc=\"urn:ietf:params:xml:ns:netconf:base:1.0\" xc:operation=\"delete\">
                      <vrf-name>red</vrf-name>
                      <create/>
                    </vrf>
