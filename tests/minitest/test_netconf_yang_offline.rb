@@ -122,7 +122,6 @@ TARGET_BLUE_VRF_DELETE_DESCRIPTION =
 
 # TestNetconfOffline - Offline Minitest for Netconf class
 class TestNetconfOffline < Minitest::Test
-
   def test_netconf_prefix_merge
     assert(Cisco::Netconf.insync_for_merge(TARGET_BLUE_VRF,
                                            CURRENT_BLUE_VRF),

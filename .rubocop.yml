@@ -92,3 +92,6 @@ Style/TrailingComma:
 Style/VariableName:
   Exclude:
     - 'docs/*.rb'
+
+Style/ClassAndModuleChildren:
+    Enabled: false
