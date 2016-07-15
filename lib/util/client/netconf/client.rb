@@ -53,13 +53,13 @@ class Cisco::Client::NETCONF < Cisco::Client
     raise Cisco::AuthenticationFailed, \
           'Netconf client creation failure: ' + e.message
   rescue Net::SSH::Disconnect
-    raise Cisco::YangError.new(error: e.message)
+    raise Cisco::YangError.new(error: e.message) # rubocop:disable Style/RaiseArgs
   rescue Errno::EHOSTUNREACH
-    raise Cisco::YangError.new(error: e.message)
+    raise Cisco::YangError.new(error: e.message) # rubocop:disable Style/RaiseArgs
   rescue Errno::ECONNREFUSED
-    raise Cisco::YangError.new(error: e.message)
+    raise Cisco::YangError.new(error: e.message) # rubocop:disable Style/RaiseArgs
   rescue Errno::ECONNRESET
-    raise Cisco::YangError.new(error: e.message)
+    raise Cisco::YangError.new(error: e.message) # rubocop:disable Style/RaiseArgs
   end
 
   def self.validate_args(**kwargs)

@@ -54,9 +54,6 @@ class Cisco::Client
     @password = kwargs[:password]
     self.data_formats = data_formats
     self.platform = platform
-    @cache_enable = true
-    @cache_auto = true
-    cache_flush
   end
 
   def self.validate_args(**kwargs)
@@ -159,30 +156,6 @@ class Cisco::Client
     "<#{self.class} of #{@address}>"
   end
 
-  def cache_enable?
-    @cache_enable
-  end
-
-  def cache_enable=(enable)
-    @cache_enable = enable
-    cache_flush unless enable
-  end
-
-  def cache_auto?
-    @cache_auto
-  end
-
-  attr_writer :cache_auto
-
-  # Clear the cache of CLI output results.
-  #
-  # If cache_auto is true (default) then this will be performed automatically
-  # whenever a set() is called, but providers may also call this
-  # to explicitly force the cache to be cleared.
-  def cache_flush
-    # to be implemented by subclasses
-  end
-
   # Configure the given state on the device.
   #
   # @raise [RequestNotSupported] if this client doesn't support the given
@@ -199,7 +172,6 @@ class Cisco::Client
     # subclasses will generally want to call Client.munge_to_array()
     # on context and/or values before calling super()
     fail Cisco::RequestNotSupported unless self.supports?(data_format)
-    cache_flush if cache_auto?
     Cisco::Logger.debug("Set state using data format '#{data_format}'")
     Cisco::Logger.debug("  with context:\n    #{context.join("\n    ")}") \
       unless context.nil? || context.empty?
@@ -209,10 +181,6 @@ class Cisco::Client
   end
 
   # Get the given state from the device.
-  #
-  # Unlike set() this will not clear the CLI cache;
-  # multiple calls with the same parameters may return cached data
-  # rather than querying the device repeatedly.
   #
   # @raise [RequestNotSupported] if the client doesn't support the data_format
   # @raise [RequestFailed] if the command is rejected by the device
@@ -239,10 +207,6 @@ class Cisco::Client
     Cisco::Logger.debug("  to get value:     #{value}") \
       unless value.nil?
     # to be implemented by subclasses
-  end
-
-  def wants_cmd_ref
-    true
   end
 
   def system

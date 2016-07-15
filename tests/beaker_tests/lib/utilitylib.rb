@@ -62,7 +62,6 @@ def create_interface_title(tests, id)
       intf = tests[:ethernet]
     else
       intf = find_interface(tests, id)
-      # cache for later tests
       tests[:ethernet] = intf
     end
   when /dot1q/
@@ -70,7 +69,6 @@ def create_interface_title(tests, id)
       intf = "#{tests[:ethernet]}.1"
     else
       intf = find_interface(tests, id)
-      # cache for later tests
       tests[:ethernet] = intf
       intf = "#{intf}.1" unless intf.nil?
     end
@@ -912,7 +910,6 @@ def facter_cmd(cmd)
   FACTER_BINPATH + cmd
 end
 
-# Used to cache the operation system information
 @cisco_os = nil
 # Use facter to return cisco operating system information
 def operating_system
@@ -920,7 +917,6 @@ def operating_system
   @cisco_os = on(agent, facter_cmd('os.name')).stdout.chomp
 end
 
-# Used to cache the cisco hardware type
 @cisco_hardware = nil
 # Use facter to return cisco hardware type
 def platform
@@ -975,7 +971,7 @@ def platform
 end
 
 # Check if this image is an I2 image
-@i2_image = nil # Cache the lookup result
+@i2_image = nil
 def nexus_i2_image
   return @i2_image unless @i2_image.nil?
   on(agent, facter_cmd('-p cisco.images.system_image'))

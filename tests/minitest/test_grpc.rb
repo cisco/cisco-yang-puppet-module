@@ -126,12 +126,6 @@ int gi0/0/0/0 bark bark
     assert_nil(result)
   end
 
-  def test_get_cli_cache
-    result = client.get(command: 'show clock', data_format: :cli)
-    sleep 2
-    assert_equal(result, client.get(command: 'show clock', data_format: :cli))
-  end
-
   def test_supports
     assert(client.supports?(:cli))
     assert(client.supports?(:yang_json))

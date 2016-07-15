@@ -88,14 +88,6 @@ module Cisco
           if kwargs[:password].nil?
       end
 
-      def cache_flush
-        @cache_hash = {
-          'cli_config'           => {},
-          'show_cmd_text_output' => {},
-          'show_cmd_json_output' => {},
-        }
-      end
-
       # Configure the given CLI command(s) on the device.
       #
       # @param data_format one of Cisco::DATA_FORMATS. Default is :cli
@@ -162,10 +154,6 @@ module Cisco
       end
 
       def req(stub, type, args)
-        if cache_enable? && @cache_hash[type] && @cache_hash[type][args.cli]
-          return @cache_hash[type][args.cli]
-        end
-
         debug "Sending '#{type}' request:"
         if args.is_a?(ShowCmdArgs) || args.is_a?(CliConfigArgs)
           debug "  with cli: '#{args.cli}'"
@@ -185,7 +173,6 @@ module Cisco
           handle_response(args, response)
         end
 
-        @cache_hash[type][args.cli] = output if cache_enable? && !output.empty?
         return output
       rescue ::GRPC::BadStatus => e
         warn "gRPC error '#{e.code}' during '#{type}' request: "
