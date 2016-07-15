@@ -30,15 +30,6 @@ module Cisco
     @instance_hash = {}
     @instance = nil
 
-    # Clear the cache of CLI output results.
-    #
-    # If cache_auto is true (default) then this will be performed automatically
-    # whenever a config_set() is called, but providers may also call this
-    # to explicitly force the cache to be cleared.
-    def cache_flush
-      @client.cache_flush
-    end
-
     # Here and below are implementation details and private APIs that most
     # providers shouldn't need to know about or use.
 
@@ -54,7 +45,6 @@ module Cisco
 
     def initialize(client_class)
       @client = Cisco::Client.create(client_class)
-      cache_flush
     end
 
     def to_s
@@ -63,22 +53,6 @@ module Cisco
 
     def inspect
       "Node: client:'#{client.inspect}'"
-    end
-
-    def cache_enable?
-      @client.cache_enable?
-    end
-
-    def cache_enable=(enable)
-      @client.cache_enable = enable
-    end
-
-    def cache_auto?
-      @client.cache_auto?
-    end
-
-    def cache_auto=(enable)
-      @client.cache_auto = enable
     end
 
     # Send a config command to the device.
