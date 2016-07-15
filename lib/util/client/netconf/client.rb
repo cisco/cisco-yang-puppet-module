@@ -72,7 +72,7 @@ class Cisco::Client::NETCONF < Cisco::Client
       if kwargs[:password].nil?
   end
 
-  def set(values:      nil,
+  def set(values: nil,
           **kwargs)
     return if values.nil? || values.empty?
     begin
@@ -96,8 +96,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   end
 
   def get(command:     nil,
-          value:       nil,
-          **kwargs)
+          **_kwargs)
     begin
       doc = REXML::Document.new(command)
     rescue => e

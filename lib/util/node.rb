@@ -94,7 +94,7 @@ module Cisco
     # JSON YANG config.
     def replace_yang(yang)
       @client.set(values: yang,
-                  mode: :replace_config)
+                  mode:   :replace_config)
     end
 
     # Delete the specified JSON YANG config from the device.

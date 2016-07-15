@@ -202,10 +202,10 @@ optparse = OptionParser.new do |opts|
     options[:client] = client
   end
 
-  #opts.on('-e', '--environment node', 'The node in cisco_node_utils.yaml '\
+  # opts.on('-e', '--environment node', 'The node in cisco_node_utils.yaml '\
   #        'from which to retrieve data') do |env|
   #  options[:environment] = env
-  #end
+  # end
 
   opts.on('-d', '--debug', 'Enable debug-level logging') do
     Cisco::Logger.level = Logger::DEBUG
@@ -231,7 +231,7 @@ end
 case options[:client]
 when 'netconf'
   options[:client_class] = Cisco::Client::NETCONF
-when "grpc", nil
+when 'grpc', nil
   options[:client_class] = Cisco::Client::GRPC
 else
   STDERR.puts "!! Invalid client specified: #{options[:client]}"

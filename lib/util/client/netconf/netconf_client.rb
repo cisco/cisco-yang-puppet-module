@@ -21,6 +21,7 @@ require 'net/ssh'
 require 'rexml/document'
 
 module Netconf
+  # Class for ssh connection. TODO: Jason
   class SSH
     def initialize(args)
       @args = args.clone
@@ -79,6 +80,7 @@ module Netconf
     end
   end # class SSH
 
+  # Format xml TODO: Jason
   module Format
     DEFAULT_NAMESPACE = "\"urn:ietf:params:xml:ns:netconf:base:1.0\""
 
@@ -172,9 +174,11 @@ module Netconf
   class SSHNotConnected < StandardError
   end
 
+  # netconf_client class TODO: Jason
   class Client
     public
 
+    # Base class for netconf response TODO: Jason
     class RpcResponse
       private
 
@@ -217,6 +221,7 @@ module Netconf
       end
     end
 
+    # Class for GetConfig response TODO: Jason
     class GetConfigResponse < RpcResponse
       private
 
@@ -248,6 +253,7 @@ module Netconf
       end
     end
 
+    # Class for commit response TODO: Jason
     class CommitResponse < RpcResponse
       private
 
@@ -256,6 +262,7 @@ module Netconf
       end
     end
 
+    # Class for edit config response TODO: Jason
     class EditConfigResponse < RpcResponse
       private
 

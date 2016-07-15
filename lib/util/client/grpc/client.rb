@@ -88,7 +88,7 @@ module Cisco
       # @param values [Array<String>] One or more commands to execute /
       #                               config strings to send
       # @param kwargs data-format-specific args
-      def set(values:      nil,
+      def set(values: nil,
               **kwargs)
         super
         mode = kwargs[:mode] || :merge_config
@@ -97,7 +97,6 @@ module Cisco
       end
 
       def get(command:     nil,
-              value:       nil,
               **kwargs)
         super
         fail ArgumentError if command.nil?
@@ -143,7 +142,7 @@ module Cisco
         raise_cisco(e)
       end
 
-      def handle_response(args, replies)
+      def handle_response(_args, replies)
         klass = replies[0].class
         unless replies.all? { |r| r.class == klass }
           fail Cisco::ClientError, 'reply class inconsistent: ' +
@@ -263,18 +262,13 @@ module Cisco
             end
             fail Cisco::YangError.new( # rubocop:disable Style/RaiseArgs
               rejected_input: input,
-              error:   message,
+              error:          message,
             )
           else
             fail Cisco::ClientError, message
           end
         end
       end
-
-      def yang_target(_module_name, namespace, container)
-        "<#{container} xmlns=\"#{namespace}\" />"
-      end
-
 
       def system_time
         unless @system_time

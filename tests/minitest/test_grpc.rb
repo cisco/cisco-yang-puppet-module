@@ -57,8 +57,8 @@ class TestGRPC < CiscoTestCase
   end
 
   def test_set_string
-    client.set(values:  RED_VRF,
-               mode:    :replace_config)
+    client.set(values: RED_VRF,
+               mode:   :replace_config)
     run = client.get(command: ROOT_VRF)
     assert_match(RED_VRF, run)
   end
@@ -68,7 +68,7 @@ class TestGRPC < CiscoTestCase
       client.set(values: INVALID_VRF)
     end
     assert_equal("The config '{\"Cisco-IOS-XR-infra-rsi-cfg:invalid\": [null]}' was rejected with error:
-unknown-element: Cisco-IOS-XR-infra-rsi-cfg:ns1:invalid",e.message)
+unknown-element: Cisco-IOS-XR-infra-rsi-cfg:ns1:invalid", e.message)
     assert_empty(e.successful_input)
     assert_equal(INVALID_VRF,
                  e.rejected_input)

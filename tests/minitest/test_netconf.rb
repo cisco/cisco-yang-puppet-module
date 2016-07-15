@@ -20,7 +20,6 @@ require_relative 'ciscotest'
 
 # Test case for Cisco::Client::NETCONF::Client class
 class TestNetconf < CiscoTestCase
-
   @client_class = Cisco::Client::NETCONF
 
   RED_VRF = \
@@ -50,8 +49,8 @@ class TestNetconf < CiscoTestCase
   end
 
   def test_set_string
-    client.set(values:  RED_VRF,
-               mode:    :replace)
+    client.set(values: RED_VRF,
+               mode:   :replace)
     run = client.get(command: ROOT_VRF)
     assert_match(RED_VRF, run)
   end

@@ -35,7 +35,7 @@ class Cisco::Client
 
   attr_reader :platform, :host, :port, :address, :username, :password
 
-  def initialize(platform:     nil,
+  def initialize(platform: nil,
                  **kwargs)
     if self.class == Cisco::Client
       fail NotImplementedError, 'Cisco::Client is an abstract class. ' \
@@ -135,7 +135,7 @@ class Cisco::Client
   #
   # @param values [String, Array<String>] Actual configuration to set
   # @param kwargs data-format-specific args
-  def set(values:      nil,
+  def set(values: nil,
           **_kwargs)
     # subclasses will generally want to call Client.munge_to_array()
     # on values before calling super()
@@ -151,20 +151,17 @@ class Cisco::Client
   # @param kwargs data-format-specific args
   # @return [String, Hash, nil] The state found, or nil if not found.
   def get(command:     nil,
-          value:       nil,
           **_kwargs)
     # subclasses will generally want to call Client.munge_to_array()
     # on value before calling super()
     Cisco::Logger.debug("  executing command:\n    #{command}") \
       unless command.nil? || command.empty?
-    Cisco::Logger.debug("  to get value:     #{value}") \
-      unless value.nil?
     # to be implemented by subclasses
   end
 
   private
 
- # Set the platform of the node managed by this client.
+  # Set the platform of the node managed by this client.
   def platform=(platform)
     fail ArgumentError, "unknown platform #{platform}" \
       unless Cisco::PLATFORMS.include?(platform)

@@ -22,7 +22,6 @@ require_relative '../../lib/util/yang'
 
 # TestYang - Minitest for Yang class
 class TestYang < CiscoTestCase
-
   # this test suite is meant for the GRPC client
   @client_class = Cisco::Client::GRPC
 
