@@ -32,12 +32,10 @@ include Cisco
 # CiscoTestCase - base class for all node utility minitests
 class CiscoTestCase < Minitest::Test
   # rubocop:disable Style/ClassVars
-  @@node = nil
   @@device_hash = {}
   # rubocop:enable Style/ClassVars
 
-  @my_node = nil
-  @my_device = nil
+  @node = nil
 
   # The feature (lib/cisco_node_utils/cmd_ref/<feature>.yaml) that this
   # test case is associated with, if applicable.
@@ -51,25 +49,29 @@ class CiscoTestCase < Minitest::Test
   end
 
   def self.runnable_methods
-    return super if skip_unless_supported.nil?
-    #    return super if node.cmd_ref.supports?(skip_unless_supported)
-    # If the entire feature under test is unsupported,
-    # undefine the setup/teardown methods (if any) and skip the whole test case
+    cc = client_class
+    env = cc ? cc.environment(cc) : nil
+    return super if env
+
+    # no environment configured for this test suite, so skip all tests
     remove_method :setup if instance_methods(false).include?(:setup)
     remove_method :teardown if instance_methods(false).include?(:teardown)
     [:all_skipped]
   end
 
   def all_skipped
-    skip("Skipping #{self.class}; feature " \
-         "'#{self.class.skip_unless_supported}' is unsupported on this node")
+    skip("Skipping #{self.class}; #{client_class} is not configured/supported on this node")
   end
 
-  def client_class
+  def self.client_class
     # to be implemented by subclasses
 
     # for now, default to the GRPC client
     Cisco::Client::GRPC
+  end
+
+  def client_class
+    self.class.client_class
   end
 
   def node
@@ -77,21 +79,21 @@ class CiscoTestCase < Minitest::Test
 
     is_new = !Node.instance_exists(client_class)
 
+    @node = Node.instance(client_class)
     # rubocop:disable Style/ClassVars
-    @my_node = Node.instance(client_class)
     # rubocop:enable Style/ClassVars
 
     if is_new
-      @my_node.cache_enable = true
-      @my_node.cache_auto = true
+      @node.cache_enable = true
+      @node.cache_auto = true
       # Record the platform we're running on
       puts "\nNode under test:"
-      puts "  - name  - #{@my_node.host_name}"
-      puts "  - type  - #{@my_node.product_id}"
-      puts "  - image - #{@my_node.system}\n\n"
+      puts "  - name  - #{@node.host_name}"
+      puts "  - type  - #{@node.product_id}"
+      puts "  - image - #{@node.system}\n\n"
     end
 
-    @my_node
+    @node
   rescue Cisco::AuthenticationFailed
     abort "Unauthorized to connect as #{username}:#{password}@#{address}"
   rescue Cisco::ClientError, TypeError, ArgumentError => e
@@ -112,17 +114,17 @@ class CiscoTestCase < Minitest::Test
 
   def create_device
     login = proc do
-      puts "====> ciscotest.create_device - login address: #{node.client.host}, username: #{node.client.username}, object_id: #{object_id}"
+puts "====> ciscotest.create_device - login address: #{node.client.host}, username: #{node.client.username}, object_id: #{object_id}"
       d = Net::Telnet.new('Host'    => node.client.host,
-                          'Timeout' => 240,
-                          # NX-OS has a space after '#', IOS XR does not
-                          'Prompt'  => /[$%#>] *\z/n,
-                         )
+                               'Timeout' => 240,
+                               # NX-OS has a space after '#', IOS XR does not
+                               'Prompt'  => /[$%#>] *\z/n,
+                              )
       d.login('Name'        => node.client.username,
-              'Password'    => node.client.password,
-              # NX-OS uses 'login:' while IOS XR uses 'Username:'
-              'LoginPrompt' => /(?:[Ll]ogin|[Uu]sername)[: ]*\z/n,
-             )
+                   'Password'    => node.client.password,
+                   # NX-OS uses 'login:' while IOS XR uses 'Username:'
+                   'LoginPrompt' => /(?:[Ll]ogin|[Uu]sername)[: ]*\z/n,
+                  )
       d
     end
 
@@ -141,11 +143,6 @@ class CiscoTestCase < Minitest::Test
     puts 'Telnet login refused - please check that the IP address is correct'
     puts "  and that you have configured 'telnet ipv4 server...' on the UUT"
     exit
-  end
-
-  def teardown
-    #    @my_device.close unless @my_device.nil?
-    #    @my_device = nil
   end
 
   def cmd_ref

@@ -20,7 +20,7 @@ require_relative '../../lib/util/client/netconf/netconf'
 
 # TestNetconf- Minitest for Netconf class
 class TestNetconf < CiscoTestCase
-  def client_class
+  def self.client_class
     Cisco::Client::NETCONF
   end
 

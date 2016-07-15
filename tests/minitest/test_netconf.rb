@@ -20,7 +20,7 @@ require_relative 'ciscotest'
 
 # Test case for Cisco::Client::NETCONF::Client class
 class TestNetconf < CiscoTestCase
-  def client_class
+  def self.client_class
     Cisco::Client::NETCONF
   end
 
@@ -30,16 +30,6 @@ class TestNetconf < CiscoTestCase
       "<vrfs xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg\">\n  <vrf>\n    <vrf-name>\n      blue\n    </vrf-name>\n    <create/>\n  </vrf>\n</vrfs>"
   ROOT_VRF = '<infra-rsi-cfg:vrfs xmlns:infra-rsi-cfg="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>'
   INVALID_VRF = '<infra-rsi-cfg:vrfs-invalid xmlns:infra-rsi-cfg-invalid="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg-invalid"/>'
-
-  def self.runnable_methods
-    # TODO: Skip all tests if the netconf client did not load
-    # return [:all_skipped] unless environment[:port] == 830
-    super
-  end
-
-  def all_skipped
-    skip 'No Netconf client was loaded.'
-  end
 
   def test_auth_failure
     env = environment.merge(password: 'wrong password')

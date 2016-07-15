@@ -94,7 +94,7 @@ module Cisco
     def self.environment(name=nil)
       name ||= @default_environment_name
       Cisco::Logger.debug("Getting environment '#{name}'")
-      environments.fetch(name, DEFAULT_ENVIRONMENT)
+      environments.fetch(name, nil)
     end
   end
 end
