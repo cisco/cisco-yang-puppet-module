@@ -20,9 +20,8 @@ require_relative 'ciscotest'
 
 # Test case for Cisco::Client::NETCONF::Client class
 class TestNetconf < CiscoTestCase
-  def self.client_class
-    Cisco::Client::NETCONF
-  end
+
+  @client_class = Cisco::Client::NETCONF
 
   RED_VRF = \
     "<vrfs xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg\">\n  <vrf>\n    <vrf-name>\n      red\n    </vrf-name>\n    <create/>\n  </vrf>\n</vrfs>"
@@ -32,7 +31,7 @@ class TestNetconf < CiscoTestCase
   INVALID_VRF = '<infra-rsi-cfg:vrfs-invalid xmlns:infra-rsi-cfg-invalid="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg-invalid"/>'
 
   def test_auth_failure
-    env = environment.merge(password: 'wrong password')
+    env = environment({}).merge(password: 'wrong password')
     e = assert_raises Cisco::AuthenticationFailed do
       Cisco::Client::NETCONF.new(**env)
     end

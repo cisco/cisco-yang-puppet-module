@@ -91,7 +91,7 @@ module Cisco
       Hash[hash.map { |k, v| [k.to_sym, v] }]
     end
 
-    def self.environment(name=nil)
+    def self.environment(name)
       name ||= @default_environment_name
       Cisco::Logger.debug("Getting environment '#{name}'")
       environments.fetch(name, nil)

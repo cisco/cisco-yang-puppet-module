@@ -37,19 +37,20 @@ class CiscoTestCase < Minitest::Test
 
   @node = nil
 
-  # The feature (lib/cisco_node_utils/cmd_ref/<feature>.yaml) that this
-  # test case is associated with, if applicable.
-  # If the YAML file excludes this entire feature for this platform
-  # (top-level _exclude statement, not individual attributes), then
-  # all tests in this test case will be skipped.
-  @skip_unless_supported = nil
+  @client_class = nil
 
   class << self
-    attr_accessor :skip_unless_supported
+    attr_accessor :client_class
+  end
+
+  def client_class
+    self.class.client_class
   end
 
   def self.runnable_methods
+    return [] if self.class == CiscoTestCase
     cc = client_class
+    return super unless cc
     env = cc ? cc.environment(cc) : nil
     return super if env
 
@@ -63,25 +64,23 @@ class CiscoTestCase < Minitest::Test
     skip("Skipping #{self.class}; #{client_class} is not configured/supported on this node")
   end
 
+=begin
   def self.client_class
+puts "====> ciscotest.self.client_class: nil"
     # to be implemented by subclasses
-
-    # for now, default to the GRPC client
-    Cisco::Client::GRPC
+    nil
   end
 
-  def client_class
-    self.class.client_class
-  end
+=end
 
   def node
-    return nil unless client_class
+    cc = client_class
+    assert(cc, "No client_class defined")
 
-    is_new = !Node.instance_exists(client_class)
+    return nil unless cc
 
-    @node = Node.instance(client_class)
-    # rubocop:disable Style/ClassVars
-    # rubocop:enable Style/ClassVars
+    is_new = !Node.instance_exists(cc)
+    @node = Node.instance(cc)
 
     if is_new
       # Record the platform we're running on
@@ -99,11 +98,11 @@ class CiscoTestCase < Minitest::Test
   end
 
   def client
-    node.client
+    node ? node.client : nil
   end
 
-  def environment
-    Cisco::Client.environment(client.class)
+  def environment(default=nil)
+    Cisco::Client.environment(client.class) || default
   end
 
   def device

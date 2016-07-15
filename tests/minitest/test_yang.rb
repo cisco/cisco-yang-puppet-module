@@ -22,9 +22,9 @@ require_relative '../../lib/util/yang'
 
 # TestYang - Minitest for Yang class
 class TestYang < CiscoTestCase
-  def self.client_class
-    Cisco::Client::GRPC # this test suite is meant for the GRPC client
-  end
+
+  # this test suite is meant for the GRPC client
+  @client_class = Cisco::Client::GRPC
 
   BLUE_VRF = '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs":{
       "vrf":[

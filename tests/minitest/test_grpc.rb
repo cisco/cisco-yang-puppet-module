@@ -20,9 +20,7 @@ require_relative 'ciscotest'
 
 # Test case for Cisco::Client::GRPC::Client class
 class TestGRPC < CiscoTestCase
-  def self.client_class
-    Cisco::Client::GRPC
-  end
+  @client_class = Cisco::Client::GRPC
 
   def test_auth_failure
     env = environment.merge(password: 'wrong password')

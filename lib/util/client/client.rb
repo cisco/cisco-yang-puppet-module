@@ -1,7 +1,3 @@
-#!/usr/bin/env ruby
-#
-# October 2015, Glenn F. Matthews
-#
 # Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -79,8 +75,8 @@ class Cisco::Client
   end
 
   def self.environment(client_class)
-    environment_name = "default_#{client_class.name.split('::').last.downcase}"
-    Cisco::Environment.environment(environment_name)
+    env_name = client_class.name.split('::').last.downcase
+    Cisco::Environment.environment(env_name)
   end
 
   # Try to create an instance of the specified subclass
