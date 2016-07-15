@@ -64,18 +64,9 @@ class CiscoTestCase < Minitest::Test
     skip("Skipping #{self.class}; #{client_class} is not configured/supported on this node")
   end
 
-=begin
-  def self.client_class
-puts "====> ciscotest.self.client_class: nil"
-    # to be implemented by subclasses
-    nil
-  end
-
-=end
-
   def node
     cc = client_class
-    assert(cc, "No client_class defined")
+    assert(cc, 'No client_class defined')
 
     return nil unless cc
 
@@ -83,6 +74,8 @@ puts "====> ciscotest.self.client_class: nil"
     @node = Node.instance(cc)
 
     if is_new
+      @node.cache_enable = true
+      @node.cache_auto = true
       # Record the platform we're running on
       puts "\nNode under test:"
       puts "  - name  - #{@node.host_name}"
@@ -156,6 +149,7 @@ puts "====> ciscotest.self.client_class: nil"
     else
       result = super
     end
+    node.cache_flush
     result
   end
 end
