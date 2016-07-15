@@ -330,7 +330,7 @@ class Cisco::Client
     # to be implemented by subclasses
   end
 
-  def yang_target(module_name, namespace, container)
+  def yang_target(_module_name, _namespace, _container)
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end

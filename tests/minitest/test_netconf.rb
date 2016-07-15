@@ -33,7 +33,7 @@ class TestNetconf < CiscoTestCase
 
   def self.runnable_methods
     # TODO: Skip all tests if the netconf client did not load
-    #return [:all_skipped] unless environment[:port] == 830
+    # return [:all_skipped] unless environment[:port] == 830
     super
   end
 

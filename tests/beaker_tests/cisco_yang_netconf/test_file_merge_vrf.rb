@@ -45,8 +45,8 @@ end
 teardown do
   clear_vrf
   on(agent, puppet_resource('file', \
-    '/root/temp/vrfs.xml', \
-    'ensure=absent'))
+                            '/root/temp/vrfs.xml', \
+                            'ensure=absent'))
 end
 
 #################################################################

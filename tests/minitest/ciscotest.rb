@@ -52,7 +52,7 @@ class CiscoTestCase < Minitest::Test
 
   def self.runnable_methods
     return super if skip_unless_supported.nil?
-#    return super if node.cmd_ref.supports?(skip_unless_supported)
+    #    return super if node.cmd_ref.supports?(skip_unless_supported)
     # If the entire feature under test is unsupported,
     # undefine the setup/teardown methods (if any) and skip the whole test case
     remove_method :setup if instance_methods(false).include?(:setup)
@@ -112,17 +112,17 @@ class CiscoTestCase < Minitest::Test
 
   def create_device
     login = proc do
-puts "====> ciscotest.create_device - login address: #{node.client.host}, username: #{node.client.username}, object_id: #{object_id}"
+      puts "====> ciscotest.create_device - login address: #{node.client.host}, username: #{node.client.username}, object_id: #{object_id}"
       d = Net::Telnet.new('Host'    => node.client.host,
-                               'Timeout' => 240,
-                               # NX-OS has a space after '#', IOS XR does not
-                               'Prompt'  => /[$%#>] *\z/n,
-                              )
+                          'Timeout' => 240,
+                          # NX-OS has a space after '#', IOS XR does not
+                          'Prompt'  => /[$%#>] *\z/n,
+                         )
       d.login('Name'        => node.client.username,
-                   'Password'    => node.client.password,
-                   # NX-OS uses 'login:' while IOS XR uses 'Username:'
-                   'LoginPrompt' => /(?:[Ll]ogin|[Uu]sername)[: ]*\z/n,
-                  )
+              'Password'    => node.client.password,
+              # NX-OS uses 'login:' while IOS XR uses 'Username:'
+              'LoginPrompt' => /(?:[Ll]ogin|[Uu]sername)[: ]*\z/n,
+             )
       d
     end
 
@@ -144,8 +144,8 @@ puts "====> ciscotest.create_device - login address: #{node.client.host}, userna
   end
 
   def teardown
-#    @my_device.close unless @my_device.nil?
-#    @my_device = nil
+    #    @my_device.close unless @my_device.nil?
+    #    @my_device = nil
   end
 
   def cmd_ref

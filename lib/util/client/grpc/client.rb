@@ -454,7 +454,7 @@ module Cisco
         (s + 60 * (m + 60 * (h + 24 * (d))))
       end
 
-      def yang_target(module_name, namespace, container)
+      def yang_target(_module_name, namespace, container)
         "<#{container} xmlns=\"#{namespace}\" />"
       end
 

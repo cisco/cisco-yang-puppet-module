@@ -28,8 +28,8 @@ module Netconf
       @connection = nil
     end
 
-    def open (subsystem)
-      ssh_args = Hash.new
+    def open(subsystem)
+      ssh_args = {}
       ssh_args[:password] ||= @args[:password]
       ssh_args[:port] = @args[:port]
       ssh_args[:number_of_password_prompts] = 0
@@ -44,21 +44,21 @@ module Netconf
       end
     end
 
-    def close ()
+    def close
       @channel.close unless @channel.nil?
       @connection.close unless @connection.nil?
       @channel = nil
       @connection = nil
     end
 
-    def send (data)
+    def send(data)
       @channel.send_data(data)
     end
 
-    def receive (parser)
+    def receive(parser)
       continue = true
 
-      @channel.on_data do |ch, data|
+      @channel.on_data do |_ch, data|
         result = parser.call(data)
         # If parser returns :stop, we take that as a hint to stop
         # expecting data for this message.
@@ -69,13 +69,13 @@ module Netconf
         continue = false if result == :stop
       end
 
-      @channel.on_extended_data do |ch, type, data|
+      @channel.on_extended_data do |_ch, _type, _data|
         continue = false
       end
 
       # Loop is executed until on_data or on_extended_data
       # sets continue to false
-      @connection.loop {continue}
+      @connection.loop { continue }
     end
   end # class SSH
 
@@ -83,81 +83,81 @@ module Netconf
     DEFAULT_NAMESPACE = "\"urn:ietf:params:xml:ns:netconf:base:1.0\""
 
     HELLO =
-      "<hello xmlns=#{DEFAULT_NAMESPACE}>" +
-      "  <capabilities>\n" +
-      "    <capability>urn:ietf:params:netconf:base:1.1</capability>\n" +
-      "  </capabilities>\n" +
-      "</hello>\n" +
+      "<hello xmlns=#{DEFAULT_NAMESPACE}>" \
+      "  <capabilities>\n" \
+      "    <capability>urn:ietf:params:netconf:base:1.1</capability>\n" \
+      "  </capabilities>\n" \
+      "</hello>\n" \
       "]]>]]>\n"
 
-    def self.format_msg (body)
+    def self.format_msg(body)
       "##{body.length}\n#{body}\n##\n\n"
     end
 
-    def self.format_close_session (message_id)
+    def self.format_close_session(message_id)
       body =
-        "<rpc message-id=\"#{message_id}\" xmlns=#{DEFAULT_NAMESPACE}>\n" +
-        "   <close-session/>\n" +
+        "<rpc message-id=\"#{message_id}\" xmlns=#{DEFAULT_NAMESPACE}>\n" \
+        "   <close-session/>\n" \
         " </rpc>\n"
       format_msg(body)
     end
 
-    def self.format_commit_msg (message_id)
+    def self.format_commit_msg(message_id)
       body =
-        "<rpc message-id=\"#{message_id}\" xmlns=#{DEFAULT_NAMESPACE}>\n" +
-        "  <commit/>\n" +
+        "<rpc message-id=\"#{message_id}\" xmlns=#{DEFAULT_NAMESPACE}>\n" \
+        "  <commit/>\n" \
         "</rpc>\n"
       format_msg(body)
     end
 
-    def self.format_get_msg (message_id, nc_filter)
+    def self.format_get_msg(message_id, nc_filter)
       body =
-        "<rpc message-id=\"#{message_id}\" xmlns=#{DEFAULT_NAMESPACE}>\n" +
-        "  <get>\n" +
-        "    <filter>\n" +
-        "    #{nc_filter}\n" +
-        "    </filter>\n" +
-        "  </get>\n" +
+        "<rpc message-id=\"#{message_id}\" xmlns=#{DEFAULT_NAMESPACE}>\n" \
+        "  <get>\n" \
+        "    <filter>\n" \
+        "    #{nc_filter}\n" \
+        "    </filter>\n" \
+        "  </get>\n" \
         "</rpc>\n"
       format_msg(body)
     end
 
-    def self.format_get_config_msg (message_id, nc_filter)
+    def self.format_get_config_msg(message_id, nc_filter)
       body =
-        "<rpc message-id=\"#{message_id}\" xmlns=#{DEFAULT_NAMESPACE}>\n" +
-        "  <get-config>\n" +
-        "    <source><running/></source>\n" +
-        "    <filter>\n" +
-        "      #{nc_filter}\n" +
-        "    </filter>\n" +
-        "  </get-config>\n" +
+        "<rpc message-id=\"#{message_id}\" xmlns=#{DEFAULT_NAMESPACE}>\n" \
+        "  <get-config>\n" \
+        "    <source><running/></source>\n" \
+        "    <filter>\n" \
+        "      #{nc_filter}\n" \
+        "    </filter>\n" \
+        "  </get-config>\n" \
         "</rpc>\n"
       format_msg(body)
     end
 
-    def self.format_get_config_all_msg (message_id)
+    def self.format_get_config_all_msg(message_id)
       body =
-        "<rpc message-id=\"#{message_id}\" xmlns=#{DEFAULT_NAMESPACE}>\n" +
-        "  <get-config>\n" +
-        "    <source><running/></source>\n" +
-        "  </get-config>\n" +
+        "<rpc message-id=\"#{message_id}\" xmlns=#{DEFAULT_NAMESPACE}>\n" \
+        "  <get-config>\n" \
+        "    <source><running/></source>\n" \
+        "  </get-config>\n" \
         "</rpc>\n"
       format_msg(body)
     end
 
-    def self.format_edit_config_msg_with_config_tag (message_id, default_operation, target, config)
+    def self.format_edit_config_msg_with_config_tag(message_id, default_operation, target, config)
       body =
-        "<rpc message-id=\"#{message_id}\" xmlns=#{DEFAULT_NAMESPACE}>\n" +
-        "  <edit-config>\n" +
-        "    <target><#{target}/></target>\n" +
-        "    <default-operation>#{default_operation}</default-operation>\n" +
-        "      #{config}\n" +
-        "  </edit-config>\n" +
+        "<rpc message-id=\"#{message_id}\" xmlns=#{DEFAULT_NAMESPACE}>\n" \
+        "  <edit-config>\n" \
+        "    <target><#{target}/></target>\n" \
+        "    <default-operation>#{default_operation}</default-operation>\n" \
+        "      #{config}\n" \
+        "  </edit-config>\n" \
         "</rpc>\n"
       format_msg(body)
     end
 
-    def self.format_edit_config_msg (message_id, default_operation, target, config)
+    def self.format_edit_config_msg(message_id, default_operation, target, config)
       format_edit_config_msg_with_config_tag(message_id, default_operation, target,
                                              "<config xmlns=#{DEFAULT_NAMESPACE}>#{config}</config>")
     end
@@ -178,26 +178,25 @@ module Netconf
     class RpcResponse
       private
 
-      def initialize (rpc_reply)
+      def initialize(rpc_reply)
         if rpc_reply.is_a?(String)
-          @errors = Array.new
+          @errors = []
           @doc = REXML::Document.new(rpc_reply, ignore_whitespace_nodes: :all)
           @doc.context[:attribute_quote] = :quote
-          @doc.elements.each("rpc-reply/rpc-error") do |e|
-            ht = Hash.new
+          @doc.elements.each('rpc-reply/rpc-error') do |e|
+            ht = {}
             e.children.each { |ec| ht[ec.name] = ec.text }
             @errors << ht
           end
         else
-          @errors = Array.new
+          @errors = []
           @transport_errors = rpc_reply
         end
       end
 
       public
-      def errors
-        @errors
-      end
+
+      attr_reader :errors
 
       def errors_as_string
         s = StringIO.new
@@ -210,7 +209,7 @@ module Netconf
       end
 
       def errors?
-        not @errors.empty?
+        !@errors.empty?
       end
 
       def response
@@ -221,27 +220,26 @@ module Netconf
     class GetConfigResponse < RpcResponse
       private
 
-      def initialize (rpc_reply)
+      def initialize(rpc_reply)
         super(rpc_reply)
         if rpc_reply.is_a?(String)
-          @config = Array.new
-          formatter = REXML::Formatters::Pretty.new()
-          @doc.elements.each("rpc-reply/data/*") do |e|
+          @config = []
+          formatter = REXML::Formatters::Pretty.new
+          @doc.elements.each('rpc-reply/data/*') do |e|
             o = StringIO.new
             formatter.write(e, o)
             @config << o.string
           end
         else
-          @config = Array.new
+          @config = []
         end
       end
 
       public
-      def config()
-        @config
-      end
 
-      def config_as_string()
+      attr_reader :config
+
+      def config_as_string
         o = StringIO.new
         @config.each do |ce|
           o.write(ce)
@@ -252,6 +250,7 @@ module Netconf
 
     class CommitResponse < RpcResponse
       private
+
       def initialize(rpc_reply)
         super(rpc_reply)
       end
@@ -259,6 +258,7 @@ module Netconf
 
     class EditConfigResponse < RpcResponse
       private
+
       def initialize(rpc_reply)
         super(rpc_reply)
       end
@@ -273,21 +273,21 @@ module Netconf
       buffering_data = StringIO.new
       parser = lambda do |data|
         data = buffering_data.string + data
-        buffering_data.reopen("")
+        buffering_data.reopen('')
         i = data.index(']')
         if i.nil?
           buff.write(data)
           :continue
         else
           if i != 0
-            buff.write(data[0..(i-1)])
+            buff.write(data[0..(i - 1)])
             parser.call(data[i..-1])
           else
             if data.length >= 5
-              if data[0..4] == "]]>]]"
+              if data[0..4] == ']]>]]'
                 :stop
               else
-                buff.write("]")
+                buff.write(']')
                 parser.call(data[1..-1])
               end
             else
@@ -307,7 +307,7 @@ module Netconf
       when 2
         data == "\n#"
       when 3..12
-        /\n#[1-9][0-9]{,9}$/m.match(data) != nil
+        !/\n#[1-9][0-9]{,9}$/m.match(data).nil?
       else
         false
       end
@@ -320,14 +320,14 @@ module Netconf
       buffering_data = StringIO.new
       parser = lambda do |data|
         data = buffering_data.string + data
-        buffering_data.reopen("")
+        buffering_data.reopen('')
         case state
         when :scanning_for_LF_HASH
           if data.length >= 3
             if data[0..1] != "\n#"
               fail ParseException, "expected LF HASH, but didn't get one with #{data}"
             else
-              if data[2] == "#"
+              if data[2] == '#'
                 state = :scanning_for_end_of_chunks
               else
                 state = :scanning_for_chunk_start
@@ -357,7 +357,7 @@ module Netconf
             # Set bytes_left to value of chunk size
             state = :scanning_for_chunk_data
             bytes_left = Integer("#{md[1]}")
-            if bytes_left > 4294967295
+            if bytes_left > 4_294_967_295
               fail ParseException, "chunk size #{bytes_left} is larger than 4294967295"
             end
 
@@ -373,7 +373,7 @@ module Netconf
             parser.call(data[bytes_left..-1])
           else
             buff.write(data[0..-1])
-            bytes_left = bytes_left - data.length
+            bytes_left -= data.length
             :continue
           end
         when :scanning_for_end_of_chunks
@@ -392,30 +392,28 @@ module Netconf
           fail InternalError, "unexpected state: #{state}"
         end # End case
       end # End Lambda named parser
-      return parser
+      parser
     end
 
     def connect_internal
-      begin
-        @message_id = Integer(1)
-        @ssh = SSH.new(@login)
-        @ssh.open("netconf")
-        @ssh.send(Format::HELLO)
-        buff = StringIO.new
-        # NB: Throwing the capabilities list on the floor here,
-        #     since this is only for XR based netconf, and in
-        #     the puppet context, this is fine
-        @ssh.receive(hello_parser(buff))
-      rescue => e
-        # It's possible to get these exceptions (maybe more)
-        #
-        # Net::SSH::Disconnect
-        # Net::SSH::AuthenticationFailed
-        # Errno::EHOSTUNREACH
-        # Errno::ECONNREFUSED
-        @ssh = nil
-        fail e
-      end
+      @message_id = Integer(1)
+      @ssh = SSH.new(@login)
+      @ssh.open('netconf')
+      @ssh.send(Format::HELLO)
+      buff = StringIO.new
+      # NB: Throwing the capabilities list on the floor here,
+      #     since this is only for XR based netconf, and in
+      #     the puppet context, this is fine
+      @ssh.receive(hello_parser(buff))
+    rescue => e
+      # It's possible to get these exceptions (maybe more)
+      #
+      # Net::SSH::Disconnect
+      # Net::SSH::AuthenticationFailed
+      # Errno::EHOSTUNREACH
+      # Errno::ECONNREFUSED
+      @ssh = nil
+      raise e
     end
 
     def tx_request_and_rx_reply_internal(msg)
@@ -423,67 +421,64 @@ module Netconf
       @ssh.send(msg)
       buff = StringIO.new
       @ssh.receive(netconf_1_1_parser(buff))
-      @message_id = @message_id + 1
-      return buff.string
+      @message_id += 1
+      buff.string
     end
 
     def tx_request_and_rx_reply(msg)
-      begin
+      tx_request_and_rx_reply_internal(msg)
+    rescue Net::SSH::Disconnect => e
+      if @options.key?(:no_reconnect)
+        raise e
+      else
+        connect_internal
         tx_request_and_rx_reply_internal(msg)
-      rescue Net::SSH::Disconnect => e
-        if @options.key?(:no_reconnect)
-          fail e
-        else
-          connect_internal
-          tx_request_and_rx_reply_internal(msg)
-        end
       end
     end
 
     public
 
-    def connect()
+    def connect
       connect_internal
     end
 
-    def initialize(login, options = {})
+    def initialize(login, options={})
       @login = login
       @ssh = nil
       @options = options
     end
 
     def get(filter)
-      msg = Format::format_get_msg(@message_id, filter)
+      msg = Format.format_get_msg(@message_id, filter)
       RpcResponse.new(tx_request_and_rx_reply(msg))
     end
 
     def get_config(filter)
-      if filter == "" || filter.nil?
-        msg = Format::format_get_config_all_msg(@message_id)
+      if filter == '' || filter.nil?
+        msg = Format.format_get_config_all_msg(@message_id)
       else
-        msg = Format::format_get_config_msg(@message_id, filter)
+        msg = Format.format_get_config_msg(@message_id, filter)
       end
       GetConfigResponse.new(tx_request_and_rx_reply(msg))
     end
 
     def edit_config(target, default_operation, config)
-      msg = Format::format_edit_config_msg(@message_id,
-                                           default_operation,
-                                           target,
-                                           config)
+      msg = Format.format_edit_config_msg(@message_id,
+                                          default_operation,
+                                          target,
+                                          config)
       EditConfigResponse.new(tx_request_and_rx_reply(msg))
     end
 
-    def commit_changes()
-      CommitResponse.new(tx_request_and_rx_reply(Format::format_commit_msg(@message_id)))
+    def commit_changes
+      CommitResponse.new(tx_request_and_rx_reply(Format.format_commit_msg(@message_id)))
     end
 
-    def stop()
-      tx_request_and_rx_reply(Format::format_close_session(@message_id))
+    def stop
+      tx_request_and_rx_reply(Format.format_close_session(@message_id))
     end
   end
 end
-
 
 # SAMPLE USAGE
 =begin

@@ -16,7 +16,7 @@
 module Cisco
   PLATFORMS = [
     # Cisco IOS XR
-    :ios_xr,
+    :ios_xr
   ]
 
   DATA_FORMATS = [
@@ -28,8 +28,8 @@ module Cisco
   NETCONF_SET_MODE = [
     :merge,
     :replace,
-    :delete
-    ]
+    :delete,
+  ]
 
   YANG_SET_MODE = [
     :merge_config,

@@ -89,7 +89,7 @@ module Cisco
   # Extension of RequestFailed class specifically for YANG errors
   class YangError < RequestFailed
     def initialize(message=nil,
-                   error:         nil,
+                   error: nil,
                    rejected_input:   nil,
                    successful_input: [],
                    **kwargs)
