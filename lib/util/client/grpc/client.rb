@@ -36,8 +36,7 @@ module Cisco
         kwargs[:host] ||= '127.0.0.1'
         kwargs[:port] ||= 57_400
         # rubocop:disable Style/HashSyntax
-        super(data_formats: [:cli, :yang_json],
-              platform:     :ios_xr,
+        super(platform:     :ios_xr,
               **kwargs)
         # rubocop:enable Style/HashSyntax
         @config = GRPCConfigOper::Stub.new(@address, :this_channel_is_insecure)
@@ -47,7 +46,7 @@ module Cisco
         @timeout = 10
         begin
           base_msg = 'gRPC client creation failure: '
-          get(command: 'show clock')
+          get(command: '{"Cisco-IOS-XR-shellutil-oper:system-time": "clock"}', mode: :get_oper)
         rescue Cisco::ClientError => e
           error 'initial connect failed: ' + e.to_s
           # Some peer police connection attempt rate require some time between connection attempts.
@@ -74,10 +73,6 @@ module Cisco
         end
       end
 
-      def wants_cmd_ref
-        false
-      end
-
       def self.validate_args(**kwargs)
         super
         base_msg = 'gRPC client creation failure: '
@@ -88,99 +83,26 @@ module Cisco
           if kwargs[:password].nil?
       end
 
-      # Configure the given CLI command(s) on the device.
+      # Configure the given command(s) on the device.
       #
-      # @param data_format one of Cisco::DATA_FORMATS. Default is :cli
-      # @param context [Array<String>] Zero or more configuration commands used
-      #                to enter the desired CLI sub-mode
       # @param values [Array<String>] One or more commands to execute /
       #                               config strings to send
       # @param kwargs data-format-specific args
-      def set(data_format: :cli,
-              context:     nil,
-              values:      nil,
+      def set(values:      nil,
               **kwargs)
-        context = munge_to_array(context)
-        values = munge_to_array(values)
         super
-        if data_format == :yang_json
-          mode = kwargs[:mode] || :merge_config
-          fail ArgumentError unless Cisco::YANG_SET_MODE.include? mode
-          values.each do |yang|
-            yang_req(@config, mode.to_s, ConfigArgs.new(yangjson: yang))
-          end
-        else
-          # IOS XR lets us concatenate submode commands together.
-          # This makes it possible to guarantee we are in the correct context:
-          #   context: ['foo', 'bar'], values: ['baz', 'bat']
-          #   ---> values: ['foo bar baz', 'foo bar bat']
-          # However, there's a special case for 'no' commands:
-          #   context: ['foo', 'bar'], values: ['no baz']
-          #   ---> values: ['no foo bar baz'] ---- the 'no' goes at the start
-          context = context.join(' ')
-          unless context.empty?
-            values.map! do |cmd|
-              match = cmd[/^\s*no\s+(.*)/, 1]
-              if match
-                cmd = "no #{context} #{match}"
-              else
-                cmd = "#{context} #{cmd}"
-              end
-              cmd
-            end
-          end
-          # CliConfigArgs wants a newline-separated string of commands
-          args = CliConfigArgs.new(cli: values.join("\n"))
-          req(@config, 'cli_config', args)
-        end
+        mode = kwargs[:mode] || :merge_config
+        fail ArgumentError unless Cisco::YANG_SET_MODE.include? mode
+        yang_req(@config, mode.to_s, ConfigArgs.new(yangjson: values))
       end
 
-      def get(data_format: :cli,
-              command:     nil,
-              context:     nil,
+      def get(command:     nil,
               value:       nil,
               **kwargs)
         super
         fail ArgumentError if command.nil?
-
-        if data_format == :yang_json
-          mode = kwargs[:mode] || :get_config
-          yang_req(@config, mode, ConfigGetArgs.new(yangpathjson: command))
-        else
-          args = ShowCmdArgs.new(cli: command)
-          output = req(@exec, 'show_cmd_text_output', args)
-          self.class.filter_cli(cli_output: output, context: context, value: value)
-        end
-      end
-
-      def req(stub, type, args)
-        debug "Sending '#{type}' request:"
-        if args.is_a?(ShowCmdArgs) || args.is_a?(CliConfigArgs)
-          debug "  with cli: '#{args.cli}'"
-        end
-        output = Cisco::Client.silence_warnings do
-          response = stub.send(type, args,
-                               timeout:  @timeout,
-                               username: @username,
-                               password: @password)
-          # gRPC server may split the response into multiples
-          response = response.is_a?(Enumerator) ? response.to_a : [response]
-          debug "Got responses: #{response.map(&:class).join(', ')}"
-          # Check for errors first
-          handle_errors(args, response.select { |r| !r.errors.empty? })
-
-          # If we got here, no errors occurred
-          handle_response(args, response)
-        end
-
-        return output
-      rescue ::GRPC::BadStatus => e
-        warn "gRPC error '#{e.code}' during '#{type}' request: "
-        if args.is_a?(ShowCmdArgs) || args.is_a?(CliConfigArgs)
-          warn "  with cli: '#{args.cli}'"
-        end
-        warn "  '#{e.details}'"
-        raise_cisco(e)
+        mode = kwargs[:mode] || :get_config
+        yang_req(@config, mode, ConfigGetArgs.new(yangpathjson: command))
       end
 
       # Send a YANG request via gRPC
@@ -229,10 +151,6 @@ module Cisco
         end
         debug "Handling #{replies.length} '#{klass}' reply(s):"
         case klass.to_s
-        when /ShowCmdTextReply/
-          replies.each { |r| debug "  output:\n#{r.output}" }
-          output = replies.map(&:output).join('')
-          output = handle_text_output(args, output)
         when /ShowCmdJSONReply/
           # TODO: not yet supported by server to test against
           replies.each { |r| debug "  jsonoutput:\n#{r.jsonoutput}" }
@@ -256,33 +174,6 @@ module Cisco
         output
       end
 
-      def handle_text_output(args, output)
-        # For a successful show command, gRPC presents the output as:
-        # \n--------- <cmd> ----------
-        # \n<output of command>
-        # \n\n
-
-        # For an invalid CLI, gRPC presents the output as:
-        # \n--------- <cmd> --------
-        # \n<cmd>
-        # \n<error output>
-        # \n\n
-
-        # Discard the leading whitespace, header, and trailing whitespace
-        output = output.split("\n").drop(2)
-        return '' if output.nil? || output.empty?
-
-        # Now we have either [<output_line_1>, <output_line_2>, ...] or
-        # [<cmd>, <error_line_1>, <error_line_2>, ...]
-        if output[0].strip == args.cli.strip
-          fail Cisco::CliError.new( # rubocop:disable Style/RaiseArgs
-            rejected_input: args.cli,
-            clierror:       output.join("\n"),
-          )
-        end
-        output.join("\n")
-      end
-
       def handle_errors(args, error_responses)
         return if error_responses.empty?
         debug "#{error_responses.length} response(s) had errors:"
@@ -292,7 +183,7 @@ module Cisco
         # Less conveniently, some are JSON and some are not.
         begin
           msg = JSON.parse(first_error)
-          handle_json_error(msg)
+          handle_json_error(args, msg)
         rescue JSON::ParserError
           handle_text_error(args, first_error)
         end
@@ -316,7 +207,7 @@ module Cisco
       end
 
       # Generate a CliError from a failed CliConfigReply
-      def handle_json_error(msg)
+      def handle_json_error(args, msg)
         # {
         #   "cisco-grpc:errors": {
         #   "error": [
@@ -363,88 +254,68 @@ module Cisco
               fail Cisco::YangError.new( # rubocop:disable Style/RaiseArgs
                 message
               )
-            else
-              match = /\n\n(.*)\n\n\Z/m.match(message)
-              if match.nil?
-                rejected = '(unknown, see error message)'
-              else
-                rejected = match[1].split("\n")
-              end
-              fail Cisco::CliError.new( # rubocop:disable Style/RaiseArgs
-                rejected_input: rejected,
-                clierror:       message,
-              )
             end
+          elsif type == 'protocol'
+            if args.is_a?(ConfigGetArgs)
+              input = args.yangpathjson
+            elsif args.is_a?(ConfigArgs)
+              input = args.yangjson
+            end
+            fail Cisco::YangError.new( # rubocop:disable Style/RaiseArgs
+              rejected_input: input,
+              error:   message,
+            )
           else
             fail Cisco::ClientError, message
           end
         end
       end
 
-      def os
-        output = get(command:     'show version',
-                     data_format: :cli)
-        /Cisco.*Software/.match(output).to_s
+      def yang_target(_module_name, namespace, container)
+        "<#{container} xmlns=\"#{namespace}\" />"
       end
 
-      def os_version
-        output = get(command:     'show version',
-                     data_format: :cli)
-        /IOS XR.*Version (.*)$/.match(output)[1]
+
+      def system_time
+        unless @system_time
+          filter = '{"Cisco-IOS-XR-shellutil-oper:system-time":"uptime"}'
+          reply = get(command: filter, mode: :get_oper)
+          @system_time = JSON.parse(reply)
+        end
+        @system_time
       end
 
-      def product_description
-        output = get(command:     'show inventory',
-                     data_format: :cli)
-        /NAME: "Rack 0".*DESCR: "(.*)"/.match(output)[1]
+      def diag
+        unless @diag
+          filter = '{"Cisco-IOS-XR-sdr-invmgr-diag-oper:diag":"racks"}'
+          reply = get(command: filter, mode: :get_oper)
+          @diag = JSON.parse(reply)
+        end
+        @diag
       end
 
-      def product_id
-        output = get(command:     'show inventory',
-                     data_format: :cli)
-        /NAME: "Rack 0".*\nPID: (\S+)/.match(output)[1]
-      end
-
-      def product_version_id
-        output = get(command:     'show inventory',
-                     data_format: :cli)
-        /"Rack 0".*\n.*VID: ([^ ,]+)/.match(output)[1]
-      end
-
-      def product_serial_number
-        output = get(command:     'show inventory',
-                     data_format: :cli)
-        /Rack 0".*\n.*SN: ([^ ,]+)/.match(output)[1]
+      def inventory
+        unless @inventory
+          filter = '{"Cisco-IOS-XR-invmgr-oper:inventory":"racks"}'
+          reply = get(command: filter, mode: :get_oper)
+          @inventory = JSON.parse(reply)
+        end
+        @inventory
       end
 
       def host_name
-        output = get(command:     'show running | i hostname',
-                     data_format: :cli)
-        /^hostname (.*)$/.match(output)[1]
+        return '' unless system_time
+        system_time['Cisco-IOS-XR-shellutil-oper:system-time']['uptime']['host-name']
       end
 
-      def domain_name
-        output = get(command:     'show running-config all',
-                     data_format: :cli)
-        /^domain name (\S+)$/.match(output)[1]
-      end
-
-      def system_uptime
-        output = get(command:     'show version',
-                     data_format: :cli)
-        t = /.*System uptime is (?:(\d+) days)?,?\s?(?:(\d+) hours)?,?\s?(?:(\d+) minutes)?,?\s?(?:(\d+) seconds)?/.match(output).to_a
-        fail 'failed to retrieve system uptime' if t.nil?
-        t.shift
-        # time units: t = ["0", "23", "15", "49"]
-        t.map!(&:to_i)
-        d, h, m, s = t
-        (s + 60 * (m + 60 * (h + 24 * (d))))
+      def product_id
+        return '' unless diag
+        diag['Cisco-IOS-XR-sdr-invmgr-diag-oper:diag']['racks']['rack'][0]['chassis']['pid']
       end
 
       def system
-        output = get(command:     'show version',
-                     data_format: :cli)
-        /IOS XR.*Version (.*)$/.match(output)[1]
+        return '' unless inventory
+        inventory['Cisco-IOS-XR-invmgr-oper:inventory']['racks']['rack'][0]['attributes']['inv-basic-bag']['software-revision']
       end
 
       def yang_target(module_name, _namespace, container)

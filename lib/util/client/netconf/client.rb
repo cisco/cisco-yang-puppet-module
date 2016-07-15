@@ -72,9 +72,7 @@ class Cisco::Client::NETCONF < Cisco::Client
       if kwargs[:password].nil?
   end
 
-  def set(data_format: :xml,
-          context:     nil,
-          values:      nil,
+  def set(values:      nil,
           **kwargs)
     return if values.nil? || values.empty?
     begin
@@ -97,9 +95,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     end
   end
 
-  def get(data_format: :cli,
-          command:     nil,
-          context:     nil,
+  def get(command:     nil,
           value:       nil,
           **kwargs)
     begin

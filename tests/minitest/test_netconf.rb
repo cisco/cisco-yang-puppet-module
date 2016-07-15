@@ -50,8 +50,7 @@ class TestNetconf < CiscoTestCase
   end
 
   def test_set_string
-    client.set(context: nil,
-               values:  RED_VRF,
+    client.set(values:  RED_VRF,
                mode:    :replace)
     run = client.get(command: ROOT_VRF)
     assert_match(RED_VRF, run)
@@ -59,8 +58,7 @@ class TestNetconf < CiscoTestCase
 
   def test_set_invalid
     e = assert_raises Cisco::YangError do
-      client.set(context: nil,
-                 values:  INVALID_VRF)
+      client.set(values:  INVALID_VRF)
     end
     assert_equal('The config \'apply of <infra-rsi-cfg:vrfs-invalid ' \
       'xmlns:infra-rsi-cfg-invalid="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg-invalid"/>\' was rejected with error:
@@ -68,8 +66,6 @@ error-type => rpc
 error-tag => malformed-message
 error-severity => error
 ', e.message)
-    ## rubocop:enable Style/TrailingWhitespace
-    ## Unlike NXAPI, a Netconf config command is always atomic
     assert_empty(e.successful_input)
     assert_equal('apply of <infra-rsi-cfg:vrfs-invalid xmlns:infra-rsi-cfg-invalid="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg-invalid"/>', e.rejected_input)
   end
@@ -89,11 +85,5 @@ error-severity => error
   def test_get_empty
     result = client.get(command: BLUE_VRF)
     assert_empty(result)
-  end
-
-  def test_supports
-    assert(client.supports?(:xml))
-    refute(client.supports?(:cli))
-    refute(client.supports?(:yang_json))
   end
 end

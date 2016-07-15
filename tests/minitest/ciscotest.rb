@@ -74,8 +74,6 @@ class CiscoTestCase < Minitest::Test
     @node = Node.instance(cc)
 
     if is_new
-      @node.cache_enable = true
-      @node.cache_auto = true
       # Record the platform we're running on
       puts "\nNode under test:"
       puts "  - name  - #{@node.host_name}"
@@ -149,7 +147,6 @@ class CiscoTestCase < Minitest::Test
     else
       result = super
     end
-    node.cache_flush
     result
   end
 end

@@ -33,10 +33,9 @@ class Cisco::Client
     @@clients << client
   end
 
-  attr_reader :data_formats, :platform, :host, :port, :address, :username, :password
+  attr_reader :platform, :host, :port, :address, :username, :password
 
-  def initialize(data_formats: [],
-                 platform:     nil,
+  def initialize(platform:     nil,
                  **kwargs)
     if self.class == Cisco::Client
       fail NotImplementedError, 'Cisco::Client is an abstract class. ' \
@@ -48,7 +47,6 @@ class Cisco::Client
     @address = @port.nil? ? @host : "#{@host}:#{@port}"
     @username = kwargs[:username]
     @password = kwargs[:password]
-    self.data_formats = data_formats
     self.platform = platform
   end
 
@@ -68,10 +66,6 @@ class Cisco::Client
       fail TypeError, 'invalid password' unless password.is_a?(String)
       fail ArgumentError, 'empty password' if password.empty?
     end
-  end
-
-  def supports?(data_format)
-    data_formats.include?(data_format)
   end
 
   def self.environment_name(client_class)
@@ -139,160 +133,38 @@ class Cisco::Client
 
   # Configure the given state on the device.
   #
-  # @raise [RequestNotSupported] if this client doesn't support the given
-  #   data_format
-  #
-  # @param data_format one of Cisco::DATA_FORMATS. Default is :cli
-  # @param context [String, Array<String>] Context for the configuration
   # @param values [String, Array<String>] Actual configuration to set
   # @param kwargs data-format-specific args
-  def set(data_format: :cli,
-          context:     nil,
-          values:      nil,
+  def set(values:      nil,
           **_kwargs)
     # subclasses will generally want to call Client.munge_to_array()
-    # on context and/or values before calling super()
-    fail Cisco::RequestNotSupported unless self.supports?(data_format)
-    Cisco::Logger.debug("Set state using data format '#{data_format}'")
-    Cisco::Logger.debug("  with context:\n    #{context.join("\n    ")}") \
-      unless context.nil? || context.empty?
-    Cisco::Logger.debug("  to value(s):\n    #{values.join("\n    ")}") \
+    # on values before calling super()
+    Cisco::Logger.debug("values: #{values})") \
       unless values.nil? || values.empty?
     # to be implemented by subclasses
   end
 
   # Get the given state from the device.
   #
-  # @raise [RequestNotSupported] if the client doesn't support the data_format
-  # @raise [RequestFailed] if the command is rejected by the device
-  #
-  # @param data_format one of Cisco::DATA_FORMATS. Default is :cli
   # @param command [String] the get command to execute
-  # @param context [String, Array<String>] Context to refine/filter the results
   # @param value [String, Regexp] Specific key or regexp to look up
   # @param kwargs data-format-specific args
   # @return [String, Hash, nil] The state found, or nil if not found.
-  def get(data_format: :cli,
-          command:     nil,
-          context:     nil,
+  def get(command:     nil,
           value:       nil,
           **_kwargs)
     # subclasses will generally want to call Client.munge_to_array()
-    # on context and/or value before calling super()
-    fail Cisco::RequestNotSupported unless self.supports?(data_format)
-    Cisco::Logger.debug("Get state using data format '#{data_format}'")
+    # on value before calling super()
     Cisco::Logger.debug("  executing command:\n    #{command}") \
       unless command.nil? || command.empty?
-    Cisco::Logger.debug("  with context:\n    #{context.join("\n    ")}") \
-      unless context.nil? || context.empty?
     Cisco::Logger.debug("  to get value:     #{value}") \
       unless value.nil?
     # to be implemented by subclasses
   end
 
-  def system
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def domain_name
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def product_serial_number
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def os
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def os_version
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def product_description
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def product_id
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def product_version_id
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def product_serial_number
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def host_name
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def domain_name
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def system_uptime
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def last_reset_time
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def last_reset_reason
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def system_cpu_utilization
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def boot
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def system
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
-  def yang_target(_module_name, _namespace, _container)
-    fail Cisco::RequestNotSupported
-    # to be implemented by subclasses
-  end
-
   private
 
-  # Set the list of data formats supported by this client.
-  # If the client supports multiple formats, and a given feature or property
-  # can be managed by multiple formats, the list order indicates preference.
-  def data_formats=(data_formats)
-    data_formats = [data_formats] unless data_formats.is_a?(Array)
-    unknown = data_formats - Cisco::DATA_FORMATS
-    fail ArgumentError, "unknown data formats: #{unknown}" unless unknown.empty?
-    @data_formats = data_formats
-  end
-
-  # Set the platform of the node managed by this client.
+ # Set the platform of the node managed by this client.
   def platform=(platform)
     fail ArgumentError, "unknown platform #{platform}" \
       unless Cisco::PLATFORMS.include?(platform)

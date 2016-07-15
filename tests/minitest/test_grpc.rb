@@ -21,6 +21,12 @@ require_relative 'ciscotest'
 # Test case for Cisco::Client::GRPC::Client class
 class TestGRPC < CiscoTestCase
   @client_class = Cisco::Client::GRPC
+  RED_VRF = \
+  "{\n \"Cisco-IOS-XR-infra-rsi-cfg:vrfs\": {\n  \"vrf\": [\n   {\n    \"vrf-name\": \"RED\",\n    \"create\": [\n     null\n    ]\n   }\n  ]\n }\n}\n"
+  BLUE_VRF = \
+  "{\n \"Cisco-IOS-XR-infra-rsi-cfg:vrfs\": {\n  \"vrf\": [\n   {\n    \"vrf-name\": \"BLUE\",\n    \"create\": [\n     null\n    ]\n   }\n  ]\n }\n}\n"
+  ROOT_VRF = '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs": [null]}'
+  INVALID_VRF = '{"Cisco-IOS-XR-infra-rsi-cfg:invalid": [null]}'
 
   def test_auth_failure
     env = environment.merge(password: 'wrong password')
@@ -50,83 +56,38 @@ class TestGRPC < CiscoTestCase
                  e.message)
   end
 
-  def test_set_cli_string
-    client.set(context: 'int gi0/0/0/0',
-               values:  'description panda')
-    run = client.get(command: 'show run int gi0/0/0/0')
-    assert_match(/description panda/, run)
+  def test_set_string
+    client.set(values:  RED_VRF,
+               mode:    :replace_config)
+    run = client.get(command: ROOT_VRF)
+    assert_match(RED_VRF, run)
   end
 
-  def test_set_cli_array
-    client.set(context: ['int gi0/0/0/0'],
-               values:  ['description elephant'])
-    run = client.get(command: 'show run int gi0/0/0/0')
-    assert_match(/description elephant/, run)
-  end
-
-  def test_set_cli_invalid
-    e = assert_raises Cisco::CliError do
-      client.set(context: ['int gi0/0/0/0'],
-                 values:  ['wark', 'bark bark'])
+  def test_set_invalid
+    e = assert_raises Cisco::YangError do
+      client.set(values: INVALID_VRF)
     end
-    assert_equal('The following commands were rejected:
-  int gi0/0/0/0 wark
-  int gi0/0/0/0 bark bark
-with error:
-!! SYNTAX/AUTHORIZATION ERRORS: This configuration failed due to
-!! one or more of the following reasons:
-!!  - the entered commands do not exist,
-!!  - the entered commands have errors in their syntax,
-!!  - the software packages containing the commands are not active,
-!!  - the current user is not a member of a task-group that has
-!!    permissions to use the commands.
-int gi0/0/0/0 wark
-int gi0/0/0/0 bark bark
-', e.message.gsub(/\s+\n+/, "\n"))
-    # rubocop:enable Style/TrailingWhitespace
-    # Unlike NXAPI, a gRPC config command is always atomic
+    assert_equal("The config '{\"Cisco-IOS-XR-infra-rsi-cfg:invalid\": [null]}' was rejected with error:
+unknown-element: Cisco-IOS-XR-infra-rsi-cfg:ns1:invalid",e.message)
     assert_empty(e.successful_input)
-    assert_equal(['int gi0/0/0/0 wark', 'int gi0/0/0/0 bark bark'],
+    assert_equal(INVALID_VRF,
                  e.rejected_input)
   end
 
-  def test_get_cli_default
-    result = client.get(command: 'show debug')
-    s = device.cmd('show debug')
-    # Strip the leading timestamp and trailing prompt from the telnet output
-    s = s.split("\n")[2..-2].join("\n")
-    assert_equal(s, result)
-  end
-
-  def test_get_cli_invalid
-    assert_raises Cisco::CliError do
-      client.get(command: 'show fuzz')
+  def test_get_invalid
+    assert_raises Cisco::YangError do
+      client.get(command: INVALID_VRF)
     end
   end
 
-  def test_get_cli_incomplete
-    assert_raises Cisco::CliError do
-      client.get(command: 'show ')
+  def test_get_incomplete
+    assert_raises Cisco::YangError do
+      client.get(command: INVALID_VRF)
     end
   end
 
-  def test_get_cli_explicit
-    result = client.get(command: 'show debug', data_format: :cli)
-    s = device.cmd('show debug')
-    # Strip the leading timestamp and trailing prompt from the telnet output
-    s = s.split("\n")[2..-2].join("\n")
-    assert_equal(s, result)
-  end
-
-  def test_get_cli_empty
-    result = client.get(command:     'show debug | include foo | exclude foo',
-                        data_format: :cli)
-    assert_nil(result)
-  end
-
-  def test_supports
-    assert(client.supports?(:cli))
-    assert(client.supports?(:yang_json))
-    refute(client.supports?(:xml))
+  def test_get_empty
+    result = client.get(command: BLUE_VRF)
+    assert_empty(result)
   end
 end

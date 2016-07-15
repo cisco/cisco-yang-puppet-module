@@ -70,46 +70,46 @@ module Cisco
     # Merge the specified config with the running config on the device.
     # using netconf
     def merge_netconf(config)
-      @client.set(data_format: :xml, values: config, mode: :merge)
+      @client.set(values: config, mode: :merge)
     end
 
     # Replace the running config on the device with the specified
     # config using netconf client.
     def replace_netconf(config)
-      @client.set(data_format: :xml, values: config, mode: :replace)
+      @client.set(values: config, mode: :replace)
     end
 
     # Retrieve config from the device for the specified path using netconf.
     def get_netconf(xpath)
-      @client.get(data_format: :xml, command: xpath)
+      @client.get(command: xpath)
     end
 
     # Merge the specified JSON YANG config with the running config on
     # the device.
     def merge_yang(yang)
-      @client.set(data_format: :yang_json, values: [yang], mode: :merge_config)
+      @client.set(values: yang, mode: :merge_config)
     end
 
     # Replace the running config on the device with the specified
     # JSON YANG config.
     def replace_yang(yang)
-      @client.set(data_format: :yang_json, values: [yang],
+      @client.set(values: yang,
                   mode: :replace_config)
     end
 
     # Delete the specified JSON YANG config from the device.
     def delete_yang(yang)
-      @client.set(data_format: :yang_json, values: [yang], mode: :delete_config)
+      @client.set(values: yang, mode: :delete_config)
     end
 
     # Retrieve JSON YANG config from the device for the specified path.
     def get_yang(yang_path)
-      @client.get(data_format: :yang_json, command: yang_path)
+      @client.get(command: yang_path)
     end
 
     # Retrieve JSON YANG operational data for the specified path.
     def get_yang_oper(yang_path)
-      @client.get(data_format: :yang_json, command: yang_path, mode: :get_oper)
+      @client.get(command: yang_path, mode: :get_oper)
     end
 
     # @return [String] such as "Cisco Nexus Operating System (NX-OS) Software"
