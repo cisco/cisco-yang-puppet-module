@@ -74,48 +74,33 @@ class Cisco::Client
     data_formats.include?(data_format)
   end
 
+  def self.environment_name(client_class)
+    client_class.name.split('::').last.downcase
+  end
+
   def self.environment(client_class)
-    env_name = client_class.name.split('::').last.downcase
-    Cisco::Environment.environment(env_name)
+    Cisco::Environment.environment(environment_name(client_class))
   end
 
   # Try to create an instance of the specified subclass
   def self.create(client_class)
-    environment = environment(client_class)
-    host = environment[:host]
-    port = environment[:port]
+    env = environment(client_class)
+    env_name = environment_name(client_class)
+
+    fail Cisco::ClientError, "No client environment configured for '#{env_name}'" unless env
+
+    host = env[:host]
+    port = env[:port]
     debug "Trying to connect to #{host}:#{port} as #{client_class}"
     errors = []
     begin
-      client = client_class.new(**environment)
+      client = client_class.new(**env)
       debug "#{client_class} connected successfully"
       return client
     rescue Cisco::ClientError, TypeError, ArgumentError => e
       debug "Unable to connect to #{host} as #{client_class}: #{e.message}"
       debug e.backtrace.join("\n  ")
       errors << e
-    end
-    handle_errors(errors)
-  end
-
-  # Try to create an instance of an appropriate subclass
-  def self.old_create(environment_name=nil)
-    fail 'No client implementations available!' if clients.empty?
-    debug "Trying to establish client connection. clients = #{clients}"
-    environment = Cisco::Environment.environment(environment_name)
-    host = environment[:host]
-    errors = []
-    clients.each do |client_class|
-      begin
-        debug "Trying to connect to #{host} as #{client_class}"
-        client = client_class.new(**environment)
-        debug "#{client_class} connected successfully"
-        return client
-      rescue Cisco::ClientError, TypeError, ArgumentError => e
-        debug "Unable to connect to #{host} as #{client_class}: #{e.message}"
-        debug e.backtrace.join("\n  ")
-        errors << e
-      end
     end
     handle_errors(errors)
   end

@@ -441,14 +441,14 @@ module Cisco
         (s + 60 * (m + 60 * (h + 24 * (d))))
       end
 
-      def yang_target(_module_name, namespace, container)
-        "<#{container} xmlns=\"#{namespace}\" />"
-      end
-
       def system
         output = get(command:     'show version',
                      data_format: :cli)
         /IOS XR.*Version (.*)$/.match(output)[1]
+      end
+
+      def yang_target(module_name, _namespace, container)
+        "{\"#{module_name}:#{container}\": [null]}"
       end
     end
   end

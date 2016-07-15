@@ -100,7 +100,8 @@ class Cisco::Client::NETCONF < Cisco::Client
   def get(data_format: :cli,
           command:     nil,
           context:     nil,
-          value:       nil)
+          value:       nil,
+          **kwargs)
     begin
       doc = REXML::Document.new(command)
     rescue => e
@@ -336,5 +337,9 @@ class Cisco::Client::NETCONF < Cisco::Client
       sr = e.text
     end
     sr
+  end
+
+  def yang_target(_module_name, namespace, container)
+    "<#{container} xmlns=\"#{namespace}\" />"
   end
 end
