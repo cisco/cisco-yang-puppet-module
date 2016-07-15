@@ -104,7 +104,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     begin
       doc = REXML::Document.new(command)
     rescue => e
-      raise Cisco::YangError.new(rejected_input: command,
+      raise Cisco::YangError.new(rejected_input: command, # rubocop:disable Style/RaiseArgs
                                  error:          e.message)
     end
 
@@ -192,13 +192,13 @@ class Cisco::Client::NETCONF < Cisco::Client
     @redundancy
   end
 
-  def get_software_revision
+  def software_revision
     return '' unless inventory
-    software_revision = ''
+    sr = ''
     inventory.elements.each('rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/software-revision') do |e|
-      software_revision = e.text
+      sr = e.text
     end
-    software_revision
+    sr
   end
 
   def os
@@ -212,11 +212,11 @@ class Cisco::Client::NETCONF < Cisco::Client
 
   def os_version
     return '' unless inventory
-    software_revision = ''
+    sr = ''
     inventory.elements.each('rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/software-revision') do |e|
-      software_revision = e.text
+      sr = e.text
     end
-    software_revision
+    sr
   end
 
   def product_description
@@ -289,7 +289,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     uptime
   end
 
-  def get_last_reset_time
+  def last_reset_time
     return '' unless redundancy
     last_reset_time = ''
     redundancy.elements.each('rpc-reply/data/redundancy/nodes/node/log') do |e|
@@ -305,7 +305,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     last_reset_time
   end
 
-  def get_last_reset_reason
+  def last_reset_reason
     return '' unless redundancy
     reason = ''
     redundancy.elements.each('rpc-reply/data/redundancy/nodes/node/active-reboot-reason') do |e|
@@ -320,7 +320,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     # rpc-reply/data/system-monitoring/cpu-utilization/total-cpu-fifteen-minute
   end
 
-  def get_boot
+  def boot
     return '' unless software_install
     boot_image = ''
     software_install.elements.each('rpc-reply/data/software-install/committed/committed-package-info/committed-packages') do |e|
@@ -331,10 +331,10 @@ class Cisco::Client::NETCONF < Cisco::Client
 
   def system
     return '' unless inventory
-    software_revision = ''
+    sr = ''
     inventory.elements.each('rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/software-revision') do |e|
-      software_revision = e.text
+      sr = e.text
     end
-    software_revision
+    sr
   end
 end

@@ -305,12 +305,12 @@ class Cisco::Client
     # to be implemented by subclasses
   end
 
-  def get_last_reset_time
+  def last_reset_time
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
 
-  def get_last_reset_reason
+  def last_reset_reason
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
@@ -320,7 +320,7 @@ class Cisco::Client
     # to be implemented by subclasses
   end
 
-  def get_boot
+  def boot
     fail Cisco::RequestNotSupported
     # to be implemented by subclasses
   end
