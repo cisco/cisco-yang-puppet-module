@@ -23,14 +23,12 @@ Puppet::Type.type(:cisco_yang).provide(:cisco) do
   confine feature: :node_util
 
   def initialize(value={})
-puts "====> initialize - value: #{value}"
     super(value)
     @node = Cisco::Node.instance(Cisco::Client::GRPC)
     debug 'Created provider instance of cisco_yang.'
   end
 
   def exists?
-puts "====> exists?"
     activate
     source && source != :absent
   end

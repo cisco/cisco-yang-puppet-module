@@ -100,8 +100,9 @@ module Cisco
       if @module.nil?
         @module = Regexp.last_match(1) if line =~ /^module (.+) {/
       elsif @namespace.nil?
-        # move this to the process_file line loop if more general handling is needed
-        while m = line.match(/(.*)"\+$/) # handle split lines
+        # handle split lines (move this to the process_file line
+        # loop if more general handling is needed)
+        until (m = line.match(/(.*)"\+$/)).nil?
           line2 = file.gets
           break if line2.nil?
           line2.match(/^\s*"(.*)/) do |m2|
@@ -154,21 +155,22 @@ module Cisco
                           command:     yang_target,
                           mode:        operation)
         if data && data.strip.length > 0
-          puts "[     Data returned ]"\
+          puts '[     Data returned ]'\
               if @options[:verbose]
           output_data(yang_target, data)
         else
           data = nil
-          puts "[     No data returned ]"\
+          puts '[     No data returned ]'\
               if @options[:verbose]
         end
 
         resource = {
-#          module_name: module_name,
-#          namespace: namespace,
-#          container: container,
+          ensure: data.nil? ? :absent : :present,
           target: yang_target,
-          source: data
+          # source: data,
+          # module_name: module_name,
+          # namespace: namespace,
+          # container: container,
         }
       rescue Cisco::ClientError, Cisco::YangError => e
         puts "[   Processing container #{container} ]" if @options[:verbose]
