@@ -1,8 +1,4 @@
 #!/usr/bin/env ruby
-# Yang Unit Tests
-#
-# Jason Young, June 2016
-#
 # Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +17,8 @@ require 'net/ssh'
 require 'rexml/document'
 
 module Netconf
-  # Class for ssh connection. TODO: Jason
+  # SSH class that does little more than wrap the net/ssh class.  It provides
+  # an interface for receiving packets that is parser based.
   class SSH
     def initialize(args)
       @args = args.clone
@@ -80,7 +77,8 @@ module Netconf
     end
   end # class SSH
 
-  # Format xml TODO: Jason
+  # Module that contains frequently used Netconf XML format strings, and
+  # helper functions for building up properly formatted Netconf frames
   module Format
     DEFAULT_NAMESPACE = "\"urn:ietf:params:xml:ns:netconf:base:1.0\""
 
@@ -174,11 +172,18 @@ module Netconf
   class SSHNotConnected < StandardError
   end
 
-  # netconf_client class TODO: Jason
+  # Netconf client class
+  # [1] defines the netconf frame parsers
+  # [2] connects to SSH
+  # [3] defines a few frame parsing classes for the various response
+  #     types for Netconf/SSH
+  #
   class Client
     public
 
-    # Base class for netconf response TODO: Jason
+    # Base class for netconf responses
+    #
+    # Uses REXML xpath queries to gather any errors
     class RpcResponse
       private
 
@@ -221,7 +226,8 @@ module Netconf
       end
     end
 
-    # Class for GetConfig response TODO: Jason
+    # Parse configuration responses, using REXML xpath
+    # queries to pull configuration data from the response
     class GetConfigResponse < RpcResponse
       private
 
@@ -253,7 +259,9 @@ module Netconf
       end
     end
 
-    # Class for commit response TODO: Jason
+    # Wrapper around RpcResponse purely by name.  As
+    # commit responses cannot contain data other than errors
+    # there's not much else to do
     class CommitResponse < RpcResponse
       private
 
@@ -262,7 +270,9 @@ module Netconf
       end
     end
 
-    # Class for edit config response TODO: Jason
+    # Wrapper around RpcResponse purely by name.  As
+    # edit config responses cannot contain data other than errors
+    # there's not much else to do
     class EditConfigResponse < RpcResponse
       private
 
