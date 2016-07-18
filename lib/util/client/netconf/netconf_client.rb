@@ -186,7 +186,7 @@ module Netconf
   # [3] defines a few frame parsing classes for the various response
   #     types for Netconf/SSH
   #
-  class Client
+  class NetconfClient
     public
 
     # Base class for netconf responses
@@ -261,6 +261,39 @@ module Netconf
       def config_as_string
         o = StringIO.new
         @config.each do |ce|
+          o.write(ce)
+        end
+        o.string
+      end
+    end
+
+    # Parse responses, using REXML xpath
+    # queries to pull data from the response
+    class GetResponse < RpcResponse
+      private
+
+      def initialize(rpc_reply)
+        super(rpc_reply)
+        if rpc_reply.is_a?(String)
+          @data = []
+          formatter = REXML::Formatters::Pretty.new
+          @doc.elements.each('rpc-reply/data/*') do |e|
+            o = StringIO.new
+            formatter.write(e, o)
+            @data << o.string
+          end
+        else
+          @data = []
+        end
+      end
+
+      public
+
+      attr_reader :data
+
+      def data_as_string
+        o = StringIO.new
+        @data.each do |ce|
           o.write(ce)
         end
         o.string
@@ -473,9 +506,9 @@ module Netconf
       @options = options
     end
 
-    def get(filter)
+    def get_oper(filter)
       msg = Format.format_get_msg(@message_id, filter)
-      RpcResponse.new(tx_request_and_rx_reply(msg))
+      GetResponse.new(tx_request_and_rx_reply(msg))
     end
 
     def get_config(filter)
@@ -484,7 +517,7 @@ module Netconf
       else
         msg = Format.format_get_config_msg(@message_id, filter)
       end
-      GetConfigResponse.new(tx_request_and_rx_reply(msg))
+      GetResponse.new(tx_request_and_rx_reply(msg))
     end
 
     def edit_config(target, default_operation, config)
@@ -501,6 +534,10 @@ module Netconf
 
     def stop
       tx_request_and_rx_reply(Format.format_close_session(@message_id))
+    end
+
+    def close
+      @ssh.close if @ssh
     end
   end
 end

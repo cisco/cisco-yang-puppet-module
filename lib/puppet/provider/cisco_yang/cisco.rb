@@ -13,6 +13,7 @@
 # limitations under the License.
 
 require_relative '../../../util/node_util' if Puppet.features.node_util?
+require_relative '../../../util/yang_accessor' if Puppet.features.node_util?
 
 Puppet::Type.type(:cisco_yang).provide(:cisco) do
   desc 'IOS-XR configuration management via YANG.'
