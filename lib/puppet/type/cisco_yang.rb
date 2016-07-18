@@ -48,16 +48,16 @@ Puppet::Type.newtype(:cisco_yang) do
     }
   ~~~
   ~~~puppet
-    cisco_bgp {  '{\"Cisco-IOS-XR-infra-rsi-cfg:vrfs\": [null]}':
+    cisco_yang {  '{\"Cisco-IOS-XR-infra-rsi-cfg:vrfs\": [null]}':
       ensure => absent,
   ~~~
   "
 
   ensurable
 
-  newparam(:target, :parent => YangJson) do
+  newparam(:target, parent: YangJson) do
     isnamevar
-    desc 'String conntaining the model path of the target node in YANG JSON '\
+    desc 'String containing the model path of the target node in YANG JSON '\
          'format, or a reference to a local file containing the model path.'
   end
 
@@ -85,7 +85,7 @@ Puppet::Type.newtype(:cisco_yang) do
     end
   end
 
-  newproperty(:source, :parent => YangJson) do
+  newproperty(:source, parent: YangJson) do
     desc 'The model data in YANG JSON format, or a reference to a local file '\
          'containing the model data.  This property is only used when '\
          'ensure=>present is used.'
@@ -97,8 +97,8 @@ Puppet::Type.newtype(:cisco_yang) do
   validate do
     fail("The 'target' parameter must be set in the manifest.") if self[:target].nil?
     if self[:source].nil? && self[:ensure] == :present
+      fail("The 'source' parameter must be set in the manifest when mode is replace.") if self[:mode] == :replace
       self[:source] = self[:target]
-      puts "NOTE: using target as source"
     end
   end
 end

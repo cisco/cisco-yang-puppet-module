@@ -40,7 +40,7 @@ step 'Setup' do
     property: 'ensure',
     value:    'present',
   }
-  resource_set(agent, resource, "Create a VRF BLUE with properties.")
+  resource_set(agent, resource, 'Create a VRF BLUE with properties.')
 end
 
 teardown do
@@ -50,7 +50,7 @@ end
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: VRF Present" do
+test_name 'TestCase :: VRF Present' do
   id = :replace12
   tests[id][:ensure] = :present
   test_harness_run(tests, id)

@@ -40,7 +40,7 @@ step 'Setup' do
     property: 'ensure',
     value:    'present',
   }
-  resource_set(agent, resource, "Create a VRF BLUE with property vpn id.")
+  resource_set(agent, resource, 'Create a VRF BLUE with property vpn id.')
 end
 
 teardown do
@@ -50,7 +50,7 @@ end
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: Merge12 VRF BLUE" do
+test_name 'TestCase :: Merge12 VRF BLUE' do
   id = :merge12
   tests[id][:ensure] = :present
   test_harness_run(tests, id)

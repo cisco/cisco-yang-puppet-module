@@ -39,7 +39,7 @@ step 'Setup' do
     property: 'ensure',
     value:    'present',
   }
-  resource_set(agent, resource, "Create a VRF BLUE.")
+  resource_set(agent, resource, 'Create a VRF BLUE.')
 end
 
 teardown do
@@ -49,8 +49,7 @@ end
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: VRF Absent" do
-
+test_name 'TestCase :: VRF Absent' do
   # -------------------------------------------------------------------
   id = :delete
   tests[id][:ensure] = :absent

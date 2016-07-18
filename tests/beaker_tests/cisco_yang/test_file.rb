@@ -57,7 +57,7 @@ end
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: read config from vrfs.json file"  do
+test_name 'TestCase :: read config from vrfs.json file' do
   id = :file_merge
   tests[id][:ensure] = :present
   test_harness_run(tests, id)
