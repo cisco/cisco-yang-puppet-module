@@ -35,7 +35,7 @@ module Netconf
       ssh_args[:number_of_password_prompts] = 0
       # Enable if you're having trouble with SSH, change :info to :debug if you
       # are really having trouble
-      #ssh_args[:verbose] = :info if Cisco::Logger.level == Logger::DEBUG
+      ssh_args[:verbose] = :info if Cisco::Logger.level == Logger::DEBUG
       debug "Netconf::SSH::open with args: #{@args} and ssh_args: #{ssh_args}"
 
       @connection = Net::SSH.start(@args[:target],
@@ -461,7 +461,7 @@ module Netconf
       buff = StringIO.new
       # NB: Throwing the capabilities list on the floor here,
       #     since this is only for XR based netconf, and in
-      #     the puppet context, this is fine
+      #     the puppet context, this is fine for now
       @ssh.receive(hello_parser(buff))
     rescue => e
       # It's possible to get these exceptions (maybe more)
@@ -471,6 +471,7 @@ module Netconf
       # Errno::EHOSTUNREACH
       # Errno::ECONNREFUSED
       @ssh = nil
+      debug "Netconf::NetconfClient connect failed with #{e}"
       raise e
     end
 
@@ -489,6 +490,7 @@ module Netconf
       if @options.key?(:no_reconnect)
         raise e
       else
+        debug "Netconf::NetconfClient connecting due to Net::SSH::Disconnect"
         connect_internal
         tx_request_and_rx_reply_internal(msg)
       end
@@ -497,46 +499,64 @@ module Netconf
     public
 
     def connect
+      debug "Netconf::NetconfClient connecting by request"
       connect_internal
     end
 
     def initialize(login, options={})
+      debug "Netconf::NetconfClient started with login: #{login} and options: #{options}"
       @login = login
       @ssh = nil
       @options = options
     end
 
     def get_oper(filter)
+      debug "Netconf::NetconfClient get_oper with filter #{filter}"
       msg = Format.format_get_msg(@message_id, filter)
-      GetResponse.new(tx_request_and_rx_reply(msg))
+      rsp = GetResponse.new(tx_request_and_rx_reply(msg))
+      debug "Netconf::NetconfClient get_oper returned #{rsp.response}"
+      rsp
     end
 
     def get_config(filter)
+      debug "Netconf::NetconfClient get_config with filter #{filter}"
       if filter == '' || filter.nil?
         msg = Format.format_get_config_all_msg(@message_id)
       else
         msg = Format.format_get_config_msg(@message_id, filter)
       end
-      GetResponse.new(tx_request_and_rx_reply(msg))
+      rsp = GetResponse.new(tx_request_and_rx_reply(msg))
+      debug "Netconf::NetconfClient get_config returned #{rsp.response}"
     end
 
     def edit_config(target, default_operation, config)
+      debug "Netconf::NetconfClient edit_config"
+      debug "target:\n#{target}"
+      debug "default_operation: #{default_operation}"
+      debug "config:\n#{config}"
       msg = Format.format_edit_config_msg(@message_id,
                                           default_operation,
                                           target,
                                           config)
-      EditConfigResponse.new(tx_request_and_rx_reply(msg))
+      rsp = EditConfigResponse.new(tx_request_and_rx_reply(msg))
+      debug "Netconf::NetconfClient edit_config returned #{rsp.response}"
+      rsp
     end
 
     def commit_changes
-      CommitResponse.new(tx_request_and_rx_reply(Format.format_commit_msg(@message_id)))
+      debug "Netconf::NetconfClient commit_changes"
+      rsp = CommitResponse.new(tx_request_and_rx_reply(Format.format_commit_msg(@message_id)))
+      debug "Netconf::NetconfClient commit_changes returned #{rsp.response}"
+      rsp
     end
 
     def stop
+      debug "Netconf::NetconfClient stop"
       tx_request_and_rx_reply(Format.format_close_session(@message_id))
     end
 
     def close
+      debug "Netconf::NetconfClient close"
       @ssh.close if @ssh
     end
   end
@@ -613,7 +633,7 @@ login = { :target => '192.168.1.16',
 #filter = vrf_filter
 #filter = srlg_filter
 #puts "NC client starting"
-ncc = Netconf::Client.new(login)
+ncc = Netconf::NetconfClient.new(login)
 begin
   #puts "NC client connecting"
   ncc.connect
@@ -632,12 +652,12 @@ require 'pry-nav'
 filter = '<platform-inventory xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-plat-chas-invmgr-oper"/>'
 #filter = '<platform xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-plat-chas-invmgr-oper"/>'
 #filter = '<inventory xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-invmgr-oper"/>'
-reply = ncc.get(filter)
+reply = ncc.get_oper(filter)
 revision = nil
 formatter = REXML::Formatters::Pretty.new()
 o = StringIO.new
 formatter.write(reply.response, o)
-puts o.string
+#puts o.string
 exit
 #binding.pry
 #reply.response.elements.each("rpc-reply/data/inventory/racks/rack/entity/slot/tsi1s/tsi1/attributes/inv-basic-bag/model-name") do |e|
