@@ -18,14 +18,13 @@ require 'logger'
 module Cisco
 end
 
-# Module for logging in CiscoNodeUtils. Will automatically
-# tie into Puppet or Chef logging modules if available.
+# Module for logging. Will use the Puppet logging module if
+# available, otherwise will create a Logger to use
 module Cisco::Logger
   module_function
 
   # Figure out what provider logging utility we
-  # should use: Puppet or Chef.
-  # If not found use the Ruby Logger/STDOUT/INFO.
+  # should use: Puppet or Ruby Logger/STDOUT/INFO.
   if defined? (Puppet::Util::Logging)
     @@logger = Puppet # rubocop:disable Style/ClassVars
     def error(string)
@@ -36,19 +35,15 @@ module Cisco::Logger
       @@logger.warning(string)
     end
   else
-    if defined? (Chef::Log)
-      @@logger = Chef::Log # rubocop:disable Style/ClassVars
-    else
-      @@logger = Logger.new(STDOUT) # rubocop:disable Style/ClassVars
-      @@logger.level = Logger::INFO
+    @@logger = Logger.new(STDOUT) # rubocop:disable Style/ClassVars
+    @@logger.level = Logger::INFO
 
-      def level
-        @@logger.level
-      end
+    def level
+      @@logger.level
+    end
 
-      def level=(level)
-        @@logger.level = level
-      end
+    def level=(level)
+      @@logger.level = level
     end
 
     def error(string)

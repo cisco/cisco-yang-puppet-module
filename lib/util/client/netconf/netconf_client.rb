@@ -15,6 +15,8 @@
 
 require 'net/ssh'
 require 'rexml/document'
+require_relative '../../logger'
+include Cisco::Logger
 
 module Netconf
   # SSH class that does little more than wrap the net/ssh class.  It provides
@@ -31,18 +33,22 @@ module Netconf
       ssh_args[:password] ||= @args[:password]
       ssh_args[:port] = @args[:port]
       ssh_args[:number_of_password_prompts] = 0
-      # Debugs, yay
-      # ssh_args[:verbose] = :debug
+      # Enable if you're having trouble with SSH, change :info to :debug if you
+      # are really having trouble
+      #ssh_args[:verbose] = :info if Cisco::Logger.level == Logger::DEBUG
+      debug "Netconf::SSH::open with args: #{@args} and ssh_args: #{ssh_args}"
 
       @connection = Net::SSH.start(@args[:target],
                                    @args[:username],
                                    ssh_args)
       @channel = @connection.open_channel do |ch|
         ch.subsystem(subsystem)
+        debug "Netconf::SSH connecting to subsystem #{subsystem}"
       end
     end
 
     def close
+      debug "Netconf::SSH closing SSH session"
       @channel.close unless @channel.nil?
       @connection.close unless @connection.nil?
       @channel = nil
@@ -50,10 +56,12 @@ module Netconf
     end
 
     def send(data)
+      debug "Netconf::SSH sending data #{data}"
       @channel.send_data(data)
     end
 
     def receive(parser)
+      debug "Netconf::SSH receiving data"
       continue = true
 
       @channel.on_data do |_ch, data|
@@ -498,7 +506,8 @@ module Netconf
 end
 
 # SAMPLE USAGE
-=begin
+
+Cisco::Logger.level = Logger::DEBUG
 
 red_vrf =
   '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
@@ -561,7 +570,7 @@ vrfs_config =
 #vrf_filter = '<infra-rsi-cfg:vrfs xmlns:infra-rsi-cfg="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>'
 #srlg_filter = '<infra-rsi-cfg:srlg xmlns:infra-rsi-cfg="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>'
 
-login = { :target => '192.168.1.6',
+login = { :target => '192.168.1.16',
   :username => 'root',
   :password => 'lab'}
 #filter = vrf_filter
@@ -684,4 +693,3 @@ reply.errors.each do |e|
   puts "Error:"
   e.each { |k,v| puts "#{k} - #{v}" }
 end
-=end
