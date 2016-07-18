@@ -48,7 +48,7 @@ module Netconf
     end
 
     def close
-      debug "Netconf::SSH closing SSH session"
+      debug 'Netconf::SSH closing SSH session'
       @channel.close unless @channel.nil?
       @connection.close unless @connection.nil?
       @channel = nil
@@ -61,7 +61,7 @@ module Netconf
     end
 
     def receive(parser)
-      debug "Netconf::SSH receiving data"
+      debug 'Netconf::SSH receiving data'
       continue = true
 
       @channel.on_data do |_ch, data|
@@ -187,8 +187,6 @@ module Netconf
   #     types for Netconf/SSH
   #
   class NetconfClient
-    public
-
     # Base class for netconf responses
     #
     # Uses REXML xpath queries to gather any errors
@@ -340,18 +338,16 @@ module Netconf
           if i != 0
             buff.write(data[0..(i - 1)])
             parser.call(data[i..-1])
-          else
-            if data.length >= 5
-              if data[0..4] == ']]>]]'
-                :stop
-              else
-                buff.write(']')
-                parser.call(data[1..-1])
-              end
+          elsif data.length >= 5
+            if data[0..4] == ']]>]]'
+              :stop
             else
-              buffering_data.write(data)
-              :continue
+              buff.write(']')
+              parser.call(data[1..-1])
             end
+          else
+            buffering_data.write(data)
+            :continue
           end
         end
       end
@@ -384,12 +380,11 @@ module Netconf
           if data.length >= 3
             if data[0..1] != "\n#"
               fail ParseException, "expected LF HASH, but didn't get one with #{data}"
+            elsif data[2] == '#'
+              state = :scanning_for_end_of_chunks
+              parser.call(data)
             else
-              if data[2] == '#'
-                state = :scanning_for_end_of_chunks
-              else
-                state = :scanning_for_chunk_start
-              end
+              state = :scanning_for_chunk_start
               parser.call(data)
             end
           else
@@ -490,7 +485,7 @@ module Netconf
       if @options.key?(:no_reconnect)
         raise e
       else
-        debug "Netconf::NetconfClient connecting due to Net::SSH::Disconnect"
+        debug 'Netconf::NetconfClient connecting due to Net::SSH::Disconnect'
         connect_internal
         tx_request_and_rx_reply_internal(msg)
       end
@@ -499,7 +494,7 @@ module Netconf
     public
 
     def connect
-      debug "Netconf::NetconfClient connecting by request"
+      debug 'Netconf::NetconfClient connecting by request'
       connect_internal
     end
 
@@ -527,10 +522,11 @@ module Netconf
       end
       rsp = GetResponse.new(tx_request_and_rx_reply(msg))
       debug "Netconf::NetconfClient get_config returned #{rsp.response}"
+      rsp
     end
 
     def edit_config(target, default_operation, config)
-      debug "Netconf::NetconfClient edit_config"
+      debug 'Netconf::NetconfClient edit_config'
       debug "target:\n#{target}"
       debug "default_operation: #{default_operation}"
       debug "config:\n#{config}"
@@ -544,19 +540,19 @@ module Netconf
     end
 
     def commit_changes
-      debug "Netconf::NetconfClient commit_changes"
+      debug 'Netconf::NetconfClient commit_changes'
       rsp = CommitResponse.new(tx_request_and_rx_reply(Format.format_commit_msg(@message_id)))
       debug "Netconf::NetconfClient commit_changes returned #{rsp.response}"
       rsp
     end
 
     def stop
-      debug "Netconf::NetconfClient stop"
+      debug 'Netconf::NetconfClient stop'
       tx_request_and_rx_reply(Format.format_close_session(@message_id))
     end
 
     def close
-      debug "Netconf::NetconfClient close"
+      debug 'Netconf::NetconfClient close'
       @ssh.close if @ssh
     end
   end
@@ -564,6 +560,7 @@ end
 
 # SAMPLE USAGE
 
+=begin
 Cisco::Logger.level = Logger::DEBUG
 
 red_vrf =
@@ -624,18 +621,18 @@ vrfs_config =
    </vrf>
   </vrfs>'
 
-#vrf_filter = '<infra-rsi-cfg:vrfs xmlns:infra-rsi-cfg="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>'
-#srlg_filter = '<infra-rsi-cfg:srlg xmlns:infra-rsi-cfg="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>'
+# vrf_filter = '<infra-rsi-cfg:vrfs xmlns:infra-rsi-cfg="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>'
+# srlg_filter = '<infra-rsi-cfg:srlg xmlns:infra-rsi-cfg="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>'
 
-login = { :target => '192.168.1.16',
-  :username => 'root',
-  :password => 'lab'}
-#filter = vrf_filter
-#filter = srlg_filter
-#puts "NC client starting"
+login = { target:   '192.168.1.16',
+          username: 'root',
+          password: 'lab' }
+# filter = vrf_filter
+# filter = srlg_filter
+# puts "NC client starting"
 ncc = Netconf::NetconfClient.new(login)
 begin
-  #puts "NC client connecting"
+  # puts "NC client connecting"
   ncc.connect
 rescue => e
   puts "Attempted to connect and got #{e.class}/#{e}"
@@ -645,37 +642,37 @@ end
 require 'pry'
 require 'pry-nav'
 
-#filter = '<inventory xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-invmgr-oper"/>'
-#filter = '<inventory xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-invmgr-oper-sub1"/>'
-#filter = '<cfm xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ethernet-cfm-oper"/>'
-#filter = '<system-time xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-shellutil-oper"/>'
+# filter = '<inventory xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-invmgr-oper"/>'
+# filter = '<inventory xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-invmgr-oper-sub1"/>'
+# filter = '<cfm xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ethernet-cfm-oper"/>'
+# filter = '<system-time xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-shellutil-oper"/>'
 filter = '<platform-inventory xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-plat-chas-invmgr-oper"/>'
-#filter = '<platform xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-plat-chas-invmgr-oper"/>'
-#filter = '<inventory xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-invmgr-oper"/>'
+# filter = '<platform xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-plat-chas-invmgr-oper"/>'
+# filter = '<inventory xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-invmgr-oper"/>'
 reply = ncc.get_oper(filter)
 revision = nil
-formatter = REXML::Formatters::Pretty.new()
+formatter = REXML::Formatters::Pretty.new
 o = StringIO.new
 formatter.write(reply.response, o)
-#puts o.string
+# puts o.string
 exit
-#binding.pry
-#reply.response.elements.each("rpc-reply/data/inventory/racks/rack/entity/slot/tsi1s/tsi1/attributes/inv-basic-bag/model-name") do |e|
-#puts "here"
-#reply.response.elements.each("rpc-reply/data/platform-inventory/racks/rack/attributes/basic-info/serial-number") do |e|
-  #puts "name: #{e.name}, text: #{e.text}"
-#end
+# binding.pry
+# reply.response.elements.each("rpc-reply/data/inventory/racks/rack/entity/slot/tsi1s/tsi1/attributes/inv-basic-bag/model-name") do |e|
+# puts "here"
+# reply.response.elements.each("rpc-reply/data/platform-inventory/racks/rack/attributes/basic-info/serial-number") do |e|
+# puts "name: #{e.name}, text: #{e.text}"
+# end
 exit
-name = ""
-reply.response.elements.each("rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/name") do |e|
+name = ''
+reply.response.elements.each('rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/name') do |e|
   name = e.text
 end
-product_id = ""
-reply.response.elements.each("rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/model-name") do |e|
+product_id = ''
+reply.response.elements.each('rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/model-name') do |e|
   product_id = e.text
 end
-software_revision = ""
-reply.response.elements.each("rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/software-revision") do |e|
+software_revision = ''
+reply.response.elements.each('rpc-reply/data/inventory/racks/rack/attributes/inv-basic-bag/software-revision') do |e|
   software_revision = e.text
 end
 
@@ -684,69 +681,67 @@ puts product_id
 puts software_revision
 exit
 
-#filter = '<srlg xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-oper"/>'
+# filter = '<srlg xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-oper"/>'
 filter = '<inventory xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-invmgr-oper"/>'
 reply = ncc.get(filter)
-#binding.pry
-formatter = REXML::Formatters::Pretty.new()
+# binding.pry
+formatter = REXML::Formatters::Pretty.new
 o = StringIO.new
-#reply.response.elements.each("rpc-reply/data/inventory/racks/*") do |e|
+# reply.response.elements.each("rpc-reply/data/inventory/racks/*") do |e|
 revision = nil
-reply.response.elements.each("rpc-reply/data/inventory/racks/rack/entity/slot/tsi1s/tsi1/attributes/inv-basic-bag/software-revision") do |e|
-  if e.text != nil
-    revision = e.text
-  end
-  #formatter.write(e, o)
+reply.response.elements.each('rpc-reply/data/inventory/racks/rack/entity/slot/tsi1s/tsi1/attributes/inv-basic-bag/software-revision') do |e|
+  revision = e.text unless e.text.nil?
+  # formatter.write(e, o)
 end
 puts revision
-#puts o.string
+# puts o.string
 exit
 
-puts "NC client connected"
-#reply = ncc.get_config(vrf_filter)
+puts 'NC client connected'
+# reply = ncc.get_config(vrf_filter)
 reply = ncc.get_config(nil)
 puts reply.config_as_string
 exit
 
-
-reply = ncc.edit_config("candidate", "merge", rds)
-puts "edit_config response errors"
+reply = ncc.edit_config('candidate', 'merge', rds)
+puts 'edit_config response errors'
 reply.errors.each do |e|
-  puts "Error:"
-  e.each { |k,v| puts "#{k} - #{v}" }
+  puts 'Error:'
+  e.each { |k, v| puts "#{k} - #{v}" }
 end
-reply = ncc.commit_changes()
-puts "commit_changes response errors"
+reply = ncc.commit_changes
+puts 'commit_changes response errors'
 reply.errors.each do |e|
-  puts "Error:"
-  e.each { |k,v| puts "#{k} - #{v}" }
+  puts 'Error:'
+  e.each { |k, v| puts "#{k} - #{v}" }
 end
 
 exit
 
 # Add the red vrf
-reply = ncc.edit_config("candidate", "merge", red_vrf)
-puts "edit_config response errors"
+reply = ncc.edit_config('candidate', 'merge', red_vrf)
+puts 'edit_config response errors'
 reply.errors.each do |e|
-  puts "Error:"
-  e.each { |k,v| puts "#{k} - #{v}" }
+  puts 'Error:'
+  e.each { |k, v| puts "#{k} - #{v}" }
 end
-reply = ncc.commit_changes()
-puts "commit_changes response errors"
+reply = ncc.commit_changes
+puts 'commit_changes response errors'
 reply.errors.each do |e|
-  puts "Error:"
-  e.each { |k,v| puts "#{k} - #{v}" }
+  puts 'Error:'
+  e.each { |k, v| puts "#{k} - #{v}" }
 end
 
-reply = ncc.edit_config("candidate", "merge", delete_red_vrf)
-puts "edit_config response errors"
+reply = ncc.edit_config('candidate', 'merge', delete_red_vrf)
+puts 'edit_config response errors'
 reply.errors.each do |e|
-  puts "Error:"
-  e.each { |k,v| puts "#{k} - #{v}" }
+  puts 'Error:'
+  e.each { |k, v| puts "#{k} - #{v}" }
 end
-reply = ncc.commit_changes()
-puts "commit_changes response errors"
+reply = ncc.commit_changes
+puts 'commit_changes response errors'
 reply.errors.each do |e|
-  puts "Error:"
-  e.each { |k,v| puts "#{k} - #{v}" }
+  puts 'Error:'
+  e.each { |k, v| puts "#{k} - #{v}" }
 end
+=end

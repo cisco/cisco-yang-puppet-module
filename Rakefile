@@ -9,7 +9,7 @@ task :validate do
     sh "puppet parser validate --noop #{manifest}"
   end
   Dir['spec/**/*.rb', 'lib/**/*.rb'].each do |ruby_file|
-    sh "ruby -c #{ruby_file}" unless ruby_file =~ /spec\/fixtures/
+    sh "ruby -c #{ruby_file}" unless ruby_file =~ %r{/spec\/fixtures/}
   end
   Dir['templates/**/*.erb'].each do |template|
     sh "erb -P -x -T '-' #{template} | ruby -c"

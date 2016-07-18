@@ -63,6 +63,7 @@ module Cisco
         end
         out = convert_xml(REXML::Document.new(input, @iw))
       end
+      out
     end
 
     def self.insync_for_merge(target, current)
