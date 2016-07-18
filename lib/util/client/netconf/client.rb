@@ -33,9 +33,9 @@ class Cisco::Client::NETCONF < Cisco::Client
                username: kwargs[:username],
                password: kwargs[:password] }
 
-    @client = Netconf::Client.new(@login)
+    @netconf_client = Netconf::NetconfClient.new(@login)
     begin
-      @client.connect
+      @netconf_client.connect
     rescue => e
       puts "Attempted to connect and got class:#{e.class}/error:#{e}"
       raise_cisco(e)
@@ -78,13 +78,13 @@ class Cisco::Client::NETCONF < Cisco::Client
     begin
       mode = kwargs[:mode] || :merge
       fail ArgumentError unless Cisco::NETCONF_SET_MODE.include? mode
-      reply = @client.edit_config('candidate', mode.to_s, values)
+      reply = @netconf_client.edit_config('candidate', mode.to_s, values)
       if reply.errors?
         fail Cisco::YangError.new( # rubocop:disable Style/RaiseArgs
           rejected_input: "apply of #{values}",
           error:          reply.errors_as_string)
       end
-      reply = @client.commit_changes
+      reply = @netconf_client.commit_changes
       if reply.errors?
         fail Cisco::YangError.new( # rubocop:disable Style/RaiseArgs
           rejected_input: "commit of #{values}",
@@ -96,7 +96,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   end
 
   def get(command: nil,
-          **_kwargs)
+          **kwargs)
     begin
       doc = REXML::Document.new(command)
     rescue => e
@@ -107,15 +107,22 @@ class Cisco::Client::NETCONF < Cisco::Client
     return nil if doc.root.nil?
 
     begin
-      reply = @client.get_config(command)
+      mode = kwargs[:mode] || :get_config
+
+      if mode == :get_oper
+        reply = @netconf_client.get_oper(command)
+      else
+        reply = @netconf_client.get_config(command)
+      end
 
       if reply.errors?
         fail Cisco::YangError.new( # rubocop:disable Style/RaiseArgs
           rejected_input: command,
           error:          reply.errors_as_string)
       else
-        reply.config_as_string
+        reply.data_as_string
       end
+
     rescue => e
       raise_cisco(e)
     end
@@ -128,7 +135,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   def inventory
     unless @inventory
       filter = '<inventory xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-invmgr-oper"/>'
-      reply = @client.get(filter)
+      reply = @netconf_client.get_oper(filter)
       @inventory = reply.response unless reply.errors?
     end
     @inventory
@@ -137,7 +144,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   def chas_inventory
     unless @chas_inventory
       filter = '<platform-inventory xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-plat-chas-invmgr-oper"/>'
-      reply = @client.get(filter)
+      reply = @netconf_client.get_oper(filter)
       @chas_inventory = reply.response unless reply.errors?
     end
     @chas_inventory
@@ -146,7 +153,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   def ip_domain
     unless @ip_domain
       filter = '<ip-domain xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ip-domain-oper"/>'
-      reply = @client.get(filter)
+      reply = @netconf_client.get_oper(filter)
       @ip_domain = reply.response unless reply.errors?
     end
     @ip_domain
@@ -155,7 +162,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   def system_time
     unless @system_time
       filter = '<system-time xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-shellutil-oper"/>'
-      reply = @client.get(filter)
+      reply = @netconf_client.get_oper(filter)
       @system_time = reply.response unless reply.errors?
     end
     @system_time
@@ -164,7 +171,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   def software_install
     unless @software_install
       filter = '<software-install xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-spirit-install-instmgr-oper"/>'
-      reply = @client.get(filter)
+      reply = @netconf_client.get_oper(filter)
       @software_install = reply.response unless reply.errors?
     end
     @software_install
@@ -173,7 +180,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   def diag
     unless @diag
       filter = '<diag xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-sdr-invmgr-diag-oper"/>'
-      reply = @client.get(filter)
+      reply = @netconf_client.get_oper(filter)
       @diag = reply.response unless reply.errors?
     end
     @diag
@@ -182,7 +189,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   def redundancy
     unless @redundancy
       filter = '<redundancy xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rmf-oper"/>'
-      reply = @client.get(filter)
+      reply = @netconf_client.get_oper(filter)
       @redundancy = reply.response unless reply.errors?
     end
     @redundancy
