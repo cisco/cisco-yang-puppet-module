@@ -95,7 +95,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     end
   end
 
-  def get(command:     nil,
+  def get(command: nil,
           **_kwargs)
     begin
       doc = REXML::Document.new(command)

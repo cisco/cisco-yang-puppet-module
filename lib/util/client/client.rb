@@ -150,7 +150,7 @@ class Cisco::Client
   # @param value [String, Regexp] Specific key or regexp to look up
   # @param kwargs data-format-specific args
   # @return [String, Hash, nil] The state found, or nil if not found.
-  def get(command:     nil,
+  def get(command: nil,
           **_kwargs)
     # subclasses will generally want to call Client.munge_to_array()
     # on value before calling super()

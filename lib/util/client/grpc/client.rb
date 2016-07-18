@@ -96,7 +96,7 @@ module Cisco
         yang_req(@config, mode.to_s, ConfigArgs.new(yangjson: values))
       end
 
-      def get(command:     nil,
+      def get(command: nil,
               **kwargs)
         super
         fail ArgumentError if command.nil?

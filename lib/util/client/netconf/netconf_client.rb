@@ -434,7 +434,7 @@ module Netconf
     end
 
     def tx_request_and_rx_reply_internal(msg)
-      fail SSHNotConnected.new unless @ssh
+      fail SSHNotConnected.new unless @ssh # rubocop:disable Style/RaiseArgs
       @ssh.send(msg)
       buff = StringIO.new
       @ssh.receive(netconf_1_1_parser(buff))
