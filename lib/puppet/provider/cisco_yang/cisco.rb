@@ -71,6 +71,13 @@ Puppet::Type.type(:cisco_yang).provide(:cisco) do
     end
 
     @source = source_yang
+  rescue Exception => e
+    unless e.message =~ /unknown-namespace/ ||
+           e.message =~ /not recognized or supported/
+      raise
+    end
+    error e.message
+    @source = nil
   end
 
   # Set the source YANG.
@@ -93,15 +100,11 @@ Puppet::Type.type(:cisco_yang).provide(:cisco) do
 
   def self.instances
     ya = Cisco::YangAccessor.new
-    resources = ya.process(client_class: Cisco::Client::GRPC)
+    targets = ya.targets(client_class: Cisco::Client::GRPC)
 
-    resources.map do |r|
-      new(name: r[:target])
+    targets.map do |target|
+      new(name: target)
     end
-  rescue Exception => e
-    puts "Error during self.instances: #{e}"
-    puts e.backtrace
-    abort e.message
   end
 
   def activate

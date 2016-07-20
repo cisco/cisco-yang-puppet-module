@@ -26,6 +26,10 @@ module Cisco
     def process(options)
       @options = options
 
+      # suppress stdout
+      old_stdout = $stdout
+      $stdout = StringIO.new if @options[:quiet]
+
       client # initialize the client
 
       dir_or_file = options[:path] || '/pkg/yang'
@@ -55,14 +59,14 @@ module Cisco
       @cnrs = 0
       @errors = 0
 
-      resources = []
+      targets = []
 
       if file
-        resources.concat(process_file(file))
+        targets.concat(process_file(file))
         @files += 1
       else
         Dir.glob(dir + '/*.yang').sort.each do |item|
-          resources.concat(process_file(item))
+          targets.concat(process_file(item))
           @files += 1
         end
       end
@@ -75,7 +79,16 @@ module Cisco
       puts "Time: #{delta.round(2)} seconds"
       puts # spacer
 
-      resources
+      $stdout = old_stdout
+
+      targets
+    end
+
+    def targets(options)
+      options[:parse_only] = true;
+      options[:quiet] = true;
+
+      process(options)
     end
 
     def process_file(file)
@@ -83,17 +96,17 @@ module Cisco
       @namespace = nil
       @containers = {}
 
-      resources = []
+      targets = []
       puts "[ Processing file #{file} ]" if @options[:verbose]
 
       File.open(file) do |f|
         loop do
           break if (line = f.gets).nil?
-          resource = process_line(line, f)
-          resources << resource if resource
+          target = process_line(line, f)
+          targets << target if target
         end
       end
-      resources
+      targets
     end
 
     def process_line(line, file)
@@ -146,41 +159,31 @@ module Cisco
       @containers[container] = true
       @cnrs += 1
 
-      resource = nil
-
-      begin
-        puts "[   Processing container #{container}... ]"\
-            if @options[:verbose]
-        data = client.get(data_format: :yang_json,
-                          command:     yang_target,
-                          mode:        operation)
-        if data && data.strip.length > 0
-          puts '[     Data returned ]'\
+      unless @options[:parse_only]
+        begin
+          puts "[   Processing container #{container}... ]"\
               if @options[:verbose]
-          output_data(yang_target, data)
-        else
-          data = nil
-          puts '[     No data returned ]'\
-              if @options[:verbose]
+          data = client.get(data_format: :yang_json,
+                            command:     yang_target,
+                            mode:        operation)
+          if data && data.strip.length > 0
+            puts '[     Data returned ]'\
+                if @options[:verbose]
+            output_data(yang_target, data)
+          else
+            data = nil
+            puts '[     No data returned ]'\
+                if @options[:verbose]
+          end
+        rescue Cisco::ClientError, Cisco::YangError => e
+          @errors += 1
+          puts "!!Error on '#{yang_target}': #{e}"
+          debug e.backtrace
+          puts # spacer
         end
-
-        resource = {
-          ensure: data.nil? ? :absent : :present,
-          target: yang_target,
-          # source: data,
-          # module_name: module_name,
-          # namespace: namespace,
-          # container: container,
-        }
-      rescue Cisco::ClientError, Cisco::YangError => e
-        puts "[   Processing container #{container} ]" if @options[:verbose]
-        @errors += 1
-        puts "!!Error on '#{yang_target}': #{e}"
-        debug e.backtrace
-        puts # spacer
       end
 
-      resource
+      yang_target
     end
 
     def output_data(yang_target, data)
