@@ -85,8 +85,8 @@ module Cisco
     end
 
     def targets(options)
-      options[:parse_only] = true;
-      options[:quiet] = true;
+      options[:parse_only] = true
+      options[:quiet] = true
 
       process(options)
     end
@@ -171,7 +171,6 @@ module Cisco
                 if @options[:verbose]
             output_data(yang_target, data)
           else
-            data = nil
             puts '[     No data returned ]'\
                 if @options[:verbose]
           end

@@ -67,10 +67,8 @@ Puppet::Type.type(:cisco_yang_netconf).provide(:cisco) do
     end
 
     @source = source_yang
-  rescue Exception => e
-    unless e.message =~ /unknown-namespace/
-      raise
-    end
+  rescue StandardError => e
+    raise unless e.message =~ /unknown-namespace/
     error e.message
     @source = nil
   end

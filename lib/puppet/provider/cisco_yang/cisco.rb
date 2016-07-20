@@ -71,7 +71,7 @@ Puppet::Type.type(:cisco_yang).provide(:cisco) do
     end
 
     @source = source_yang
-  rescue Exception => e
+  rescue StandardError => e
     unless e.message =~ /unknown-namespace/ ||
            e.message =~ /not recognized or supported/
       raise
