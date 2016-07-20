@@ -1,17 +1,45 @@
-require 'puppetlabs_spec_helper/rake_tasks'
-require 'puppet-lint/tasks/puppet-lint'
-PuppetLint.configuration.send('disable_80chars')
-PuppetLint.configuration.ignore_paths = ['spec/**/*.pp', 'pkg/**/*.pp']
+# Rakefile for testing rspec.
+#
+# October, 2013
+#
+# Copyright (c) 2013-2015 Cisco and/or its affiliates.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-desc 'Validate manifests, templates, and ruby files'
-task :validate do
-  Dir['manifests/**/*.pp'].each do |manifest|
-    sh "puppet parser validate --noop #{manifest}"
-  end
-  Dir['spec/**/*.rb', 'lib/**/*.rb'].each do |ruby_file|
-    sh "ruby -c #{ruby_file}" unless ruby_file =~ %r{/spec\/fixtures/}
-  end
-  Dir['templates/**/*.erb'].each do |template|
-    sh "erb -P -x -T '-' #{template} | ruby -c"
-  end
-end
+require 'facter'
+require 'rubocop/rake_task'
+
+task default: %w(rubocop test)
+
+RuboCop::RakeTask.new
+
+task :test do
+  rspec_cmd = ''
+  spec_files = ''
+
+  puppet_version = Facter.value(:puppetversion)
+  if puppet_version.nil?
+    fail "Can't find a puppet version."
+  elsif puppet_version.include? 'Enterprise'
+    rspec_cmd = '/opt/puppet/bin/rspec'
+  else
+    rspec_cmd = 'rspec' # from path
+  end # if version
+
+  RSPEC_OPTS = [
+    '--color',
+    '--format documentation',
+  ].join(' ')
+
+  sh "#{rspec_cmd} #{RSPEC_OPTS} #{spec_files}"
+end # task test

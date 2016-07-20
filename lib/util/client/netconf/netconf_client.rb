@@ -35,7 +35,7 @@ module Netconf
       ssh_args[:number_of_password_prompts] = 0
       # Enable if you're having trouble with SSH, change :info to :debug if you
       # are really having trouble
-      #ssh_args[:verbose] = :info if Cisco::Logger.level == Logger::DEBUG
+      # ssh_args[:verbose] = :info if Cisco::Logger.level == Logger::DEBUG
       debug "Netconf::SSH::open with args: #{@args} and ssh_args: #{ssh_args}"
 
       @connection = Net::SSH.start(@args[:target],

@@ -92,7 +92,16 @@ Puppet::Type.type(:cisco_yang).provide(:cisco) do
   end
 
   def self.instances
-    []
+    ya = Cisco::YangAccessor.new
+    resources = ya.process({client_class: Cisco::Client::GRPC})
+
+    resources.map do |r|
+        new(:name => r[:target])
+    end
+  rescue Exception => e
+    puts "Error during self.instances: #{e}"
+    puts e.backtrace
+    abort e.message
   end
 
   def activate
