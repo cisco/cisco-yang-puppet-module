@@ -42,7 +42,7 @@ sudo puppet module install pkg/cisco-ciscoyang-0.1.0.tar.gz
 ~~~
 
 ### Puppet Agent
-The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco IOS-XR devices.
+The Puppet Agent requires installation and setup on each device. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco IOS-XR devices.
 
 ## Usage
 
