@@ -93,10 +93,10 @@ Puppet::Type.type(:cisco_yang).provide(:cisco) do
 
   def self.instances
     ya = Cisco::YangAccessor.new
-    resources = ya.process({client_class: Cisco::Client::GRPC})
+    resources = ya.process(client_class: Cisco::Client::GRPC)
 
     resources.map do |r|
-        new(:name => r[:target])
+      new(name: r[:target])
     end
   rescue Exception => e
     puts "Error during self.instances: #{e}"
