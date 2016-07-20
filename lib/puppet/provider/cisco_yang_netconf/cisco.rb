@@ -13,7 +13,8 @@
 # limitations under the License.
 
 require_relative '../../../util/node_util' if Puppet.features.node_util?
-require 'rubygems'
+require_relative '../../../util/yang_accessor' if Puppet.features.node_util?
+# require 'rubygems'
 
 Puppet::Type.type(:cisco_yang_netconf).provide(:cisco) do
   desc 'IOS-XR configuration management via YANG.'
@@ -66,6 +67,10 @@ Puppet::Type.type(:cisco_yang_netconf).provide(:cisco) do
     end
 
     @source = source_yang
+  rescue StandardError => e
+    raise unless e.message =~ /unknown-namespace/
+    error e.message
+    @source = nil
   end
 
   # Set the source YANG.
@@ -87,7 +92,12 @@ Puppet::Type.type(:cisco_yang_netconf).provide(:cisco) do
   end
 
   def self.instances
-    []
+    ya = Cisco::YangAccessor.new
+    targets = ya.targets(client_class: Cisco::Client::NETCONF)
+
+    targets.map do |target|
+      new(name: target)
+    end
   end
 
   def activate
