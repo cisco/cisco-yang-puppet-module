@@ -137,9 +137,6 @@ Allows IOS-XR to be configured using YANG models in JSON format via gRPC.
 
 #### Parameters
 
-##### `ensure`
-Determines whether a certain configuration should be present or not on the device. Valid values are `present` and `absent`.
-
 ##### `target`
 The model path of the target node in YANG JSON format, or a reference to a local file containing the model path.  For example, to configure the list of vrfs in IOS-XR, you could specify a `target` of '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs": [null]}' or reference a file which contained the same JSON string.
 
@@ -150,6 +147,9 @@ Determines which mode is used when setting configuration via ensure=>present. Va
 Valid values are `true` and `false` (which is the default). If `true` is specified, then the config in the source property is set on the device regardless of the current value. If `false` is specified (or no value is specified), the default behavior is to set the configuration only if it is different from the running configuration.
 
 #### Properties
+
+##### `ensure`
+Determines whether a certain configuration should be present or not on the device. Valid values are `present` and `absent`.
 
 ##### `source`
 The model data in YANG JSON format, or a reference to a local file containing the model data.  This property is only used when ensure=>present is specified. In addition, if `source` is not specified when ensure=>present is used, `source` will default to the value of the `target` parameter. This removes some amount of redundancy when the `source` and `target` values are the same (or very similar).
