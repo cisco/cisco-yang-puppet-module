@@ -64,7 +64,7 @@ commit
 end
 ~~~
 
-Refer to the [gRPC configuration guide](http://www.cisco.com/c/en/us/td/docs/iosxr/ncs5500/DataModels/b-Datamodels-cg-ncs5500/b-Datamodels-cg-ncs5500_chapter_010.html#concept_700172ED7CF44313B0D7E521B2983F32) for more options.
+For more options, refer to the gRPC configuration guide for your specific version of XR.
 
 #### Enable Netconf SSH server
 ~~~
@@ -79,13 +79,8 @@ commit
 end
 ~~~
 
-<<<<<<< Updated upstream
-Refer to the [Netconf configuration guide](http://www.cisco.com/c/en/us/td/docs/iosxr/ncs5500/DataModels/b-Datamodels-cg-ncs5500/b-Datamodels-cg-ncs5500_chapter_010.html#concept_36F5E732AF894862AC57FDC5FEBFA170) for more options.
-
-=======
 For more options, refer to the NETCONF configuration guide for your specific version of XR.
 
->>>>>>> Stashed changes
 After applying the correct config, you need to validate that there is an RSA key generated
 ~~~
 show crypto key mypubkey rsa
@@ -113,8 +108,6 @@ interface loopback 1
 !
 end
 ~~~
-
-
 
 ## <a name="env-bs">Puppet Agent Environment: bash-shell</a>
 
