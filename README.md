@@ -13,7 +13,7 @@
 
 ## Overview
 
-The `ciscoyang` module allows configuration of IOS-XR through Cisco supported [YANG data models](https://github.com/YangModels/yang/tree/master/vendor/cisco) in JSON format . This module bundles a Puppet type, provider, Beaker tests, and sample manifests to enable users to configure and manage IOS-XR.
+The `ciscoyang` module allows configuration of IOS-XR through Cisco supported [YANG data models](https://github.com/YangModels/yang/tree/master/vendor/cisco) in JSON format . This module bundles the `cisco_yang` and `cisco_yang_netconf` Puppet types, providers, Beaker tests, and sample manifests to enable users to configure and manage IOS-XR.
 
 Please refer to the [Limitations](#limitations) section for details on currently supported hardware and software.
 The Limitations section also provides details on compatible Puppet Agent and Puppet Master versions.
@@ -24,7 +24,7 @@ Contributions to this Puppet Module are welcome. Guidelines on contributions to 
 
 ## Module Description
 
-This module enables management of supported Cisco Network Elements through the ``cisco_yang`` Puppet Type and IOS XR provider.
+This module enables management of supported Cisco Network Elements through the `cisco_yang` Puppet Type and IOS XR provider.
 
 A typical role-based architecture scenario might involve a network administrator who uses a version control system to manage various YANG-based configuration files.  An IT administrator who is responsible for the puppet infrastructure can simply reference the YANG files from a puppet manifest in order to deploy the configuration.
 
@@ -34,8 +34,15 @@ A typical role-based architecture scenario might involve a network administrator
 
 The `ciscoyang` module must be installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
 
+To manually install the `ciscoyang` module from the github source, perform the following commands from the cisco-yang-puppet-module directory:
+
+~~~bash
+puppet module build
+sudo puppet module install pkg/cisco-ciscoyang-0.1.0.tar.gz
+~~~
+
 ### Puppet Agent
-The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco IOS-XR devices.
+The Puppet Agent requires installation and setup on each device. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco IOS-XR devices.
 
 ## Usage
 
@@ -91,7 +98,7 @@ the agent and then reference it from the manifest.
 }
 ~~~
 
-The following example shows how to use `ciscoyang` to configure two VRF instances on a Cisco IOS-XR device using the Yang Netconf type.
+The following example shows how to use `ciscoyang` to configure two VRF instances on a Cisco IOS-XR device using the Yang NETCONF type.
 
 ~~~puppet
 node 'default' {
@@ -124,9 +131,9 @@ node 'default' {
 ~~~
 
 --
-## <a name="cisco-yang-type">The ``cisco_yang`` Puppet Type<a>
+## <a name="cisco-yang-type">The `cisco_yang` Puppet Type<a>
 
-Allows IOS-XR to be configured using YANG models in JSON format.
+Allows IOS-XR to be configured using YANG models in JSON format via gRPC.
 
 #### Parameters
 
@@ -148,9 +155,9 @@ Valid values are `true` and `false` (which is the default). If `true` is specifi
 The model data in YANG JSON format, or a reference to a local file containing the model data.  This property is only used when ensure=>present is specified. In addition, if `source` is not specified when ensure=>present is used, `source` will default to the value of the `target` parameter. This removes some amount of redundancy when the `source` and `target` values are the same (or very similar).
 
 --
-## <a name="cisco-yang-netconf-type">The ``cisco_yang_netconf`` Puppet Type<a>
+## <a name="cisco-yang-netconf-type">The `cisco_yang_netconf` Puppet Type<a>
 
-The Netconf protocol does not allow deletion of configuration subtrees, but instead requires addition of 'operation="delete"' attributes.  Thus, this is required of the source
+Allows IOS-XR to be configured using YANG models in XML format via NETCONF.
 
 #### Parameters
 
@@ -166,7 +173,7 @@ Valid values are `true` and `false` (which is the default). If `true` is specifi
 #### Properties
 
 ##### `source`
-The model data in YANG XML Netconf format, or a reference to a local file containing the model data. 
+The model data in YANG XML Netconf format, or a reference to a local file containing the model data. *The Netconf protocol does not allow deletion of configuration subtrees, but instead requires addition of 'operation="delete"' attributes in the YANG XML specifed in the `source` property.
 
 ## Limitations
 
@@ -198,7 +205,7 @@ Minimum Requirements:
 ## License
 
 ~~~text
-Copyright (c) 2014-2016 Cisco and/or its affiliates.
+Copyright (c) 2016 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

@@ -6,12 +6,11 @@
 1. [Pre-Install Tasks](#pre-install)
 1. [Puppet Agent Environment: bash-shell](#env-bs)
 1. [Puppet Agent Installation, Configuration and Usage](#agent-config)
-1. [Optional: Automated Installation Options](#auto-install)
 1. [References](#references)
 
 ## <a name="overview">Overview</a>
 
-This document describes Puppet agent installation and setup on Cisco IOS XR devices. These instructions focus on manual setup. See the [Automated Installation](#auto-install) section for documentation regarding alternative installation methods.
+This document describes Puppet agent installation and setup on Cisco IOS XR devices
 
 ## <a name="pre-install">Pre-Install Tasks</a>
 
@@ -40,9 +39,6 @@ interface GigabitEthernet0/0/0/0
 router static
  address-family ipv4 unicast
   0.0.0.0/0 GigabitEthernet0/0/0/0 10.0.0.1
-!
-grpc
- port 57799 # optional - default is 57400
 !
 tpa
  address-family ipv4
@@ -250,10 +246,6 @@ chkconfig --level 345 puppet on
 service puppet start
 ~~~
 
-## <a name="auto-install">Automated Installation Options</a>
-
-[Beaker](README-beaker-agent-install.md) - Installing and Configuring Puppet Agent Using the Beaker Tool
-
 ## <a name="references">References</a>
 
 [Cisco IOS XR Application Hosting Configuration Guide](http://www.cisco.com/c/en/us/td/docs/iosxr/AppHosting/App-Hosting-Config-Guide.html)
@@ -263,7 +255,7 @@ service puppet start
 
 ----
 ~~~
-Copyright (c) 2014-2016 Cisco and/or its affiliates.
+Copyright (c) 2016 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
