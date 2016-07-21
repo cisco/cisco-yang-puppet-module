@@ -33,7 +33,7 @@ optparse = OptionParser.new do |opts|
 
   opts.on('-o', '--oper',
           'Retrieve operational data instead of configuration '\
-          '(warning: possibly returns a lot of data; use at own risk)') do
+          '(experimental; use at own risk)') do
     options[:oper] = true
   end
 

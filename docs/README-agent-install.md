@@ -76,7 +76,7 @@ end
 ~~~
 
 For more options, refer to the NETCONF configuration guide for your specific version of XR.
- 
+
 After applying the correct config, you need to validate that there is an RSA key generated
 ~~~
 show crypto key mypubkey rsa
@@ -179,7 +179,7 @@ See the following references for more puppet.conf settings:
 * https://docs.puppetlabs.com/puppet/latest/reference/config_file_main.html
 * https://docs.puppetlabs.com/references/latest/configuration.html
 
-#### <a name="configuration">Edit the module config file:</a>
+#### <a name="module-config">Edit the module config file:</a>
 
 The `ciscoyang` puppet module requires configuration through a yaml file. Two configuration file locations are supported:
 
@@ -196,7 +196,7 @@ grpc:
   port: 57400
   username: admin
   password: admin
-  
+
 netconf:
   host: 10.10.10.10
   username: admin
