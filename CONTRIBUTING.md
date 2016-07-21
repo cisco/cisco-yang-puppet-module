@@ -4,8 +4,7 @@ Cisco IOS XR Software is a modular and fully distributed network operating syste
 ## Getting Started
 
 * Create a [GitHub account](https://github.com/signup/free)
-* A virtual XRv 9000 may be helpful for development and testing. Users with a valid [cisco.com](http://cisco.com) user ID can obtain a copy of a virtual XRv 9000 by sending their [cisco.com](http://cisco.com) user ID in an email to [[TODO]]. If you do not have a [cisco.com](http://cisco.com) user ID please register for one at [https://tools.cisco.com/IDREG/guestRegistration](https://tools.cisco.com/IDREG/guestRegistration)
-
+* A virtual XRv 9000 may be helpful for development and testing.
 
 ## Making Changes
 
@@ -13,7 +12,8 @@ Cisco IOS XR Software is a modular and fully distributed network operating syste
 * Pull a branch under the "develop" branch for your changes.
 * Make changes in your branch.
 * Testing
-  * Add beaker test cases to validate your changes.
+  * Add/update minitest test cases to validate your changes (under `tests/minitest`).
+  * Add/update beaker test cases to validate your changes (under `tests/beaker`).
   * Run all the tests to ensure there was no collateral damage to existing code.
   * Check for unnecessary whitespace with `git diff --check`
   * Run `rubocop --lint` against all changed files. See [https://rubygems.org/gems/rubocop](https://rubygems.org/gems/rubocop)
