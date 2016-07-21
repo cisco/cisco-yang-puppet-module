@@ -79,8 +79,13 @@ commit
 end
 ~~~
 
+<<<<<<< Updated upstream
 Refer to the [Netconf configuration guide](http://www.cisco.com/c/en/us/td/docs/iosxr/ncs5500/DataModels/b-Datamodels-cg-ncs5500/b-Datamodels-cg-ncs5500_chapter_010.html#concept_36F5E732AF894862AC57FDC5FEBFA170) for more options.
- 
+
+=======
+For more options, refer to the NETCONF configuration guide for your specific version of XR.
+
+>>>>>>> Stashed changes
 After applying the correct config, you need to validate that there is an RSA key generated
 ~~~
 show crypto key mypubkey rsa
@@ -184,6 +189,34 @@ See the following references for more puppet.conf settings:
 * https://docs.puppetlabs.com/puppet/latest/reference/config_about_settings.html
 * https://docs.puppetlabs.com/puppet/latest/reference/config_file_main.html
 * https://docs.puppetlabs.com/references/latest/configuration.html
+
+#### <a name="module-config">Edit the module config file:</a>
+
+The `ciscoyang` puppet module requires configuration through a yaml file. Two configuration file locations are supported:
+
+* `/etc/cisco_yang.yaml` (system and/or root user configuration)
+* `~/cisco_yang.yaml` (per-user configuration)
+
+If both files exist and are readable, configuration in the user-specific file will take precedence over the system configuration.
+
+This file specifies the host, port, username, and/or password to be used to connect to gRPC and/or NETCONF. Here is an example configuration file:
+
+~~~bash
+grpc:
+  host: 127.0.0.1
+  port: 57400
+  username: admin
+  password: admin
+
+netconf:
+  host: 10.10.10.10
+  username: admin
+  password: admin
+~~~
+
+The `cisco_yang` puppet type uses the `grpc` configuration options and the `cisco_yang_netconf` type uses the `netconf` configuration options. While the gRPC host address can be the standard loopback address (127.0.0.1), the NETCONF host address must be the `loopback 1` address that you configured earlier.
+
+*For security purposes, it is highly recommended that access to this file be restricted to only the owning user (`chmod 0600`).*
 
 #### Run the Puppet Agent
 
