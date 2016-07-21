@@ -7,7 +7,7 @@ to run, this utility needs access to one or more *.yang files (found in the
 `/pkg/yang` directory on the XR device, as well as from other sources). Usually, this
 would be run from the bash-shell on the XR device, but can be run remotely if
 applicable .yang files are available. Client connection information (host, username, etc.)
-is read from the standard [configuration file](README-agent-install.md#module-config).
+is read from the [module configuration file](README-agent-install.md#module-config).
 
 Running `puppet agent -t` on XR caches the module source on the client, usually under the
 `/opt/puppetlabs/puppet/cache` directory.  The `show_running_yang.rb` Ruby file will be
