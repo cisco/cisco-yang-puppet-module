@@ -13,7 +13,7 @@
 
 ## Overview
 
-The `ciscoyang` module allows configuration of IOS-XR through Cisco supported [YANG data models](https://github.com/YangModels/yang/tree/master/vendor/cisco) in JSON format . This module bundles the `cisco_yang` and `cisco_yang_netconf` Puppet types, providers, Beaker tests, and sample manifests to enable users to configure and manage IOS-XR.
+The `ciscoyang` module allows configuration of IOS-XR through Cisco supported [YANG data models](https://github.com/YangModels/yang/tree/master/vendor/cisco) in JSON/XML format. This module bundles the `cisco_yang` and `cisco_yang_netconf` Puppet types, providers, Beaker tests, and sample manifests to enable users to configure and manage IOS-XR.
 
 Please refer to the [Limitations](#limitations) section for details on currently supported hardware and software.
 The Limitations section also provides details on compatible Puppet Agent and Puppet Master versions.
