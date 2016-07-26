@@ -40,7 +40,7 @@ To manually install the `ciscoyang` module from the github source, perform the f
 
 ~~~bash
 $ git clone https://github.com/cisco/cisco-yang-puppet-module.git
-$ cd cisco-network-yang-module
+$ cd cisco-yang-puppet-module
 $ puppet module build
 $ sudo puppet module install pkg/cisco-ciscoyang-0.1.0.tar.gz
 ~~~
