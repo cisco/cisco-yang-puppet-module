@@ -50,7 +50,7 @@ The Puppet Agent requires installation and setup on each device. For more inform
 
 ## Usage
 
-The following example shows how to use `ciscoyang` to configure two VRF instances on a Cisco IOS-XR device.
+The following example manifest shows how to use `ciscoyang` to configure two VRF instances on a Cisco IOS-XR device.
 
 ~~~puppet
 node 'default' {
@@ -88,7 +88,7 @@ node 'default' {
 }
 ~~~
 
-The following example shows how to copy a file from the Puppet master to
+The following example manifest shows how to copy a file from the Puppet master to
 the agent and then reference it from the manifest.
 
 ~~~puppet
@@ -102,7 +102,7 @@ the agent and then reference it from the manifest.
 }
 ~~~
 
-The following example shows how to use `ciscoyang` to configure two VRF instances on a Cisco IOS-XR device using the Yang NETCONF type.
+The following example manifest shows how to use `ciscoyang` to configure two VRF instances on a Cisco IOS-XR device using the Yang NETCONF type.
 
 ~~~puppet
 node 'default' {
