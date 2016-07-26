@@ -30,9 +30,11 @@ A typical role-based architecture scenario might involve a network administrator
 
 ## Setup
 
-### Puppet Master
+### <a name="puppet-master-setup">Puppet Master</a>
 
-The `ciscoyang` module must be installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
+Puppet Server must be installed on the Puppet Master workstation. Please see [Install: Puppet Server](https://docs.puppet.com/puppetserver/latest/install_from_packages.html) for detailed install steps.
+
+Next, the `ciscoyang` module must be installed on the Puppet Master workstation. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
 
 To manually install the `ciscoyang` module from the github source, perform the following commands from the cisco-yang-puppet-module directory:
 
@@ -194,13 +196,6 @@ Minimum Requirements:
   * [https://www.codecademy.com/tracks/ruby](https://www.codecademy.com/tracks/ruby)
   * [https://rubymonk.com/](https://rubymonk.com/)
   * [https://www.codeschool.com/paths/ruby](https://www.codeschool.com/paths/ruby)
-* Ruby Gems
-  * [http://guides.rubygems.org/](http://guides.rubygems.org/)
-  * [https://en.wikipedia.org/wiki/RubyGems](https://en.wikipedia.org/wiki/RubyGems)
-* Yum
-  * [https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified](https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified)
-  * [https://www.centos.org/docs/5/html/yum/](https://www.centos.org/docs/5/html/yum/)
-  * [http://www.linuxcommand.org/man_pages](http://www.linuxcommand.org/man_pages/yum8.html)
 
 ## License
 
