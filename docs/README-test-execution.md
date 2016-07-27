@@ -16,7 +16,7 @@
 
 ## <a name="overview">Overview</a>
 
-This document describes the process for executing tests provided for the code in this Puppet module. The instructions provided below assume you have cloned this repository to a "test driver" workstation and will reference sub-directories under the root `cisco-yang-puppet-module` directory:
+This document describes the process for executing tests provided for the code in this Puppet module. The instructions below assume you have cloned this repository to a "test driver" workstation and will reference subdirectories under the root `cisco-yang-puppet-module` directory:
 
 ~~~
 $ git clone https://github.com/cisco/cisco-yang-puppet-module.git
@@ -25,9 +25,9 @@ $ cd cisco-network-yang-module/tests
 
 ## <a name="minitest">Minitest Tests</a>
 
-The test files located in the `tests/minitest` directory use [minitest](https://github.com/seattlerb/minitest/) as their test framework. These tests generally require a Cisco router, switch, or virtual machine to test against.  The executable minitest files are all named `test_*.rb`.
+The test files located in the `tests/minitest` directory use [minitest](https://github.com/seattlerb/minitest/) as their test framework. In addition to the test driver workstation, these tests generally require a Cisco router, switch, or virtual machine to test against.  The executable minitest files are all named `test_*.rb`.
 
-### <a name="minitest-config">Edit or create a minitest config file:</a>
+### <a name="minitest-config">Edit or create a minitest config file</a>
 
 You must create a `cisco_yang.yaml` file on the driver workstation to specify the XR node under test. Two configuration file locations are supported:
 
@@ -82,7 +82,7 @@ $ rake test
 
 ## <a name="beaker">Beaker Tests</a>
 
-The test files located in the `tests/beaker` directory use [Beaker](https://github.com/puppetlabs/beaker) as their test framework. These tests require a Cisco router, switch, or virtual machine to test against.  The executable Beaker Ruby files are in subdirectories and are named `test_*.rb`.
+The test files located in the `tests/beaker` directory use [Beaker](https://github.com/puppetlabs/beaker) as their test framework. In addition to the test driver workstation, these tests require a Puppet Master workstation and an XR Puppet Agent device.  The executable Beaker Ruby files are in subdirectories and are named `test_*.rb`.
 
 ### <a name="beaker-prereqs">Prerequisites</a>
 
@@ -102,7 +102,7 @@ HOSTS:
         roles:
             - agent
         platform: cisco_ios_xr-6-x86_64
-        ip: <fully qualified domain name>
+        ip: <ip address or fully qualified domain name>
         ssh:
           auth_methods: ["password"]
           # SSHd for third-party network namespace (TPNNS) uses port 57722
@@ -122,7 +122,7 @@ HOSTS:
         roles:
             - master
         platform: <server os-version-architecture>
-        ip: <fully qualifed domain name>
+        ip: <ip address or fully qualifed domain name>
         ssh:
           # Root user/password must be configured for master.
           auth_methods: ["password"]

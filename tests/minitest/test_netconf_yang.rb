@@ -19,7 +19,7 @@ require_relative 'ciscotest'
 require_relative '../../lib/util/client/netconf/netconf'
 
 # TestNetconf- Minitest for Netconf class
-class TestNetconf < CiscoTestCase
+class TestNetconfYang < CiscoTestCase
   @client_class = Cisco::Client::NETCONF
 
   BLUE_VRF = '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">

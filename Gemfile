@@ -25,7 +25,9 @@ gem 'facter', facter_version
 gem 'puppetlabs_spec_helper', '>= 0.8.2'
 gem 'puppet-lint', '>= 1.0.0'
 gem 'rubocop', '= 0.35.1', require: false
-gem 'rake', '~> 10.1.0', require: false
+gem 'rake', '>= 10.5.0', require: false
 gem 'metadata-json-lint'
+gem 'grpc', '~> 0.14.1'
+gem 'net-telnet', '>= 0.1.1'
 
 # vim:ft=ruby

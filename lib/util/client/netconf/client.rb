@@ -133,7 +133,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   end
 
   def inventory
-    unless @inventory
+    unless defined? @inventory
       filter = '<inventory xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-invmgr-oper"/>'
       reply = @netconf_client.get_oper(filter)
       @inventory = reply.response unless reply.errors?
@@ -142,7 +142,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   end
 
   def chas_inventory
-    unless @chas_inventory
+    unless defined? @chas_inventory
       filter = '<platform-inventory xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-plat-chas-invmgr-oper"/>'
       reply = @netconf_client.get_oper(filter)
       @chas_inventory = reply.response unless reply.errors?
@@ -151,7 +151,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   end
 
   def ip_domain
-    unless @ip_domain
+    unless defined? @ip_domain
       filter = '<ip-domain xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ip-domain-oper"/>'
       reply = @netconf_client.get_oper(filter)
       @ip_domain = reply.response unless reply.errors?
@@ -160,7 +160,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   end
 
   def system_time
-    unless @system_time
+    unless defined? @system_time
       filter = '<system-time xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-shellutil-oper"/>'
       reply = @netconf_client.get_oper(filter)
       @system_time = reply.response unless reply.errors?
@@ -169,7 +169,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   end
 
   def software_install
-    unless @software_install
+    unless defined? @software_install
       filter = '<software-install xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-spirit-install-instmgr-oper"/>'
       reply = @netconf_client.get_oper(filter)
       @software_install = reply.response unless reply.errors?
@@ -178,7 +178,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   end
 
   def diag
-    unless @diag
+    unless defined? @diag
       filter = '<diag xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-sdr-invmgr-diag-oper"/>'
       reply = @netconf_client.get_oper(filter)
       @diag = reply.response unless reply.errors?
@@ -187,7 +187,7 @@ class Cisco::Client::NETCONF < Cisco::Client
   end
 
   def redundancy
-    unless @redundancy
+    unless defined? @redundancy
       filter = '<redundancy xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rmf-oper"/>'
       reply = @netconf_client.get_oper(filter)
       @redundancy = reply.response unless reply.errors?
