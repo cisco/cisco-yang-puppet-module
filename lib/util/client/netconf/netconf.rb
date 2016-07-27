@@ -57,7 +57,7 @@ module Cisco
       if empty?(input)
         out = {}
       else
-        if @iw.nil?
+        unless defined? @iw
           @iw = {}
           @iw[:ignore_whitespace_nodes] = :all
         end

@@ -1,5 +1,4 @@
-gem 'minitest', '~> 5.0'
-require 'minitest/autorun'
+require_relative 'ciscotest'
 require_relative '../../lib/util/client/netconf/netconf'
 
 # Two elts in Current, one will be deleted by operation=delete clause
@@ -121,7 +120,7 @@ TARGET_BLUE_VRF_DELETE_DESCRIPTION =
 </infra-rsi-cfg:vrfs>'
 
 # TestNetconfOffline - Offline Minitest for Netconf class
-class TestNetconfOffline < Minitest::Test
+class TestNetconfOffline < CiscoTestCase
   def test_netconf_prefix_merge
     assert(Cisco::Netconf.insync_for_merge(TARGET_BLUE_VRF,
                                            CURRENT_BLUE_VRF),

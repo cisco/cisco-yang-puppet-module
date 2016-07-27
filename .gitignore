@@ -8,3 +8,4 @@ Gemfile.lock
 tests/minitest/coverage/
 tests/minitest/run_grpc.sh
 tests/minitest/run_netconf.sh
+tests/beaker_tests/hosts.cfg

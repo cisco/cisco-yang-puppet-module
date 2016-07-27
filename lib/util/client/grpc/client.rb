@@ -271,7 +271,7 @@ module Cisco
       end
 
       def system_time
-        unless @system_time
+        unless defined? @system_time
           filter = '{"Cisco-IOS-XR-shellutil-oper:system-time":"uptime"}'
           reply = get(command: filter, mode: :get_oper)
           @system_time = JSON.parse(reply)
@@ -280,7 +280,7 @@ module Cisco
       end
 
       def diag
-        unless @diag
+        unless defined? @diag
           filter = '{"Cisco-IOS-XR-sdr-invmgr-diag-oper:diag":"racks"}'
           reply = get(command: filter, mode: :get_oper)
           @diag = JSON.parse(reply)
@@ -289,7 +289,7 @@ module Cisco
       end
 
       def inventory
-        unless @inventory
+        unless defined? @inventory
           filter = '{"Cisco-IOS-XR-invmgr-oper:inventory":"racks"}'
           reply = get(command: filter, mode: :get_oper)
           @inventory = JSON.parse(reply)

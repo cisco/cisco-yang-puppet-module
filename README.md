@@ -30,15 +30,19 @@ A typical role-based architecture scenario might involve a network administrator
 
 ## Setup
 
-### Puppet Master
+### <a name="puppet-master-setup">Puppet Master</a>
 
-The `ciscoyang` module must be installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
+Puppet Server must be installed on the Puppet Master workstation. Please see [Install: Puppet Server](https://docs.puppet.com/puppetserver/latest/install_from_packages.html) for detailed install steps.
 
-To manually install the `ciscoyang` module from the github source, perform the following commands from the cisco-yang-puppet-module directory:
+Next, the `ciscoyang` module must be installed on the Puppet Master workstation. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
+
+To manually install the `ciscoyang` module from the github source, perform the following commands on the Puppet Master workstation:
 
 ~~~bash
-puppet module build
-sudo puppet module install pkg/cisco-ciscoyang-0.1.0.tar.gz
+$ git clone https://github.com/cisco/cisco-yang-puppet-module.git
+$ cd cisco-yang-puppet-module
+$ puppet module build
+$ sudo puppet module install pkg/cisco-ciscoyang-0.1.0.tar.gz
 ~~~
 
 ### Puppet Agent
@@ -46,7 +50,7 @@ The Puppet Agent requires installation and setup on each device. For more inform
 
 ## Usage
 
-The following example shows how to use `ciscoyang` to configure two VRF instances on a Cisco IOS-XR device.
+The following example manifest shows how to use `ciscoyang` to configure two VRF instances on a Cisco IOS-XR device.
 
 ~~~puppet
 node 'default' {
@@ -84,7 +88,7 @@ node 'default' {
 }
 ~~~
 
-The following example shows how to copy a file from the Puppet master to
+The following example manifest shows how to copy a file from the Puppet master to
 the agent and then reference it from the manifest.
 
 ~~~puppet
@@ -98,7 +102,7 @@ the agent and then reference it from the manifest.
 }
 ~~~
 
-The following example shows how to use `ciscoyang` to configure two VRF instances on a Cisco IOS-XR device using the Yang NETCONF type.
+The following example manifest shows how to use `ciscoyang` to configure two VRF instances on a Cisco IOS-XR device using the Yang NETCONF type.
 
 ~~~puppet
 node 'default' {
@@ -194,13 +198,6 @@ Minimum Requirements:
   * [https://www.codecademy.com/tracks/ruby](https://www.codecademy.com/tracks/ruby)
   * [https://rubymonk.com/](https://rubymonk.com/)
   * [https://www.codeschool.com/paths/ruby](https://www.codeschool.com/paths/ruby)
-* Ruby Gems
-  * [http://guides.rubygems.org/](http://guides.rubygems.org/)
-  * [https://en.wikipedia.org/wiki/RubyGems](https://en.wikipedia.org/wiki/RubyGems)
-* Yum
-  * [https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified](https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified)
-  * [https://www.centos.org/docs/5/html/yum/](https://www.centos.org/docs/5/html/yum/)
-  * [http://www.linuxcommand.org/man_pages](http://www.linuxcommand.org/man_pages/yum8.html)
 
 ## License
 

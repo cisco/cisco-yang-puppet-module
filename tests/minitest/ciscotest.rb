@@ -48,7 +48,6 @@ class CiscoTestCase < Minitest::Test
   end
 
   def self.runnable_methods
-    return [] if self.class == CiscoTestCase
     cc = client_class
     return super unless cc
     env = cc ? cc.environment(cc) : nil
@@ -75,7 +74,7 @@ class CiscoTestCase < Minitest::Test
 
     if is_new
       # Record the platform we're running on
-      puts "\nNode under test:"
+      puts "\nNode under test via #{cc}:"
       puts "  - name  - #{@node.host_name}"
       puts "  - type  - #{@node.product_id}"
       puts "  - image - #{@node.system}\n\n"
