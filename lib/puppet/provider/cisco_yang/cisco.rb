@@ -21,7 +21,7 @@ Puppet::Type.type(:cisco_yang).provide(:cisco) do
 
   confine feature: :json
   confine feature: :node_util
-
+  
   def initialize(value={})
     super(value)
     @node = Cisco::Node.instance(Cisco::Client::GRPC)

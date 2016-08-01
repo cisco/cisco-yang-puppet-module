@@ -76,7 +76,7 @@ class Cisco::Client
     Cisco::Environment.environment(environment_name(client_class))
   end
 
-  # Try to create an instance of the specified subclass
+  # Try to create an instance of the specified subclass.
   def self.create(client_class)
     env = environment(client_class)
     env_name = environment_name(client_class)
