@@ -245,42 +245,42 @@ end
 
 CREATE = {
   desc:           'Create VRF BLUE',
-  title:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     source: BLUE_VRF_WO_PROPERTY
-  }
+  },
 }
 
 CREATE_SRLG = {
   desc:           'CREATE SRLG GE0 and GE1',
-  title:  ROOT_SRLG,
+  title:          ROOT_SRLG,
   manifest_props: {
     source: SRLG_GE_01
-  }
+  },
 }
 
 REPLACE = {
   desc:           'Replace VRF GREEN with BLUE',
-  title:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     source: BLUE_VRF_WO_PROPERTY,
     mode:   'replace',
-  }
+  },
 }
 
 REPLACE12 = {
   desc:           'Replace VRF BLUE with BLUE',
-  title:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     # Replace BLUE_VRF_W_PROPERTY1 by BLUE_VRF_W_PROPERTY2.
     source: BLUE_VRF_W_PROPERTY2,
     mode:   'replace',
-  }
+  },
 }
 
 MERGE = {
   desc:           'Merge VRF BLUE with GREEN',
-  title:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     source: BLUE_VRF_WO_PROPERTY,
     mode:   'merge',
@@ -292,7 +292,7 @@ MERGE = {
 
 MERGE12 = {
   desc:           'Merge VRF BLUE with BLUE',
-  title:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     # merge BLUE_VRF_W_PROPERTY2 with existing configuration.
     # Expecting existing configuration to be BLUE_VRF_W_PROPERTY1
@@ -307,16 +307,16 @@ MERGE12 = {
 
 REPLACE_SRLG = {
   desc:           'Update SRLG GE0 properties',
-  title:  ROOT_SRLG,
+  title:          ROOT_SRLG,
   manifest_props: {
     source: SRLG_GE_01_UPDATE,
     mode:   'replace',
-  }
+  },
 }
 
 FILE_MERGE = {
   desc:           'Merge VOIP and INTERNET VRFs with current config',
-  title:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     source: '/root/temp/vrfs.xml',
     mode:   'merge',
@@ -328,7 +328,7 @@ FILE_MERGE = {
 
 FILE_REPLACE = {
   desc:           'Replace current config by VOIP and INTERNET VRFs',
-  title:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     source: '/root/temp/vrfs.xml',
     mode:   'replace',

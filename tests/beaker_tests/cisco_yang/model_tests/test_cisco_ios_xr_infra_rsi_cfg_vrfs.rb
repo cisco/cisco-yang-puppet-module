@@ -22,7 +22,7 @@ tests = {
   agent:         agent,
   resource_name: 'cisco_yang',
   os:            'ios_xr',
-  os_version:    '6.2.1'
+  os_version:    '6.2.1',
 }
 
 # skip entire file if os, version, etc. don't match
@@ -51,7 +51,7 @@ tests[:vrfs] = {
         }
       }',
     mode:   'replace',
-  }
+  },
 }
 
 #################################################################

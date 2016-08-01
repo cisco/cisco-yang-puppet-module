@@ -34,18 +34,18 @@ module Cisco
     # providers shouldn't need to know about or use.
 
     attr_reader :client
-    
+
     # Return a node instance that wraps a client of the specified class.
-    def self.instance(client_class = nil)
+    def self.instance(client_class=nil)
       return @instance_hash[client_class] ||= new(client_class) unless client_class.nil?
-      
+
       # just return one of the cached instances
       return @instance_hash[hash.keys[0]] unless @instance_hash.empty?
-      
+
       # no nodes currently cached, so create one
-      debug "Attempting to create a client (type not specified)..."
+      debug 'Attempting to create a client (type not specified)...'
       env_names = Cisco::Environment.environment_names
-      
+
       Cisco::Client.clients.each do |c|
         client_env_name = Cisco::Client.environment_name(c)
         if env_names.include?(client_env_name)
@@ -53,8 +53,8 @@ module Cisco
           return instance(c)
         end
       end
-      
-      error "No clients configured"
+
+      error 'No clients configured'
     end
 
     def self.instance_exists(client_class)

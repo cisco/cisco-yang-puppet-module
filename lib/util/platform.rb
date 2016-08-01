@@ -17,7 +17,6 @@ require_relative 'node_util'
 module Cisco
   # Platform - class for gathering platform hardware and software information
   class Platform < NodeUtil
-    
     # XR: 6.1.1.04I
     def self.image_version
       config_get('show_version', 'version')

@@ -51,10 +51,10 @@ module Cisco
       end
       @environments
     end
-    
+
     def self.environment_names
       names = []
-      environments.each do |name, config|
+      environments.each do |name, _config|
         names << name
       end
       names

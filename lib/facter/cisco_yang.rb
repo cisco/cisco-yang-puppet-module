@@ -7,9 +7,9 @@ Facter.add(:cisco_yang) do
 
   setcode do
     hash = {}
-    
+
     hash['configured_envs'] = Cisco::Environment.environment_names.join(',')
-    
+
     # don't do this, for now.  It's slow, so wait until we need it
     # Platform = Cisco::Platform
     # hash['system'] = Platform.system
@@ -19,4 +19,4 @@ Facter.add(:cisco_yang) do
 
     hash
   end
-end 
+end

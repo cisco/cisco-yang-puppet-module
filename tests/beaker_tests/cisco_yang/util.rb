@@ -278,68 +278,68 @@ end
 
 DELETE = {
   desc:           'Delete VRF BLUE',
-  title:  BLUE_VRF_WO_PROPERTY,
+  title:          BLUE_VRF_WO_PROPERTY,
   manifest_props: {
-  }
+  },
 }
 
 DELETE_PROPERTY = {
   desc:           'Delete VRF BLUE description',
-  title:  BLUE_VRF_W_PROPERTY2,
+  title:          BLUE_VRF_W_PROPERTY2,
   manifest_props: {
-  }
+  },
 }
 
 CREATE = {
   desc:           'Create VRF BLUE',
-  title:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     source: BLUE_VRF_WO_PROPERTY
-  }
+  },
 }
 
 CREATE_SRLG = {
   desc:           'CREATE SRLG GE0 and GE1',
-  title:  ROOT_SRLG,
+  title:          ROOT_SRLG,
   manifest_props: {
     source: SRLG_GE_01
-  }
+  },
 }
 
 REPLACE = {
   desc:           'Replace VRF GREEN with BLUE',
-  title:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     source: BLUE_VRF_WO_PROPERTY,
     mode:   'replace',
-  }
+  },
 }
 
 REPLACE12 = {
   desc:           'Replace VRF BLUE with BLUE',
-  title:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     # Replace BLUE_VRF_W_PROPERTY1 by BLUE_VRF_W_PROPERTY2.
     source: BLUE_VRF_W_PROPERTY2,
     mode:   'replace',
-  }
+  },
 }
 
 MERGE = {
   desc:           'Merge VRF BLUE with GREEN',
-  title:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     source: BLUE_VRF_WO_PROPERTY,
     mode:   'merge',
   },
   resource:       {
-    source: BLUE_GREEN_VRF_WO_PROPERTY,
+    source: BLUE_GREEN_VRF_WO_PROPERTY
   },
 }
 
 MERGE12 = {
   desc:           'Merge VRF BLUE with BLUE',
-  title:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     # merge BLUE_VRF_W_PROPERTY2 with existing configuration (BLUE_VRF_W_PROPERTY1)
     # resulting BLUE_VRF_W_PROPERTY12
@@ -347,22 +347,22 @@ MERGE12 = {
     mode:   'merge',
   },
   resource:       {
-    source: BLUE_VRF_W_PROPERTY12,
+    source: BLUE_VRF_W_PROPERTY12
   },
 }
 
 REPLACE_SRLG = {
   desc:           'Update SRLG GE0 properties',
-  title:  ROOT_SRLG,
+  title:          ROOT_SRLG,
   manifest_props: {
     source: SRLG_GE_01_UPDATE,
     mode:   'replace',
-  }
+  },
 }
 
 FILE_MERGE = {
   desc:           'Merge VOIP and INTERNET VRFs with current config',
-  title:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     source: '/root/temp/vrfs.json',
     mode:   'merge',
@@ -374,7 +374,7 @@ FILE_MERGE = {
 
 FILE_REPLACE = {
   desc:           'Replace current config by VOIP and INTERNET VRFs',
-  title:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     source: '/root/temp/vrfs.json',
     mode:   'replace',

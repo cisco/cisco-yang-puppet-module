@@ -364,9 +364,9 @@ def test_harness_run_clean(tests, id)
   # clean out any resources
   resource_absent_by_title(tests[:agent], tests[:resource_name], tests[id][:title])
 
-  # run manifest, resource, idempotence tests  
+  # run manifest, resource, idempotence tests
   test_harness_run(tests, id)
-  
+
   # clean out any resources
   resource_absent_by_title(tests[:agent], tests[:resource_name], tests[id][:title])
 end
@@ -415,15 +415,15 @@ end
 
 # Method for any extra checks to be done to determine support.
 # Override this in a particular test file as needed.
-def agent_supports_test?(tests, id=nil)
+def agent_supports_test?(_tests, _id=nil)
   true
-end  
+end
 
 # Helper to skip tests on unsupported agents.
 # Returns true if skipped, false if not skipped.
 def skip_unless_supported(tests, id=nil)
   return false if agent_supports_test_private?(tests, id)
-  
+
   if id
     tests[:skipped] ||= []
     tests[:skipped] << tests[id][:desc]
@@ -445,7 +445,7 @@ def client_pattern(tests)
     return 'netconf'
   else
     return nil
-  end  
+  end
 end
 
 def skipped_tests_summary(tests)
@@ -457,14 +457,14 @@ def skipped_tests_summary(tests)
   raise_skip_exception(tests[:resource_name], self)
 end
 
-private 
+private
 
-# Returns true if the actual_version is greater than 
+# Returns true if the actual_version is greater than
 # or equal to the test version.
 def version_matches(actual_version, test_version)
   av = Gem::Version.new(actual_version)
   tv = Gem::Version.new(test_version)
-  return (av <=> tv) >= 0
+  (av <=> tv) >= 0
 end
 
 # Helper to determine if agent supports specified test(s).
@@ -481,7 +481,7 @@ end
 #   tests[id][:client] - A client regexp pattern for specified test (caller set)
 def agent_supports_test_private?(tests, id=nil)
   return false unless agent_supports_test?(tests, id)
-  
+
   # Prefer specific test key over the all tests key
   os_regex = (id ? tests[id][:os] : nil) || tests[:os]
   os_version_test = (id ? tests[id][:os_version] : nil) || tests[:os_version]
