@@ -52,6 +52,14 @@ module Cisco
       @environments
     end
 
+    def self.environment_names
+      names = []
+      environments.each do |name, _config|
+        names << name
+      end
+      names
+    end
+
     def self.merge_config(path, current_config)
       data = data_from_file(path)
       data.each do |name, config|
@@ -81,6 +89,7 @@ module Cisco
         Cisco::Logger.debug "No permissions to read #{path}"
         return {}
       end
+      Cisco::Logger.debug "File found at #{path}"
       YAML.load_file(path)
     rescue Psych::SyntaxError => e
       Cisco::Logger.error("Error loading #{path}: #{e}")

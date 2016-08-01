@@ -1,5 +1,5 @@
 # Cisco node helper class. Abstracts away the details of the underlying
-# transport (grpc/netconf) and provides various convenient helper methods.
+# transport (grpc/netconf) and provides various convenience methods.
 
 # Copyright (c) 2016 Cisco and/or its affiliates.
 #
@@ -23,9 +23,9 @@ require_relative 'logger'
 # Add node management classes and APIs to the Cisco namespace.
 module Cisco
   # class Cisco::Node
-  # Singleton representing the network node (switch/router) that is
+  # Pseudo-singleton representing the network node (switch/router) that is
   # running this code. The singleton is lazily instantiated, meaning that
-  # it doesn't exist until some client requests it (with Node.instance())
+  # it doesn't exist until some client requests it (with Node.instance(...))
   class Node
     @instance_hash = {}
     @instance = nil
@@ -35,8 +35,26 @@ module Cisco
 
     attr_reader :client
 
-    def self.instance(client_class)
-      @instance_hash[client_class] ||= new(client_class)
+    # Return a node instance that wraps a client of the specified class.
+    def self.instance(client_class=nil)
+      return @instance_hash[client_class] ||= new(client_class) unless client_class.nil?
+
+      # just return one of the cached instances
+      return @instance_hash[hash.keys[0]] unless @instance_hash.empty?
+
+      # no nodes currently cached, so create one
+      debug 'Attempting to create a client (type not specified)...'
+      env_names = Cisco::Environment.environment_names
+
+      Cisco::Client.clients.each do |c|
+        client_env_name = Cisco::Client.environment_name(c)
+        if env_names.include?(client_env_name)
+          debug "Environment configuration found for client #{c}"
+          return instance(c)
+        end
+      end
+
+      error 'No clients configured'
     end
 
     def self.instance_exists(client_class)

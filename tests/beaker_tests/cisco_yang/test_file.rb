@@ -13,14 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-#
-# See README-develop-beaker-scripts.md (Section: Test Script Variable Reference)
-# for information regarding:
-#  - test script general prequisites
-#  - command return codes
-#  - A description of the 'tests' hash and its usage
-#
-###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 require File.expand_path('../util.rb', __FILE__)
 
@@ -32,6 +24,8 @@ tests = {
 }
 tests[:file_merge] = FILE_MERGE
 tests[:replace_merge] = FILE_REPLACE
+
+skip_unless_supported(tests)
 
 def dependency_manifest(_tests, _id)
   setup_manifest = \

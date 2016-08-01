@@ -13,14 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-#
-# See README-develop-beaker-scripts.md (Section: Test Script Variable Reference)
-# for information regarding:
-#  - test script general prequisites
-#  - command return codes
-#  - A description of the 'tests' hash and its usage
-#
-###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 ROOT_VRF = \
@@ -266,101 +258,88 @@ def massage_path(str)
   ret.gsub!(/\s*\[\s*/, '[').gsub!(/\s*\]\s*/, ']').gsub!(/\s*,\s*/, ',')
 end
 
-def create_pattern(str)
-  ret = str.clone
-  ret.delete!("\n").gsub!(/\s*{\s*/, '{').gsub!(/\s*}\s*/, '}').gsub!(/\s*:\s*/, ':')
-  ret.gsub!(/\s*\[\s*/, '\[').gsub!(/\s*\]\s*/, '\]').gsub!(/\s*,\s*/, ',')
+def scrub_yang(yang)
+  return yang if yang.nil? || yang.empty?
+  begin
+    ret = yang.clone
+    ret.delete!("\n")
+    ret.gsub!(/\s*{\s*/, '{')
+    ret.gsub!(/\s*}\s*/, '}')
+    ret.gsub!(/\s*:\s*/, ':')
+    ret.gsub!(/\s*\[\s*/, '[')
+    ret.gsub!(/\s*\]\s*/, ']')
+    ret.gsub!(/\s*,\s*/, ',')
+  rescue => exception
+    logger.debug("Error scrubbing yang:\n#{yang}")
+    logger.debug(exception)
+    yang
+  end
 end
 
 DELETE = {
   desc:           'Delete VRF BLUE',
-  title_pattern:  BLUE_VRF_WO_PROPERTY,
+  title:          BLUE_VRF_WO_PROPERTY,
   manifest_props: {
-  },
-  resource:       {
-    'source' => create_pattern(BLUE_VRF_WO_PROPERTY),
-    'ensure' => 'absent',
   },
 }
 
 DELETE_PROPERTY = {
   desc:           'Delete VRF BLUE description',
-  title_pattern:  BLUE_VRF_W_PROPERTY2,
+  title:          BLUE_VRF_W_PROPERTY2,
   manifest_props: {
-  },
-  resource:       {
-    'source' => create_pattern(BLUE_VRF_W_PROPERTY1),
-    'ensure' => 'present',
   },
 }
 
 CREATE = {
   desc:           'Create VRF BLUE',
-  title_pattern:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     source: BLUE_VRF_WO_PROPERTY
-  },
-  resource:       {
-    'source' => create_pattern(BLUE_VRF_WO_PROPERTY),
-    'ensure' => 'present',
   },
 }
 
 CREATE_SRLG = {
   desc:           'CREATE SRLG GE0 and GE1',
-  title_pattern:  ROOT_SRLG,
+  title:          ROOT_SRLG,
   manifest_props: {
     source: SRLG_GE_01
-  },
-  resource:       {
-    'source' => create_pattern(SRLG_GE_01),
-    'ensure' => 'present',
   },
 }
 
 REPLACE = {
   desc:           'Replace VRF GREEN with BLUE',
-  title_pattern:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     source: BLUE_VRF_WO_PROPERTY,
     mode:   'replace',
-  },
-  resource:       {
-    'source' => create_pattern(BLUE_VRF_WO_PROPERTY),
-    'ensure' => 'present',
   },
 }
 
 REPLACE12 = {
   desc:           'Replace VRF BLUE with BLUE',
-  title_pattern:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     # Replace BLUE_VRF_W_PROPERTY1 by BLUE_VRF_W_PROPERTY2.
     source: BLUE_VRF_W_PROPERTY2,
     mode:   'replace',
   },
-  resource:       {
-    'source' => create_pattern(BLUE_VRF_W_PROPERTY2),
-    'ensure' => 'present',
-  },
 }
 
 MERGE = {
   desc:           'Merge VRF BLUE with GREEN',
-  title_pattern:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     source: BLUE_VRF_WO_PROPERTY,
     mode:   'merge',
   },
   resource:       {
-    'source' => create_pattern(BLUE_GREEN_VRF_WO_PROPERTY),
-    'ensure' => 'present',
+    source: BLUE_GREEN_VRF_WO_PROPERTY
   },
 }
 
 MERGE12 = {
   desc:           'Merge VRF BLUE with BLUE',
-  title_pattern:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     # merge BLUE_VRF_W_PROPERTY2 with existing configuration (BLUE_VRF_W_PROPERTY1)
     # resulting BLUE_VRF_W_PROPERTY12
@@ -368,46 +347,39 @@ MERGE12 = {
     mode:   'merge',
   },
   resource:       {
-    'source' => create_pattern(BLUE_VRF_W_PROPERTY12),
-    'ensure' => 'present',
+    source: BLUE_VRF_W_PROPERTY12
   },
 }
 
 REPLACE_SRLG = {
   desc:           'Update SRLG GE0 properties',
-  title_pattern:  ROOT_SRLG,
+  title:          ROOT_SRLG,
   manifest_props: {
     source: SRLG_GE_01_UPDATE,
     mode:   'replace',
-  },
-  resource:       {
-    'source' => create_pattern(SRLG_GE_01_UPDATE),
-    'ensure' => 'present',
   },
 }
 
 FILE_MERGE = {
   desc:           'Merge VOIP and INTERNET VRFs with current config',
-  title_pattern:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     source: '/root/temp/vrfs.json',
     mode:   'merge',
   },
   resource:       {
-    'source' => create_pattern(INTERNET_VOIP_VRF),
-    'ensure' => 'present',
+    source: INTERNET_VOIP_VRF
   },
 }
 
 FILE_REPLACE = {
   desc:           'Replace current config by VOIP and INTERNET VRFs',
-  title_pattern:  ROOT_VRF,
+  title:          ROOT_VRF,
   manifest_props: {
     source: '/root/temp/vrfs.json',
     mode:   'replace',
   },
   resource:       {
-    'source' => create_pattern(INTERNET_VOIP_VRF),
-    'ensure' => 'present',
+    source: INTERNET_VOIP_VRF
   },
 }

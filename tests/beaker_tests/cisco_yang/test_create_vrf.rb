@@ -13,14 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-#
-# See README-develop-beaker-scripts.md (Section: Test Script Variable Reference)
-# for information regarding:
-#  - test script general prequisites
-#  - command return codes
-#  - A description of the 'tests' hash and its usage
-#
-###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 require File.expand_path('../util.rb', __FILE__)
 
@@ -31,6 +23,8 @@ tests = {
   resource_name: 'cisco_yang',
 }
 tests[:create] = CREATE
+
+skip_unless_supported(tests)
 
 step 'Setup' do
   resource_absent_by_title(agent, 'cisco_yang', ROOT_VRF)
