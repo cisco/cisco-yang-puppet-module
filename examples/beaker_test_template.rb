@@ -20,9 +20,9 @@ require File.expand_path('../../util.rb', __FILE__)
 tests = {
   master:        master,
   agent:         agent,
-  resource_name: 'cisco_yang',
+  resource_name: 'cisco_yang',  # 'cisco_yang' or 'cisco_yang_netconf'
   os:            'ios_xr',
-  os_version:    '6.2.1',
+  os_version:    '6.2.1',       # indicates that this test shoule be run on version 6.2.1 or later
 }
 
 # skip entire file if os, version, etc. don't match
@@ -30,29 +30,12 @@ skip_unless_supported(tests)
 
 # define a test (or tests)
 # (e.g. description, title, manifest)
-tests[:vrf_groups] = {
-  desc:           'Configure VRFs',
-  title:          '{"Cisco-IOS-XR-infra-rsi-cfg:vrf-groups": [null]}',
+tests[:my_test] = {     # user-defined key for this test
+  desc:           '<description of test>',
+  title:          '<target/title of resource>',
   manifest_props: {
-    source: '
-      {"Cisco-IOS-XR-infra-rsi-cfg:vrf-groups":
-        {
-          "vrf-group": [
-            {
-              "vrf-group-name": "TEST-GROUP",
-              "enable": [null],
-              "vrfs": {
-                "vrf": [
-                  {
-                    "vrf-name": "ORANGE"
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      }',
-    mode:   'replace',
+    source: '<source YANG configuration>',
+    mode:   'replace',  # usually will want this to be 'replace'
   },
 }
 
@@ -63,7 +46,7 @@ tests[:vrf_groups] = {
 test_name 'Model Test' do
   # a simple run with pre/post clean
   # (reference our test above using the key)
-  test_harness_run_clean(tests, :vrf_groups)
+  test_harness_run_clean(tests, :my_test) # same ID as above
 end
 
 # report on skipped tests

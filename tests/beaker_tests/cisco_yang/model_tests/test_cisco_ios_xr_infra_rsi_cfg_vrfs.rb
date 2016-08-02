@@ -58,7 +58,7 @@ tests[:vrfs] = {
 # Execute the test
 #################################################################
 
-test_name 'TestCase :: vrfs' do
+test_name 'Model Test' do
   # a simple run with pre/post clean
   # (reference our test above using the key)
   test_harness_run_clean(tests, :vrfs)
