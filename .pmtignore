@@ -1,0 +1,9 @@
+.bundle/
+examples/
+junit/
+log/
+pkg/
+tests/
+Gemfile.lock
+*~
+*.swp

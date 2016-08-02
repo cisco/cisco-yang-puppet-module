@@ -22,36 +22,18 @@ tests = {
   agent:         agent,
   resource_name: 'cisco_yang',
   os:            'ios_xr',
-  os_version:    '6.2.1',
+  os_version:    '6.1.1',
 }
 
 # skip entire file if os, version, etc. don't match
 skip_unless_supported(tests)
 
-# define a test (or tests)
-# (e.g. description, title, manifest)
-tests[:vrf_groups] = {
-  desc:           'Configure VRFs',
-  title:          '{"Cisco-IOS-XR-infra-rsi-cfg:vrf-groups": [null]}',
+# Define a test for the bgp YANG container.
+tests[:bgp] = {
+  desc:           'Configure BGP',
+  title:          '{"Cisco-IOS-XR-ipv4-bgp-cfg:bgp": [null]}',
   manifest_props: {
-    source: '
-      {"Cisco-IOS-XR-infra-rsi-cfg:vrf-groups":
-        {
-          "vrf-group": [
-            {
-              "vrf-group-name": "TEST-GROUP",
-              "enable": [null],
-              "vrfs": {
-                "vrf": [
-                  {
-                    "vrf-name": "ORANGE"
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      }',
+    source: File.read(File.expand_path('../yang/bgp.yang', __FILE__)),
     mode:   'replace',
   },
 }
@@ -63,7 +45,7 @@ tests[:vrf_groups] = {
 test_name 'Model Test' do
   # a simple run with pre/post clean
   # (reference our test above using the key)
-  test_harness_run_clean(tests, :vrf_groups)
+  test_harness_run_clean(tests, :bgp)
 end
 
 # report on skipped tests
