@@ -410,7 +410,8 @@ end
 # Use facter to return cisco operating system information
 def client_envs
   return @client_envs unless @client_envs.nil?
-  @client_envs = on(agent, facter_cmd('-p cisco_yang.configured_envs')).stdout.chomp.split(',')
+  result = on(agent, facter_cmd('-p cisco_yang.configured_envs')).stdout.chomp
+  @client_envs = result.scan(/"(.*?)"/).flatten
 end
 
 # Method for any extra checks to be done to determine support.
