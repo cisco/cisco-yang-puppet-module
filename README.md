@@ -24,7 +24,7 @@ Contributions to this Puppet Module are welcome. Guidelines on contributions to 
 
 ## Module Description
 
-This module enables management of supported Cisco Network Elements through the `cisco_yang` Puppet Type and IOS XR provider.
+This module enables management of supported Cisco Network Elements through the `cisco_yang` and `cisco_yang_netconf` Puppet types and providers.
 
 A typical role-based architecture scenario might involve a network administrator who uses a version control system to manage various YANG-based configuration files.  An IT administrator who is responsible for the puppet infrastructure can simply reference the YANG files from a puppet manifest in order to deploy the configuration.
 

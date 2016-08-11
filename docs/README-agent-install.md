@@ -16,7 +16,7 @@ This document describes Puppet agent installation and setup on Cisco IOS XR devi
 
 #### Platform and Software Minimum Requirements
 
-The Cisco IOS XR Puppet implementation requires open source Puppet version 4.3.2 or Puppet Enterprise 2015.3.2. Currently, Cisco IOS XRv9k version 6.0.1 and later are supported.
+The Cisco IOS XR Puppet implementation requires open source Puppet version 4.3.2 or Puppet Enterprise 2015.3.2. Currently, Cisco IOS XRv9k version 6.1.1 and later are supported.
 
 #### Set Up the Network
 
