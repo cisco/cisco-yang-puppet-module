@@ -24,7 +24,8 @@ class TestGRPC < CiscoTestCase
   RED_VRF = \
   "{\n \"Cisco-IOS-XR-infra-rsi-cfg:vrfs\": {\n  \"vrf\": [\n   {\n    \"vrf-name\": \"RED\",\n    \"create\": [\n     null\n    ]\n   }\n  ]\n }\n}\n"
   FOO_VRF = \
-  "{\n \"Cisco-IOS-XR-infra-rsi-cfg:vrfs\": {\n  \"vrf\": [\n   {\n    \"vrf-name\": \"foo-should-not-be-there\",\n    \"create\": [\n     null\n    ]\n   }\n  ]\n }\n}\n"
+  "{\n \"Cisco-IOS-XR-infra-rsi-cfg:vrfs\": {\n  \"vrf\": "\
+  "[\n   {\n    \"vrf-name\": \"foo-should-not-be-there\",\n    \"create\": [\n     null\n    ]\n   }\n  ]\n }\n}\n"
   ROOT_VRF = '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs": [null]}'
   INVALID_VRF = '{"Cisco-IOS-XR-infra-rsi-cfg:invalid": [null]}'
 
@@ -40,14 +41,14 @@ class TestGRPC < CiscoTestCase
 
   def test_connection_failure
     # Failure #1: connecting to a port that's listening for a non-gRPC protocol
-    env = environment.merge(port: 23)
+    env = environment.merge(port: '57722') # sshd
     e = assert_raises Cisco::ConnectionRefused do
       Cisco::Client::GRPC.new(**env)
     end
     assert_equal('gRPC client creation failure: Connection refused: ',
                  e.message)
     # Failure #2: Connecting to a port that's not listening at all
-    env = environment.merge(port: 0)
+    env = environment.merge(port: '0')
     e = assert_raises Cisco::ConnectionRefused do
       Cisco::Client::GRPC.new(**env)
     end
