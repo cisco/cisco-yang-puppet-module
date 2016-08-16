@@ -303,8 +303,12 @@ module Cisco
       end
 
       def product_id
-        return '' unless diag
-        diag['Cisco-IOS-XR-sdr-invmgr-diag-oper:diag']['racks']['rack'][0]['chassis']['pid']
+        begin
+          return diag['Cisco-IOS-XR-sdr-invmgr-diag-oper:diag']['racks']['rack'][0]['chassis']['pid']
+        rescue
+          puts "Unexpected diag value: #{diag}"
+          return ''
+        end
       end
 
       def system

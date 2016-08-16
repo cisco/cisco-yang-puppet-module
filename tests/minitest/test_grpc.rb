@@ -23,8 +23,8 @@ class TestGRPC < CiscoTestCase
   @client_class = Cisco::Client::GRPC
   RED_VRF = \
   "{\n \"Cisco-IOS-XR-infra-rsi-cfg:vrfs\": {\n  \"vrf\": [\n   {\n    \"vrf-name\": \"RED\",\n    \"create\": [\n     null\n    ]\n   }\n  ]\n }\n}\n"
-  BLUE_VRF = \
-  "{\n \"Cisco-IOS-XR-infra-rsi-cfg:vrfs\": {\n  \"vrf\": [\n   {\n    \"vrf-name\": \"BLUE\",\n    \"create\": [\n     null\n    ]\n   }\n  ]\n }\n}\n"
+  FOO_VRF = \
+  "{\n \"Cisco-IOS-XR-infra-rsi-cfg:vrfs\": {\n  \"vrf\": [\n   {\n    \"vrf-name\": \"foo-should-not-be-there\",\n    \"create\": [\n     null\n    ]\n   }\n  ]\n }\n}\n"
   ROOT_VRF = '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs": [null]}'
   INVALID_VRF = '{"Cisco-IOS-XR-infra-rsi-cfg:invalid": [null]}'
 
@@ -87,7 +87,7 @@ unknown-element: Cisco-IOS-XR-infra-rsi-cfg:ns1:invalid", e.message)
   end
 
   def test_get_empty
-    result = client.get(command: BLUE_VRF)
+    result = client.get(command: FOO_VRF)
     assert_empty(result)
   end
 end
