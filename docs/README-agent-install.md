@@ -142,7 +142,7 @@ rpm --import http://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs
 rpm --import http://yum.puppetlabs.com/RPM-GPG-KEY-reductive
 ~~~
 
-The recommended Puppet RPM for IOS XR is [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm).
+The recommended Puppet RPM for IOS XR is [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-7.noarch.rpm).
 
 Using the appropriate RPM, do:
 
