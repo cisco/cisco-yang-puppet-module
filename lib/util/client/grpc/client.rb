@@ -44,13 +44,13 @@ module Cisco
 
         # Make sure we can actually connect
         @timeout = 10
+
         begin
           base_msg = 'gRPC client creation failure: '
           get(command: '{"Cisco-IOS-XR-shellutil-oper:system-time": "clock"}', mode: :get_oper)
         rescue Cisco::ClientError => e
           error 'initial connect failed: ' + e.to_s
           # Some peer police connection attempt rate require some time between connection attempts.
-          sleep(1)
           if e.message[/deadline exceeded/i]
             raise Cisco::ConnectionRefused, \
                   base_msg + 'timed out during initial connection: ' + e.message
@@ -114,10 +114,13 @@ module Cisco
         end
 
         output = Cisco::Client.silence_warnings do
-          response = stub.send(type, args,
-                               timeout:  @timeout,
-                               username: @username,
-                               password: @password)
+          metadata = {
+            'timeout'  => "#{@timeout}",
+            'username' => "#{@username}",
+            'password' => "#{@password}"
+          }
+          response = stub.send(type, args, metadata: metadata)
+
           # gRPC server may split the response into multiples
           response = response.is_a?(Enumerator) ? response.to_a : [response]
           debug "Got responses: #{response.map(&:class).join(', ')}"
