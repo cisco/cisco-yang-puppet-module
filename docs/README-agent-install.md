@@ -142,14 +142,16 @@ rpm --import http://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs
 rpm --import http://yum.puppetlabs.com/RPM-GPG-KEY-reductive
 ~~~
 
-The recommended Puppet RPM for IOS XR is [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm).
+The recommended Puppet RPM for IOS XR is [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-7.noarch.rpm).
 
 Using the appropriate RPM, do:
 
 ~~~bash
-yum install $PUPPET_RPM
+yum install http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-7.noarch.rpm
 yum install puppet
 ~~~
+
+*Note that in order to perform the above yum RPM install, you must have at least one yum repo configured.*
 
 Update PATH var:
 
@@ -206,6 +208,14 @@ netconf:
 The `cisco_yang` puppet type uses the `grpc` configuration options and the `cisco_yang_netconf` type uses the `netconf` configuration options. While the gRPC host address can be the standard loopback address (127.0.0.1), the NETCONF host address must be the `loopback 1` address that you configured earlier.
 
 *For security purposes, it is highly recommended that access to this file be restricted to only the owning user (`chmod 0600`).*
+
+#### Install the grpc gem
+
+~~~bash
+gem install grpc
+~~~
+
+*grpc gem version 0.15.0 or higher is required.*
 
 #### Run the Puppet Agent
 
