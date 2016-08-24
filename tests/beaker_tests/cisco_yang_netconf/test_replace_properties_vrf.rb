@@ -29,7 +29,9 @@ skip_unless_supported(tests)
 
 step 'Setup' do
   clear_vrf
-  on(agent, puppet_resource('cisco_yang_netconf', '\'' + BLUE_VRF_WO_PROPERTY + '\'', 'mode=merge'))
+  title_string = BLUE_VRF_WO_PROPERTY
+  cmd = PUPPET_BINPATH + "resource cisco_yang_netconf '#{title_string}' mode=merge"
+  on(agent, cmd)
 end
 
 teardown do
