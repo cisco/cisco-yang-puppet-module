@@ -53,12 +53,12 @@ def scrub_yang(yang, resource_name)
     ret.delete!("\n")
     ret.gsub!(/\s*:\s*/, ':')
     ret.gsub!(/\s*,\s*/, ',')
-    if resource_name.eql? "cisco_yang"
+    if resource_name.eql? 'cisco_yang'
       ret.gsub!(/\s*{\s*/, '{')
       ret.gsub!(/\s*}\s*/, '}')
       ret.gsub!(/\s*\[\s*/, '[')
       ret.gsub!(/\s*\]\s*/, ']')
-    elsif resource_name.eql? "cisco_yang_netconf"
+    elsif resource_name.eql? 'cisco_yang_netconf'
       ret.gsub!(/\s*<\s*/, '<')
       ret.gsub!(/\s*>\s*/, '>')
     else

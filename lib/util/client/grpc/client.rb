@@ -113,25 +113,25 @@ module Cisco
           debug " with yangjson: #{args.yangjson}"
         end
 
-#        output = Cisco::Client.silence_warnings do
-          metadata = {
-            'timeout'  => "#{@timeout}",
-            'username' => "#{@username}",
-            'password' => "#{@password}"
-          }
-          response = stub.send(type, args, metadata: metadata)
-#          response = stub.send(type, args, timeout: @timeout, username: "#{@username}", password: "#{@password}")
+        #        output = Cisco::Client.silence_warnings do
+        metadata = {
+          'timeout'  => "#{@timeout}",
+          'username' => "#{@username}",
+          'password' => "#{@password}",
+        }
+        response = stub.send(type, args, metadata: metadata)
+        #          response = stub.send(type, args, timeout: @timeout, username: "#{@username}", password: "#{@password}")
 
-          # gRPC server may split the response into multiples
-          response = response.is_a?(Enumerator) ? response.to_a : [response]
-          debug "Got responses: #{response.map(&:class).join(', ')}"
-          debug "response: #{response}"
-          # Check for errors first
-          handle_errors(args, response.select { |r| !r.errors.empty? })
+        # gRPC server may split the response into multiples
+        response = response.is_a?(Enumerator) ? response.to_a : [response]
+        debug "Got responses: #{response.map(&:class).join(', ')}"
+        debug "response: #{response}"
+        # Check for errors first
+        handle_errors(args, response.select { |r| !r.errors.empty? })
 
-          # If we got here, no errors occurred
-          return handle_response(args, response)
-#        end
+        # If we got here, no errors occurred
+        return handle_response(args, response)
+        #        end
         return output
 
       rescue ::GRPC::BadStatus => e
@@ -307,12 +307,10 @@ module Cisco
       end
 
       def product_id
-        begin
-          return diag['Cisco-IOS-XR-sdr-invmgr-diag-oper:diag']['racks']['rack'][0]['chassis']['pid']
-        rescue
-          puts "Unexpected diag value: #{diag}"
-          return ''
-        end
+        return diag['Cisco-IOS-XR-sdr-invmgr-diag-oper:diag']['racks']['rack'][0]['chassis']['pid']
+      rescue
+        puts "Unexpected diag value: #{diag}"
+        return ''
       end
 
       def system
