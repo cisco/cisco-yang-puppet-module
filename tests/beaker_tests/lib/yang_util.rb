@@ -258,24 +258,6 @@ def massage_path(str)
   ret.gsub!(/\s*\[\s*/, '[').gsub!(/\s*\]\s*/, ']').gsub!(/\s*,\s*/, ',')
 end
 
-def scrub_yang(yang)
-  return yang if yang.nil? || yang.empty?
-  begin
-    ret = yang.clone
-    ret.delete!("\n")
-    ret.gsub!(/\s*{\s*/, '{')
-    ret.gsub!(/\s*}\s*/, '}')
-    ret.gsub!(/\s*:\s*/, ':')
-    ret.gsub!(/\s*\[\s*/, '[')
-    ret.gsub!(/\s*\]\s*/, ']')
-    ret.gsub!(/\s*,\s*/, ',')
-  rescue => exception
-    logger.debug("Error scrubbing yang:\n#{yang}")
-    logger.debug(exception)
-    yang
-  end
-end
-
 DELETE = {
   desc:           'Delete VRF BLUE',
   title:          BLUE_VRF_WO_PROPERTY,
