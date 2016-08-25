@@ -161,23 +161,23 @@ HOSTS:
 To run a single beaker test from the `tests/beaker_tests` directory, use the following command:
 
 ```bash
-beaker --hosts hosts.cfg --test cisco_yang/test_create_vrf.rb
+beaker --hosts hosts.cfg --test all/cisco_yang/test_create_vrf.rb
 ```
 
 **NOTE:** This runs a `cisco_yang` test to create a vrf, but any other tests under the `tests/beaker_tests` directory can be run in the same manner.
 
 ### <a name="beaker-all">Running all Beaker tests</a>
 
-To run all the Beaker tests from the `tests/beaker_tests` directory, use the `--test` parameter
-and specify the current directory (`.`):
+To run all the Beaker tests under the `tests/beaker_tests/all` directory, use the `--test` parameter
+and specify the `all` directory:
 
 ```bash
-beaker --hosts hosts.cfg --test .
+beaker --hosts hosts.cfg --test all
 ```
 
 You can also specify a subdirectory of Beaker tests:
 
 ```bash
-beaker --hosts hosts.cfg --test cisco_yang
-beaker --hosts hosts.cfg --test cisco_yang_netconf
+beaker --hosts hosts.cfg --test all/cisco_yang
+beaker --hosts hosts.cfg --test all/cisco_yang_netconf
 ```
