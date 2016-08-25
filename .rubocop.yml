@@ -31,6 +31,9 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 20
 
+Metrics/ParameterLists:
+  Max: 6
+
 # We like table alignment for readability
 Style/AlignHash:
   EnforcedHashRocketStyle: table
