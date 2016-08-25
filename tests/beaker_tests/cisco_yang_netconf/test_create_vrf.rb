@@ -23,7 +23,7 @@ tests = {
   ensurable:     false,
   resource_name: 'cisco_yang_netconf',
 }
-tests[:create] = CREATE
+tests[:create] = NETCONF_CREATE
 
 skip_unless_supported(tests)
 

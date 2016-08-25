@@ -15,10 +15,10 @@
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
-ROOT_VRF = \
+NETCONF_ROOT_VRF = \
   '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>'
 
-BLUE_VRF_WO_PROPERTY = \
+NETCONF_BLUE_VRF_WO_PROPERTY = \
   '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
     <vrf>
       <vrf-name>BLUE</vrf-name>
@@ -26,7 +26,7 @@ BLUE_VRF_WO_PROPERTY = \
     </vrf>
   </vrfs>'
 
-BLUE_VRF_W_PROPERTY1 = \
+NETCONF_BLUE_VRF_W_PROPERTY1 = \
   '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
     <vrf>
       <vrf-name>BLUE</vrf-name>
@@ -38,7 +38,7 @@ BLUE_VRF_W_PROPERTY1 = \
     </vrf>
   </vrfs>'
 
-BLUE_VRF_W_PROPERTY2 = \
+NETCONF_BLUE_VRF_W_PROPERTY2 = \
   '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
     <vrf>
       <vrf-name>BLUE</vrf-name>
@@ -47,7 +47,7 @@ BLUE_VRF_W_PROPERTY2 = \
     </vrf>
   </vrfs>'
 
-BLUE_VRF_W_PROPERTY12 = \
+NETCONF_BLUE_VRF_W_PROPERTY12 = \
   '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
     <vrf>
       <vrf-name>BLUE</vrf-name>
@@ -60,7 +60,7 @@ BLUE_VRF_W_PROPERTY12 = \
     </vrf>
   </vrfs>'
 
-GREEN_VRF_WO_PROPERTY = \
+NETCONF_GREEN_VRF_WO_PROPERTY = \
   '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
     <vrf>
       <vrf-name>GREEN</vrf-name>
@@ -68,7 +68,7 @@ GREEN_VRF_WO_PROPERTY = \
     </vrf>
   </vrfs>'
 
-BLUE_GREEN_VRF_WO_PROPERTY = \
+NETCONF_BLUE_GREEN_VRF_WO_PROPERTY = \
   '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
     <vrf>
       <vrf-name>BLUE</vrf-name>
@@ -80,7 +80,7 @@ BLUE_GREEN_VRF_WO_PROPERTY = \
     </vrf>
   </vrfs>'
 
-INTERNET_VOIP_VRF = \
+NETCONF_INTERNET_VOIP_VRF = \
 '<vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
   <vrf>
     <vrf-name>VOIP</vrf-name>
@@ -102,10 +102,10 @@ INTERNET_VOIP_VRF = \
   </vrf>
 </vrfs>'
 
-ROOT_SRLG = \
+NETCONF_ROOT_SRLG = \
   '<srlg xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>'
 
-SRLG_GE_01 = \
+NETCONF_SRLG_GE_01 = \
   '<srlg xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
     <interfaces>
       <interface>
@@ -158,7 +158,7 @@ SRLG_GE_01 = \
     <enable/>
   </srlg>'
 
-SRLG_GE_01_UPDATE = \
+NETCONF_SRLG_GE_01_UPDATE = \
   '<srlg xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
     <interfaces>
       <interface>
@@ -211,16 +211,16 @@ SRLG_GE_01_UPDATE = \
     <enable/>
   </srlg>'
 
-DELETE_SRLG = '<srlg xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg" xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0" xc:operation="delete"/>'
+NETCONF_DELETE_SRLG = '<srlg xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg" xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0" xc:operation="delete"/>'
 
 def clear_vrf
-  title_string = ROOT_VRF
+  title_string = NETCONF_ROOT_VRF
   cmd = PUPPET_BINPATH + "resource cisco_yang_netconf '#{title_string}' source='#{title_string}' mode=replace"
   on(agent, cmd)
 end
 
 def clear_srlg
-  title_string = ROOT_SRLG
+  title_string = NETCONF_ROOT_SRLG
   cmd = PUPPET_BINPATH + "resource cisco_yang_netconf '#{title_string}' source='#{title_string}' mode=replace"
   on(agent, cmd)
 end
@@ -247,97 +247,97 @@ def scrub_yang(yang)
   end
 end
 
-CREATE = {
+NETCONF_CREATE = {
   desc:           'Create VRF BLUE',
-  title:          ROOT_VRF,
+  title:          NETCONF_ROOT_VRF,
   manifest_props: {
-    source: BLUE_VRF_WO_PROPERTY
+    source: NETCONF_BLUE_VRF_WO_PROPERTY
   },
 }
 
-CREATE_SRLG = {
+NETCONF_CREATE_SRLG = {
   desc:           'CREATE SRLG GE0 and GE1',
-  title:          ROOT_SRLG,
+  title:          NETCONF_ROOT_SRLG,
   manifest_props: {
-    source: SRLG_GE_01
+    source: NETCONF_SRLG_GE_01
   },
 }
 
-REPLACE = {
+NETCONF_REPLACE = {
   desc:           'Replace VRF GREEN with BLUE',
-  title:          ROOT_VRF,
+  title:          NETCONF_ROOT_VRF,
   manifest_props: {
-    source: BLUE_VRF_WO_PROPERTY,
+    source: NETCONF_BLUE_VRF_WO_PROPERTY,
     mode:   'replace',
   },
 }
 
-REPLACE12 = {
+NETCONF_REPLACE12 = {
   desc:           'Replace VRF BLUE with BLUE',
-  title:          ROOT_VRF,
+  title:          NETCONF_ROOT_VRF,
   manifest_props: {
-    # Replace BLUE_VRF_W_PROPERTY1 by BLUE_VRF_W_PROPERTY2.
-    source: BLUE_VRF_W_PROPERTY2,
+    # Replace NETCONF_BLUE_VRF_W_PROPERTY1 by NETCONF_BLUE_VRF_W_PROPERTY2.
+    source: NETCONF_BLUE_VRF_W_PROPERTY2,
     mode:   'replace',
   },
 }
 
-MERGE = {
+NETCONF_MERGE = {
   desc:           'Merge VRF BLUE with GREEN',
-  title:          ROOT_VRF,
+  title:          NETCONF_ROOT_VRF,
   manifest_props: {
-    source: BLUE_VRF_WO_PROPERTY,
+    source: NETCONF_BLUE_VRF_WO_PROPERTY,
     mode:   'merge',
   },
   resource:       {
-    source: BLUE_GREEN_VRF_WO_PROPERTY
+    source: NETCONF_BLUE_GREEN_VRF_WO_PROPERTY
   },
 }
 
-MERGE12 = {
+NETCONF_MERGE12 = {
   desc:           'Merge VRF BLUE with BLUE',
-  title:          ROOT_VRF,
+  title:          NETCONF_ROOT_VRF,
   manifest_props: {
-    # merge BLUE_VRF_W_PROPERTY2 with existing configuration.
-    # Expecting existing configuration to be BLUE_VRF_W_PROPERTY1
-    # resulting BLUE_VRF_W_PROPERTY12
-    source: BLUE_VRF_W_PROPERTY2,
+    # merge NETCONF_BLUE_VRF_W_PROPERTY2 with existing configuration.
+    # Expecting existing configuration to be NETCONF_BLUE_VRF_W_PROPERTY1
+    # resulting NETCONF_BLUE_VRF_W_PROPERTY12
+    source: NETCONF_BLUE_VRF_W_PROPERTY2,
     mode:   'merge',
   },
   resource:       {
-    source: BLUE_VRF_W_PROPERTY12
+    source: NETCONF_BLUE_VRF_W_PROPERTY12
   },
 }
 
-REPLACE_SRLG = {
+NETCONF_REPLACE_SRLG = {
   desc:           'Update SRLG GE0 properties',
-  title:          ROOT_SRLG,
+  title:          NETCONF_ROOT_SRLG,
   manifest_props: {
-    source: SRLG_GE_01_UPDATE,
+    source: NETCONF_SRLG_GE_01_UPDATE,
     mode:   'replace',
   },
 }
 
-FILE_MERGE = {
+NETCONF_FILE_MERGE = {
   desc:           'Merge VOIP and INTERNET VRFs with current config',
-  title:          ROOT_VRF,
+  title:          NETCONF_ROOT_VRF,
   manifest_props: {
     source: '/root/temp/vrfs.xml',
     mode:   'merge',
   },
   resource:       {
-    source: INTERNET_VOIP_VRF
+    source: NETCONF_INTERNET_VOIP_VRF
   },
 }
 
-FILE_REPLACE = {
+NETCONF_FILE_REPLACE = {
   desc:           'Replace current config by VOIP and INTERNET VRFs',
-  title:          ROOT_VRF,
+  title:          NETCONF_ROOT_VRF,
   manifest_props: {
     source: '/root/temp/vrfs.xml',
     mode:   'replace',
   },
   resource:       {
-    source: INTERNET_VOIP_VRF
+    source: NETCONF_INTERNET_VOIP_VRF
   },
 }

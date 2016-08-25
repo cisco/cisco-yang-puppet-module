@@ -23,7 +23,7 @@ tests = {
   ensurable:     false,
   resource_name: 'cisco_yang_netconf',
 }
-tests[:replace_merge] = FILE_REPLACE
+tests[:replace_merge] = NETCONF_FILE_REPLACE
 
 skip_unless_supported(tests)
 

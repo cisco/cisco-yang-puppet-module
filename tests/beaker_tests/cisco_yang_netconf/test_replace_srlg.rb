@@ -23,8 +23,8 @@ tests = {
   ensurable:     false,
   resource_name: 'cisco_yang_netconf',
 }
-tests[:replace_srlg] = REPLACE_SRLG
-tests[:create_srlg] = CREATE_SRLG
+tests[:replace_srlg] = NETCONF_REPLACE_SRLG
+tests[:create_srlg] = NETCONF_CREATE_SRLG
 
 skip_unless_supported(tests)
 

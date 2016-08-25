@@ -23,17 +23,17 @@ tests = {
   ensurable:     false,
   resource_name: 'cisco_yang_netconf',
 }
-tests[:replace] = REPLACE
+tests[:replace] = NETCONF_REPLACE
 
 skip_unless_supported(tests)
 
 step 'Setup' do
   clear_vrf
-  title_string = BLUE_VRF_WO_PROPERTY
+  title_string = NETCONF_BLUE_VRF_WO_PROPERTY
   cmd = PUPPET_BINPATH + "resource cisco_yang_netconf '#{title_string}' mode=merge"
   on(agent, cmd)
 
-  title_string = GREEN_VRF_WO_PROPERTY
+  title_string = NETCONF_GREEN_VRF_WO_PROPERTY
   cmd = PUPPET_BINPATH + "resource cisco_yang_netconf '#{title_string}' mode=merge"
   on(agent, cmd)
 end
