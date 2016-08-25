@@ -44,7 +44,7 @@ module Cisco
 
       # no nodes currently cached, so create one
       debug 'Attempting to create a client (type not specified)...'
-      env_names = Cisco::Environment.environment_names
+      env_names = Cisco::Util::Environment.environment_names
 
       Cisco::Client.clients.each do |c|
         client_env_name = Cisco::Client.environment_name(c)

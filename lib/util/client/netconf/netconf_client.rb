@@ -466,6 +466,7 @@ module Netconf
       # Errno::EHOSTUNREACH
       # Errno::ECONNREFUSED
       @ssh = nil
+  puts e.backtrace
       debug "Netconf::NetconfClient connect failed with #{e}"
       raise e
     end

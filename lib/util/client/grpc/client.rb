@@ -92,7 +92,7 @@ module Cisco
               **kwargs)
         super
         mode = kwargs[:mode] || :merge_config
-        fail ArgumentError unless Cisco::YANG_SET_MODE.include? mode
+        fail ArgumentError unless Cisco::Util::YANG_SET_MODE.include? mode
         yang_req(@config, mode.to_s, ConfigArgs.new(yangjson: values))
       end
 
@@ -113,13 +113,14 @@ module Cisco
           debug " with yangjson: #{args.yangjson}"
         end
 
-        output = Cisco::Client.silence_warnings do
+#        output = Cisco::Client.silence_warnings do
           metadata = {
             'timeout'  => "#{@timeout}",
             'username' => "#{@username}",
             'password' => "#{@password}"
           }
           response = stub.send(type, args, metadata: metadata)
+#          response = stub.send(type, args, timeout: @timeout, username: "#{@username}", password: "#{@password}")
 
           # gRPC server may split the response into multiples
           response = response.is_a?(Enumerator) ? response.to_a : [response]
@@ -129,8 +130,8 @@ module Cisco
           handle_errors(args, response.select { |r| !r.errors.empty? })
 
           # If we got here, no errors occurred
-          handle_response(args, response)
-        end
+          return handle_response(args, response)
+#        end
         return output
 
       rescue ::GRPC::BadStatus => e

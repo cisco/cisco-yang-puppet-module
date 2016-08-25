@@ -16,94 +16,96 @@ require 'yaml'
 require_relative 'logger'
 
 module Cisco
-  # Class representing the configuration environment
-  class Environment
-    @environments = {}
-    @default_environment_name = 'default'
+  module Util
+    # Class representing the configuration environment
+    class Environment
+      @environments = {}
+      @default_environment_name = 'default'
 
-    # Autogenerate Cisco::Environment.default_environment_name and
-    # Cisco::Environment.default_environment_name= class methods.
-    class << self
-      attr_accessor :default_environment_name
-    end
+      # Autogenerate Cisco::Uitl::Environment.default_environment_name and
+      # Cisco::Util::Environment.default_environment_name= class methods.
+      class << self
+        attr_accessor :default_environment_name
+      end
 
-    # We have three tiers of configuration:
-    # 1) default (defined in this file)
-    # 2) System-wide gem configuration in /etc/cisco_node_utils.yaml
-    # 3) User configuration in ~/cisco_node_utils.yaml
+      # We have three tiers of configuration:
+      # 1) default (defined in this file)
+      # 2) System-wide gem configuration in /etc/cisco_node_utils.yaml
+      # 3) User configuration in ~/cisco_node_utils.yaml
 
-    DEFAULT_ENVIRONMENT = {
-      host:     nil, # localhost by default
-      port:     nil, # only applicable to gRPC
-      username: nil,
-      password: nil,
-    }
+      DEFAULT_ENVIRONMENT = {
+        host:     nil, # localhost by default
+        port:     nil, # only applicable to gRPC
+        username: nil,
+        password: nil,
+      }
 
-    def self.environments
-      if @environments.empty?
-        @environments = merge_config('/etc/cisco_yang.yaml',
-                                     @environments)
-        @environments = merge_config('~/cisco_yang.yaml',
-                                     @environments)
-        @environments.each do |name, config|
-          Cisco::Logger.debug("Environment '#{name}': #{config}")
+      def self.environments
+        if @environments.empty?
+          @environments = merge_config('/etc/cisco_yang.yaml',
+                                      @environments)
+          @environments = merge_config('~/cisco_yang.yaml',
+                                      @environments)
+          @environments.each do |name, config|
+            Cisco::Logger.debug("Environment '#{name}': #{config}")
+          end
         end
+        @environments
       end
-      @environments
-    end
 
-    def self.environment_names
-      names = []
-      environments.each do |name, _config|
-        names << name
+      def self.environment_names
+        names = []
+        environments.each do |name, _config|
+          names << name
+        end
+        names
       end
-      names
-    end
 
-    def self.merge_config(path, current_config)
-      data = data_from_file(path)
-      data.each do |name, config|
-        # in case config is nil:
-        config ||= {}
-        # in case current_config has no entry for this name:
-        current_config[name] ||= DEFAULT_ENVIRONMENT.clone
-        # merge it on in!
-        current_config[name].merge!(strings_to_symbols(config))
+      def self.merge_config(path, current_config)
+        data = data_from_file(path)
+        data.each do |name, config|
+          # in case config is nil:
+          config ||= {}
+          # in case current_config has no entry for this name:
+          current_config[name] ||= DEFAULT_ENVIRONMENT.clone
+          # merge it on in!
+          current_config[name].merge!(strings_to_symbols(config))
+        end
+        current_config
       end
-      current_config
-    end
 
-    def self.data_from_file(path)
-      begin
-        path = File.expand_path(path)
-      rescue ArgumentError => e
-        # Can happen if path includes '~' but $HOME is not defined
-        Cisco::Logger.debug "Failed to load #{path}: #{e}"
-        return {}
+      def self.data_from_file(path)
+        begin
+          path = File.expand_path(path)
+        rescue ArgumentError => e
+          # Can happen if path includes '~' but $HOME is not defined
+          Cisco::Logger.debug "Failed to load #{path}: #{e}"
+          return {}
+        end
+        unless File.file?(path)
+          Cisco::Logger.debug "No file found at #{path}"
+          return {}
+        end
+        unless File.readable?(path)
+          Cisco::Logger.debug "No permissions to read #{path}"
+          return {}
+        end
+        Cisco::Logger.debug "File found at #{path}"
+        YAML.load_file(path)
+      rescue Psych::SyntaxError => e
+        Cisco::Logger.error("Error loading #{path}: #{e}")
+        {}
       end
-      unless File.file?(path)
-        Cisco::Logger.debug "No file found at #{path}"
-        return {}
-      end
-      unless File.readable?(path)
-        Cisco::Logger.debug "No permissions to read #{path}"
-        return {}
-      end
-      Cisco::Logger.debug "File found at #{path}"
-      YAML.load_file(path)
-    rescue Psych::SyntaxError => e
-      Cisco::Logger.error("Error loading #{path}: #{e}")
-      {}
-    end
 
-    def self.strings_to_symbols(hash)
-      Hash[hash.map { |k, v| [k.to_sym, v] }]
-    end
+      def self.strings_to_symbols(hash)
+        Hash[hash.map { |k, v| [k.to_sym, v] }]
+      end
 
-    def self.environment(name)
-      name ||= @default_environment_name
-      Cisco::Logger.debug("Getting environment '#{name}'")
-      environments.fetch(name, nil)
+      def self.environment(name)
+        name ||= @default_environment_name
+        Cisco::Logger.debug("Getting environment '#{name}'")
+        environments.fetch(name, nil)
+      end
     end
   end
 end
