@@ -13,33 +13,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../util.rb', __FILE__)
+require File.expand_path('../../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../../../lib/yang_netconf_util.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
   master:        master,
   agent:         agent,
-  resource_name: 'cisco_yang',
+  ensurable:     false,
+  resource_name: 'cisco_yang_netconf',
 }
-tests[:create] = CREATE
+tests[:replace] = NETCONF_REPLACE
 
 skip_unless_supported(tests)
 
 step 'Setup' do
-  resource_absent_by_title(agent, 'cisco_yang', ROOT_VRF)
+  clear_vrf
+  title_string = NETCONF_BLUE_VRF_WO_PROPERTY
+  cmd = PUPPET_BINPATH + "resource cisco_yang_netconf '#{title_string}' mode=merge"
+  on(agent, cmd)
+
+  title_string = NETCONF_GREEN_VRF_WO_PROPERTY
+  cmd = PUPPET_BINPATH + "resource cisco_yang_netconf '#{title_string}' mode=merge"
+  on(agent, cmd)
 end
 
 teardown do
-  resource_absent_by_title(agent, 'cisco_yang', BLUE_VRF_WO_PROPERTY)
+  clear_vrf
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name 'TestCase :: VRF Present' do
-  id = :create
-  tests[id][:ensure] = :present
+  id = :replace
   test_harness_run(tests, id)
   skipped_tests_summary(tests)
 end

@@ -46,8 +46,31 @@ IGNORE_VALUE = :ignore_value
 
 PARAMETER_KEYS = [:mode, :force]
 
-def scrub_yang(yang)
-  yang
+def scrub_yang(yang, resource_name)
+  return yang if yang.nil? || yang.empty?
+  begin
+    ret = yang.clone
+    ret.delete!("\n")
+    ret.gsub!(/\s*:\s*/, ':')
+    ret.gsub!(/\s*,\s*/, ',')
+    if resource_name.eql? 'cisco_yang'
+      ret.gsub!(/\s*{\s*/, '{')
+      ret.gsub!(/\s*}\s*/, '}')
+      ret.gsub!(/\s*\[\s*/, '[')
+      ret.gsub!(/\s*\]\s*/, ']')
+    elsif resource_name.eql? 'cisco_yang_netconf'
+      ret.gsub!(/\s*<\s*/, '<')
+      ret.gsub!(/\s*>\s*/, '>')
+    else
+      logger.debug("Error scrubbing yang:\n#{yang}")
+      logger.debug(exception)
+      yang
+    end
+  rescue => exception
+    logger.debug("Error scrubbing yang:\n#{yang}")
+    logger.debug(exception)
+    yang
+  end
 end
 
 # These methods are defined outside of a module so that
@@ -56,7 +79,7 @@ end
 # Method to parse a Hash literal into an array of RegExp literals.
 # @param hash [hash] Comma-separated list of key/value pairs.
 # @result regexparr [Array] Array of RegExp literals.
-def hash_to_patterns(hash)
+def hash_to_patterns(hash, resource_name)
   regexparr = []
   hash.each do |key, value|
     if value == IGNORE_VALUE
@@ -65,7 +88,7 @@ def hash_to_patterns(hash)
     end
     value = value.to_s
     if key == :source
-      value = Regexp.escape(scrub_yang(value) || '')
+      value = Regexp.escape(scrub_yang(value, resource_name) || '')
     elsif PARAMETER_KEYS.include?(key)
       # skip parameters, since they won't be in the output
       next
@@ -91,10 +114,10 @@ end
 # @param testcase [TestCase] An instance of Beaker::TestCase.
 # @param logger [Logger] A default instance of Beaker::Logger.
 # @result none [None] Returns no object.
-def search_pattern_in_output(output, patarr, inverse, testcase,\
+def search_pattern_in_output(output, patarr, resource_name, inverse, testcase,\
                              logger)
-  patarr = hash_to_patterns(patarr) if patarr.instance_of?(Hash)
-  output = scrub_yang(output)
+  patarr = hash_to_patterns(patarr, resource_name) if patarr.instance_of?(Hash)
+  output = scrub_yang(output, resource_name)
   patarr.each do |pattern|
     inverse ? (match = (output !~ pattern)) : (match = (output =~ pattern))
     match_kind = inverse ? 'Inverse ' : ''
@@ -230,6 +253,7 @@ def test_resource(tests, id, state=false)
     on(tests[:agent], tests[id][:resource_cmd]) do
       search_pattern_in_output(
         stdout, tests[id][:resource],
+        tests[:resource_name],
         state, self, logger)
     end
     logger.info("#{stepinfo} :: PASS")

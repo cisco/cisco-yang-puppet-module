@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../util.rb', __FILE__)
+require File.expand_path('../../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../../../lib/yang_util.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
@@ -22,7 +22,7 @@ tests = {
   agent:         agent,
   resource_name: 'cisco_yang',
 }
-tests[:replace12] = REPLACE12
+tests[:merge12] = MERGE12
 
 skip_unless_supported(tests)
 
@@ -34,18 +34,18 @@ step 'Setup' do
     property: 'ensure',
     value:    'present',
   }
-  resource_set(agent, resource, 'Create a VRF BLUE with properties.')
+  resource_set(agent, resource, 'Create a VRF BLUE with property vpn id.')
 end
 
 teardown do
-  resource_absent_by_title(agent, 'cisco_yang', ROOT_VRF)
+  resource_absent_by_title(agent, 'cisco_yang', BLUE_VRF_W_PROPERTY12)
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name 'TestCase :: VRF Present' do
-  id = :replace12
+test_name 'TestCase :: Merge12 VRF BLUE' do
+  id = :merge12
   tests[id][:ensure] = :present
   test_harness_run(tests, id)
   skipped_tests_summary(tests)

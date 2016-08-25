@@ -14,55 +14,35 @@
 # limitations under the License.
 ###############################################################################
 require File.expand_path('../../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../../util.rb', __FILE__)
+require File.expand_path('../../../lib/yang_netconf_util.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
   master:        master,
   agent:         agent,
-  resource_name: 'cisco_yang',
-  os:            'ios_xr',
-  os_version:    '6.1.1',
+  ensurable:     false,
+  resource_name: 'cisco_yang_netconf',
 }
+tests[:merge12] = NETCONF_MERGE12
 
-# skip entire file if os, version, etc. don't match
 skip_unless_supported(tests)
 
-# define a test (or tests)
-# (e.g. description, title, manifest)
-tests[:vrfs] = {
-  desc:           'Configure VRFs',
-  title:          '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs": [null]}',
-  manifest_props: {
-    source: '
-      {"Cisco-IOS-XR-infra-rsi-cfg:vrfs":
-        {
-          "vrf":
-          [
-            {
-              "vrf-name":"BLUE",
-              "create":[null]
-            },
-            {
-              "vrf-name":"GREEN",
-              "create":[null]
-            }
-          ]
-        }
-      }',
-    mode:   'replace',
-  },
-}
-
-#################################################################
-# Execute the test
-#################################################################
-
-test_name 'Model Test' do
-  # a simple run with pre/post clean
-  # (reference our test above using the key)
-  test_harness_run_clean(tests, :vrfs)
+step 'Setup' do
+  clear_vrf
+  title_string = NETCONF_BLUE_VRF_W_PROPERTY1
+  cmd = PUPPET_BINPATH + "resource cisco_yang_netconf '#{title_string}' mode=merge"
+  on(agent, cmd)
 end
 
-# report on skipped tests
-skipped_tests_summary(tests)
+teardown do
+  clear_vrf
+end
+
+#################################################################
+# TEST CASE EXECUTION
+#################################################################
+test_name 'TestCase :: Merge12 VRF BLUE' do
+  id = :merge12
+  test_harness_run(tests, id)
+  skipped_tests_summary(tests)
+end

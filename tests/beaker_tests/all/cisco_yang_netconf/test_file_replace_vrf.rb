@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../util.rb', __FILE__)
+require File.expand_path('../../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../../../lib/yang_netconf_util.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {

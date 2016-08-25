@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../util.rb', __FILE__)
+require File.expand_path('../../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../../../lib/yang_netconf_util.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
@@ -23,26 +23,27 @@ tests = {
   ensurable:     false,
   resource_name: 'cisco_yang_netconf',
 }
-tests[:merge12] = NETCONF_MERGE12
+tests[:replace_srlg] = NETCONF_REPLACE_SRLG
+tests[:create_srlg] = NETCONF_CREATE_SRLG
 
 skip_unless_supported(tests)
 
 step 'Setup' do
-  clear_vrf
-  title_string = NETCONF_BLUE_VRF_W_PROPERTY1
-  cmd = PUPPET_BINPATH + "resource cisco_yang_netconf '#{title_string}' mode=merge"
-  on(agent, cmd)
+  clear_srlg
 end
 
 teardown do
-  clear_vrf
+  clear_srlg
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name 'TestCase :: Merge12 VRF BLUE' do
-  id = :merge12
+test_name 'TestCase :: Replace GE0 by GE0 updated' do
+  id = :create_srlg
+  test_harness_run(tests, id)
+
+  id = :replace_srlg
   test_harness_run(tests, id)
   skipped_tests_summary(tests)
 end

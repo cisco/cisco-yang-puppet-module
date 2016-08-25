@@ -43,9 +43,9 @@ module Cisco
       def self.environments
         if @environments.empty?
           @environments = merge_config('/etc/cisco_yang.yaml',
-                                      @environments)
+                                       @environments)
           @environments = merge_config('~/cisco_yang.yaml',
-                                      @environments)
+                                       @environments)
           @environments.each do |name, config|
             Cisco::Logger.debug("Environment '#{name}': #{config}")
           end

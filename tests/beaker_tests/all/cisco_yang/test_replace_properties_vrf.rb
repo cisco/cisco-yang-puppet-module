@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../util.rb', __FILE__)
+require File.expand_path('../../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../../../lib/yang_util.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
@@ -22,45 +22,31 @@ tests = {
   agent:         agent,
   resource_name: 'cisco_yang',
 }
-tests[:file_merge] = FILE_MERGE
-tests[:replace_merge] = FILE_REPLACE
+tests[:replace12] = REPLACE12
 
 skip_unless_supported(tests)
 
-def dependency_manifest(_tests, _id)
-  setup_manifest = \
-  "file {'/root/temp':
-    ensure => 'directory',
-  }
-
-  file { '/root/temp/vrfs.json':
-    source => 'puppet:///modules/ciscoyang/models/defaults/vrfs.json'
-  }"
-  setup_manifest
-end
-
 step 'Setup' do
   resource_absent_by_title(agent, 'cisco_yang', ROOT_VRF)
+  resource = {
+    name:     'cisco_yang',
+    title:    BLUE_VRF_W_PROPERTY1,
+    property: 'ensure',
+    value:    'present',
+  }
+  resource_set(agent, resource, 'Create a VRF BLUE with properties.')
 end
 
 teardown do
   resource_absent_by_title(agent, 'cisco_yang', ROOT_VRF)
-  resource_absent_by_title(agent, 'file', '/root/temp/vrfs.json')
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name 'TestCase :: read config from vrfs.json file' do
-  id = :file_merge
+test_name 'TestCase :: VRF Present' do
+  id = :replace12
   tests[id][:ensure] = :present
   test_harness_run(tests, id)
-
-  resource_absent_by_title(agent, 'cisco_yang', ROOT_VRF)
-
-  id = :replace_merge
-  tests[id][:ensure] = :present
-  test_harness_run(tests, id)
-
   skipped_tests_summary(tests)
 end

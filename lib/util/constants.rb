@@ -14,6 +14,7 @@
 
 # Shared constants for the Cisco module
 module Cisco
+  # Shared constants for the Cisco module
   module Util
     PLATFORMS = [
       # Cisco IOS XR

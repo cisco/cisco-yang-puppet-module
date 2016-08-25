@@ -13,41 +13,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../util.rb', __FILE__)
+require File.expand_path('../../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../../../lib/yang_util.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
   master:        master,
   agent:         agent,
-  ensurable:     false,
-  resource_name: 'cisco_yang_netconf',
+  resource_name: 'cisco_yang',
 }
-tests[:file_merge] = NETCONF_FILE_MERGE
+tests[:create] = CREATE
 
 skip_unless_supported(tests)
 
 step 'Setup' do
-  clear_vrf
-  on(agent, puppet_resource('file', '/root/temp/', 'ensure=directory'))
-  on(agent, puppet_resource('file', \
-                            '/root/temp/vrfs.xml', \
-                            'source="puppet:///modules/ciscoyang/models/defaults/vrfs.xml"', \
-                            'ensure=present'))
+  resource_absent_by_title(agent, 'cisco_yang', ROOT_VRF)
 end
 
 teardown do
-  clear_vrf
-  on(agent, puppet_resource('file', \
-                            '/root/temp/vrfs.xml', \
-                            'ensure=absent'))
+  resource_absent_by_title(agent, 'cisco_yang', BLUE_VRF_WO_PROPERTY)
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name 'TestCase :: read config from vrfs.xml file and merge with current config' do
-  id = :file_merge
+test_name 'TestCase :: VRF Present' do
+  id = :create
+  tests[id][:ensure] = :present
   test_harness_run(tests, id)
   skipped_tests_summary(tests)
 end

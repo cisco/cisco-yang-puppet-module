@@ -13,40 +13,56 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../util.rb', __FILE__)
+require File.expand_path('../../../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../../../../lib/yang_util.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
   master:        master,
   agent:         agent,
   resource_name: 'cisco_yang',
+  os:            'ios_xr',
+  os_version:    '6.1.1',
 }
-tests[:replace] = REPLACE
 
+# skip entire file if os, version, etc. don't match
 skip_unless_supported(tests)
 
-step 'Setup' do
-  resource_absent_by_title(agent, 'cisco_yang', ROOT_VRF)
-  resource = {
-    name:     'cisco_yang',
-    title:    GREEN_VRF_WO_PROPERTY,
-    property: 'ensure',
-    value:    'present',
-  }
-  resource_set(agent, resource, 'Create a VRF GREEN.')
-end
-
-teardown do
-  resource_absent_by_title(agent, 'cisco_yang', ROOT_VRF)
-end
+# define a test (or tests)
+# (e.g. description, title, manifest)
+tests[:vrfs] = {
+  desc:           'Configure VRFs',
+  title:          '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs": [null]}',
+  manifest_props: {
+    source: '
+      {"Cisco-IOS-XR-infra-rsi-cfg:vrfs":
+        {
+          "vrf":
+          [
+            {
+              "vrf-name":"BLUE",
+              "create":[null]
+            },
+            {
+              "vrf-name":"GREEN",
+              "create":[null]
+            }
+          ]
+        }
+      }',
+    mode:   'replace',
+  },
+}
 
 #################################################################
-# TEST CASE EXECUTION
+# Execute the test
 #################################################################
-test_name 'TestCase :: VRF Present' do
-  id = :replace
-  tests[id][:ensure] = :present
-  test_harness_run(tests, id)
-  skipped_tests_summary(tests)
+
+test_name 'Model Test' do
+  # a simple run with pre/post clean
+  # (reference our test above using the key)
+  test_harness_run_clean(tests, :vrfs)
 end
+
+# report on skipped tests
+skipped_tests_summary(tests)
