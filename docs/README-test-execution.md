@@ -82,7 +82,7 @@ $ rake test
 
 ## <a name="beaker">Beaker Tests</a>
 
-The test files located in the `tests/beaker_tests` directory use [Beaker](https://github.com/puppetlabs/beaker) as their test framework. In addition to the test driver workstation, these tests require a Puppet Master workstation and an XR Puppet Agent device.  The executable Beaker Ruby files are in subdirectories and are named `test_*.rb`.
+The test files located in the `tests/beaker_tests/all` directory use [Beaker](https://github.com/puppetlabs/beaker) as their test framework. In addition to the test driver workstation, these tests require a Puppet Master workstation and an XR Puppet Agent device.  The executable Beaker Ruby files are in subdirectories and are named `test_*.rb`.
 
 ### <a name="beaker-prereqs">Prerequisites</a>
 
@@ -92,7 +92,7 @@ The test files located in the `tests/beaker_tests` directory use [Beaker](https:
 
 ### <a name="beaker-config">Beaker Configuration</a>
 
-Under the `tests/beaker_tests` directory, create file named `hosts.cfg` and add the following content:
+Under the `tests/beaker_tests/all` directory, create file named `hosts.cfg` and add the following content:
 
 *Replace the `< >` markers with specific information.*
 
@@ -158,13 +158,13 @@ HOSTS:
 
 ### <a name="beaker-single-test">Running a single test</a>
 
-To run a single beaker test from the `tests/beaker_tests` directory, use the following command:
+To run a single beaker test from the `tests/beaker_tests/all` directory, use the following command:
 
 ```bash
 beaker --hosts hosts.cfg --test all/cisco_yang/test_create_vrf.rb
 ```
 
-**NOTE:** This runs a `cisco_yang` test to create a vrf, but any other tests under the `tests/beaker_tests` directory can be run in the same manner.
+**NOTE:** This runs a `cisco_yang` test to create a vrf, but any other tests under the `tests/beaker_tests/all` directory can be run in the same manner.
 
 ### <a name="beaker-all">Running all Beaker tests</a>
 

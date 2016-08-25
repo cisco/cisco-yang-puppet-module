@@ -24,7 +24,7 @@ This example will demonstrate how to add a new Beaker test for a specific YANG m
 * The `./examples/beaker_test_template.rb` file provides a template for simple Beaker tests; copy it into the proper test directory. It is recommended that you create a separate test file for each YANG model/container combination that you wish to test.  Name your Beaker test file as `test_`, plus the YANG model filename, plus the container (all lower-case with underscores in place of other symbols). Here, the YANG model being tested is named `Cisco-IOS-XR-ipv4-bgp-cfg.yang` and the container we are testing is the `bgp` container, so the test file will be named `test_cisco_ios_xr_ipv4_bgp_cfg_bgp.rb`.
 
 ```bash
-cp examples/beaker_test_template.rb tests/beaker_tests/cisco_yang/model_tests/test_cisco_ios_xr_ipv4_bgp_cfg_bgp.rb
+cp examples/beaker_test_template.rb tests/beaker_tests/all/cisco_yang/model_tests/test_cisco_ios_xr_ipv4_bgp_cfg_bgp.rb
 ```
 
 * Our new `test_cisco_ios_xr_ipv4_bgp_cfg_bgp.rb` requires changes from the original template. Edit `test_cisco_ios_xr_ipv4_bgp_cfg_bgp.rb` and make any necessary changes.  In particular, you will want to:
@@ -190,11 +190,11 @@ tests[:bgp] = {
   :
 ~~~
 
-**Note: You can find some example model test scripts in the `tests/beaker_tests/cisco_yang/model_tests` directory.**
+**Note: You can find some example model test scripts in the `tests/beaker_tests/all/cisco_yang/model_tests` directory.**
 
 ### <a name="run-test">Run the test script</a>
 
-Refer to [README-test-execution.md](README-test-execution.md#beaker) for information on running Beaker tests.  From the `tests/beaker_tests` directory:
+Refer to [README-test-execution.md](README-test-execution.md#beaker) for information on running Beaker tests.  From the `tests/beaker_tests/all` directory:
 
 ```bash
 beaker --hosts hosts.cfg --test cisco_yang/model_tests/test_cisco_ios_xr_ipv4_bgp_cfg_bgp.rb
