@@ -82,7 +82,7 @@ $ rake test
 
 ## <a name="beaker">Beaker Tests</a>
 
-The test files located in the `tests/beaker` directory use [Beaker](https://github.com/puppetlabs/beaker) as their test framework. In addition to the test driver workstation, these tests require a Puppet Master workstation and an XR Puppet Agent device.  The executable Beaker Ruby files are in subdirectories and are named `test_*.rb`.
+The test files located in the `tests/beaker_tests` directory use [Beaker](https://github.com/puppetlabs/beaker) as their test framework. In addition to the test driver workstation, these tests require a Puppet Master workstation and an XR Puppet Agent device.  The executable Beaker Ruby files are in subdirectories and are named `test_*.rb`.
 
 ### <a name="beaker-prereqs">Prerequisites</a>
 
