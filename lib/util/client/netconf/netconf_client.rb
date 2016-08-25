@@ -449,7 +449,6 @@ module Netconf
     end
 
     def connect_internal
-puts "=====> NetconfClient.connect_internal (#{Time.now})"
       @message_id = Integer(1)
       @ssh = SSH.new(@login)
       @ssh.open('netconf')
@@ -474,10 +473,8 @@ puts "=====> NetconfClient.connect_internal (#{Time.now})"
 
     def tx_request_and_rx_reply_internal(msg)
       fail SSHNotConnected.new unless @ssh # rubocop:disable Style/RaiseArgs
-puts "=====> NetconfClient.tx_request_and_rx_reply_internal @ssh.send (#{Time.now})"
       @ssh.send(msg)
       buff = StringIO.new
-puts "=====> NetconfClient.tx_request_and_rx_reply_internal @ssh.receive (#{Time.now})"
       @ssh.receive(netconf_1_1_parser(buff))
       @message_id += 1
       buff.string
