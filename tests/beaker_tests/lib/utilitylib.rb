@@ -262,6 +262,9 @@ def puppet_resource_cmd_from_params(tests, id)
   title_string = tests[id][:title]
   cmd = PUPPET_BINPATH + "resource #{tests[:resource_name]} '#{title_string}'"
 
+  # this is a work-around for a core dump with grpc gem 1.0.0 (really 0.13.1+)
+  cmd = "LD_PRELOAD='' " + cmd if ENV['CY_CLEAR_LD_PRELOAD'] == 'true'
+
   logger.info("\ntitle_string: '#{title_string}'")
   tests[id][:resource_cmd] = cmd
 end

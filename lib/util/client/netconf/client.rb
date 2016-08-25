@@ -77,7 +77,7 @@ class Cisco::Client::NETCONF < Cisco::Client
     return if values.nil? || values.empty?
     begin
       mode = kwargs[:mode] || :merge
-      fail ArgumentError unless Cisco::NETCONF_SET_MODE.include? mode
+      fail ArgumentError unless Cisco::Util::NETCONF_SET_MODE.include? mode
       reply = @netconf_client.edit_config('candidate', mode.to_s, values)
       if reply.errors?
         fail Cisco::YangError.new( # rubocop:disable Style/RaiseArgs

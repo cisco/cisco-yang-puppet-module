@@ -14,26 +14,28 @@
 
 # Shared constants for the Cisco module
 module Cisco
-  PLATFORMS = [
-    # Cisco IOS XR
-    :ios_xr
-  ]
+  module Util
+    PLATFORMS = [
+      # Cisco IOS XR
+      :ios_xr
+    ]
 
-  DATA_FORMATS = [
-    :cli, # Cisco CLI. Indentation is significant.
-    :xml, # Netconf XML
-    :yang_json, # YANG JSON
-  ]
+    DATA_FORMATS = [
+      :cli, # Cisco CLI. Indentation is significant.
+      :xml, # Netconf XML
+      :yang_json, # YANG JSON
+    ]
 
-  NETCONF_SET_MODE = [
-    :merge,
-    :replace,
-    :delete,
-  ]
+    NETCONF_SET_MODE = [
+      :merge,
+      :replace,
+      :delete,
+    ]
 
-  YANG_SET_MODE = [
-    :merge_config,
-    :replace_config,
-    :delete_config,
-  ]
+    YANG_SET_MODE = [
+      :merge_config,
+      :replace_config,
+      :delete_config,
+    ]
+  end
 end

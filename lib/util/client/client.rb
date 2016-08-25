@@ -73,7 +73,7 @@ class Cisco::Client
   end
 
   def self.environment(client_class)
-    Cisco::Environment.environment(environment_name(client_class))
+    Cisco::Util::Environment.environment(environment_name(client_class))
   end
 
   # Try to create an instance of the specified subclass
@@ -164,7 +164,7 @@ class Cisco::Client
   # Set the platform of the node managed by this client.
   def platform=(platform)
     fail ArgumentError, "unknown platform #{platform}" \
-      unless Cisco::PLATFORMS.include?(platform)
+      unless Cisco::Util::PLATFORMS.include?(platform)
     @platform = platform
   end
 end
