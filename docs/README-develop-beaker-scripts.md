@@ -15,7 +15,7 @@ This document describes the process for writing [Beaker](https://github.com/pupp
 
 ## <a name="prereqs">Prerequisites</a>
 
-Refer to [README-test-execution.md](README-beaker-prerequisites.md) for required setup steps for Beaker and the node(s) to be tested.
+Refer to [README-test-execution.md](README-test-execution.md) for required setup steps for Beaker and the node(s) to be tested.
 
 ## <a name="new-yang-model">Basic Example: new YANG model test</a>
 
