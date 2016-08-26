@@ -31,6 +31,9 @@ module Cisco
 
       attr_accessor :timeout
 
+      # Let commands in general take up to 2 minutes
+      DEFAULT_TIMEOUT = 120
+
       def initialize(**kwargs)
         # Defaults for gRPC:
         kwargs[:host] ||= '127.0.0.1'
@@ -39,10 +42,10 @@ module Cisco
         super(platform:     :ios_xr,
               **kwargs)
         # rubocop:enable Style/HashSyntax
-        @config = GRPCConfigOper::Stub.new(@address, :this_channel_is_insecure)
-        @exec = GRPCExec::Stub.new(@address, :this_channel_is_insecure)
+        @config = GRPCConfigOper::Stub.new(@address, :this_channel_is_insecure, timeout: DEFAULT_TIMEOUT)
+        @exec = GRPCExec::Stub.new(@address, :this_channel_is_insecure, timeout: DEFAULT_TIMEOUT)
 
-        # Make sure we can actually connect
+        # Make sure we can actually connect (with a short timeout)
         @timeout = 10
 
         begin
@@ -58,8 +61,7 @@ module Cisco
           raise e.class, base_msg + e.message
         end
 
-        # Let commands in general take up to 2 minutes
-        @timeout = 120
+        @timeout = DEFAULT_TIMEOUT
       end
 
       def raise_cisco(e)
@@ -119,7 +121,8 @@ module Cisco
             'username' => "#{@username}",
             'password' => "#{@password}",
           }
-          response = stub.send(type, args, metadata: metadata)
+          deadline = Time.new() + @timeout
+          response = stub.send(type, args, deadline: deadline,  metadata: metadata)
           #          response = stub.send(type, args, timeout: @timeout, username: "#{@username}", password: "#{@password}")
 
           # gRPC server may split the response into multiples
