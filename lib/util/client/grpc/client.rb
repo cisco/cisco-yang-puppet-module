@@ -291,9 +291,11 @@ module Cisco
           filter = '{"Cisco-IOS-XR-sdr-invmgr-diag-oper:diag":"racks"}'
           reply = get(command: filter, mode: :get_oper)
           @diag = JSON.parse(reply)
-        rescue => e
-          puts "Failure parsing as JSON: #{reply}"
-          return nil
+          begin
+          rescue => e
+            puts "Failure parsing as JSON: #{reply}, error #{e}"
+            return nil
+          end
         end
         @diag
       end
