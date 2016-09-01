@@ -290,11 +290,11 @@ module Cisco
         unless defined? @diag
           filter = '{"Cisco-IOS-XR-sdr-invmgr-diag-oper:diag":"racks"}'
           reply = get(command: filter, mode: :get_oper)
-          @diag = JSON.parse(reply)
           begin
+            @diag = JSON.parse(reply)
+            puts "Successfully parsed GRPC reply from get_oper in \"diag\""
           rescue => e
-            puts "Failure parsing as JSON: #{reply}, error #{e}"
-            return nil
+            puts "Failed to parse GRPC reply \"#{reply}\" from get_oper in \"diag\" with error #{e}"
           end
         end
         @diag
@@ -315,10 +315,12 @@ module Cisco
       end
 
       def product_id
-        return diag['Cisco-IOS-XR-sdr-invmgr-diag-oper:diag']['racks']['rack'][0]['chassis']['pid']
-      rescue
-        puts "Unexpected diag value: #{diag}"
-        return ''
+        begin
+          return diag['Cisco-IOS-XR-sdr-invmgr-diag-oper:diag']['racks']['rack'][0]['chassis']['pid']
+        rescue
+          puts "Unexpected diag value: #{diag}"
+          return ''
+        end
       end
 
       def system
