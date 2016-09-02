@@ -111,7 +111,7 @@ end
 
 ~~~bash
 xrv9k# run bash
-bash-4.3# ip netns exec tpnns bash
+bash-4.3# ip netns exec global-vrf bash
 ~~~
 
 Set up DNS configuration:
@@ -241,7 +241,7 @@ modification is needed to ensure that Puppet runs in the correct namespace:
  start() {
      echo -n $"Starting puppet agent: "
 -    daemon $daemonopts $puppetd ${PUPPET_OPTS} ${PUPPET_EXTRA_OPTS}
-+    daemon $daemonopts ip netns exec tpnns $puppetd ${PUPPET_OPTS} ${PUPPET_EXTRA_OPTS}
++    daemon $daemonopts ip netns exec global-vrf $puppetd ${PUPPET_OPTS} ${PUPPET_EXTRA_OPTS}
      RETVAL=$?
      echo
          [ $RETVAL = 0 ] && touch ${lockfile}
