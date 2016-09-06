@@ -121,7 +121,7 @@ module Cisco
             'username' => "#{@username}",
             'password' => "#{@password}",
           }
-          deadline = Time.new() + @timeout
+          deadline = Time.new + @timeout
           response = stub.send(type, args, deadline: deadline,  metadata: metadata)
           #          response = stub.send(type, args, timeout: @timeout, username: "#{@username}", password: "#{@password}")
 
@@ -149,7 +149,50 @@ module Cisco
         raise_cisco(e)
       end
 
-      def handle_response(_args, replies)
+      def get_cli(command, regex=nil)
+        args = ShowCmdArgs.new(cli: command)
+        output = cli_req(@exec, 'show_cmd_text_output', args)
+
+        return regex.match(output)[1] if regex
+
+        output
+      end
+
+      def cli_req(stub, type, args)
+        debug "Sending '#{type}' request:"
+        if args.is_a?(ShowCmdArgs) || args.is_a?(CliConfigArgs)
+          debug "  with cli: '#{args.cli}'"
+        end
+        output = Cisco::Client.silence_warnings do
+          metadata = {
+            'timeout'  => "#{@timeout}",
+            'username' => "#{@username}",
+            'password' => "#{@password}",
+          }
+          deadline = Time.new + @timeout
+          response = stub.send(type, args, deadline: deadline,  metadata: metadata)
+
+          # gRPC server may split the response into multiples
+          response = response.is_a?(Enumerator) ? response.to_a : [response]
+          debug "Got responses: #{response.map(&:class).join(', ')}"
+          # Check for errors first
+          handle_errors(args, response.select { |r| !r.errors.empty? })
+
+          # If we got here, no errors occurred
+          handle_response(args, response)
+        end
+
+        return output
+      rescue ::GRPC::BadStatus => e
+        warn "gRPC error '#{e.code}' during '#{type}' request: "
+        if args.is_a?(ShowCmdArgs) || args.is_a?(CliConfigArgs)
+          warn "  with cli: '#{args.cli}'"
+        end
+        warn "  '#{e.details}'"
+        raise_cisco(e)
+      end
+
+      def handle_response(args, replies)
         klass = replies[0].class
         unless replies.all? { |r| r.class == klass }
           fail Cisco::ClientError, 'reply class inconsistent: ' +
@@ -161,6 +204,10 @@ module Cisco
           # TODO: not yet supported by server to test against
           replies.each { |r| debug "  jsonoutput:\n#{r.jsonoutput}" }
           output = replies.map(&:jsonoutput).join("\n---\n")
+        when /ShowCmdTextReply/
+          replies.each { |r| debug "  output:\n#{r.output}" }
+          output = replies.map(&:output).join('')
+          output = handle_text_output(args, output)
         when /CliConfigReply/
           # nothing to process
           output = ''
@@ -193,6 +240,33 @@ module Cisco
         rescue JSON::ParserError
           handle_text_error(args, first_error)
         end
+      end
+
+      def handle_text_output(args, output)
+        # For a successful show command, gRPC presents the output as:
+        # \n--------- <cmd> ----------
+        # \n<output of command>
+        # \n\n
+
+        # For an invalid CLI, gRPC presents the output as:
+        # \n--------- <cmd> --------
+        # \n<cmd>
+        # \n<error output>
+        # \n\n
+
+        # Discard the leading whitespace, header, and trailing whitespace
+        output = output.split("\n").drop(2)
+        return '' if output.nil? || output.empty?
+
+        # Now we have either [<output_line_1>, <output_line_2>, ...] or
+        # [<cmd>, <error_line_1>, <error_line_2>, ...]
+        if output[0].strip == args.cli.strip
+          fail Cisco::CliError.new( # rubocop:disable Style/RaiseArgs
+            rejected_input: args.cli,
+            clierror:       output.join("\n"),
+          )
+        end
+        output.join("\n")
       end
 
       # Generate an error from a failed request
@@ -315,17 +389,14 @@ module Cisco
       end
 
       def product_id
-        begin
-          return diag['Cisco-IOS-XR-sdr-invmgr-diag-oper:diag']['racks']['rack'][0]['chassis']['pid']
-        rescue
-          puts "Unexpected diag value: #{diag}"
-          return ''
-        end
+        return diag['Cisco-IOS-XR-sdr-invmgr-diag-oper:diag']['racks']['rack'][0]['chassis']['pid']
+      rescue
+        puts "Unexpected diag value: #{diag}"
+        return ''
       end
 
       def system
-        return '' unless inventory
-        inventory['Cisco-IOS-XR-invmgr-oper:inventory']['racks']['rack'][0]['attributes']['inv-basic-bag']['software-revision']
+        get_cli('sh install active', /^\s*(\S*)\s*version.*\[Boot image\]$/)
       end
 
       def yang_target(module_name, _namespace, container)
