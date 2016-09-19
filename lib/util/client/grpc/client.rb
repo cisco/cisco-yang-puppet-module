@@ -366,7 +366,6 @@ module Cisco
           reply = get(command: filter, mode: :get_oper)
           begin
             @diag = JSON.parse(reply)
-            puts "Successfully parsed GRPC reply from get_oper in \"diag\""
           rescue => e
             puts "Failed to parse GRPC reply \"#{reply}\" from get_oper in \"diag\" with error #{e}"
           end
