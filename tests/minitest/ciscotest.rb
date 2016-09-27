@@ -15,6 +15,7 @@
 # Minitest needs to have this path in order to discover our plugins
 $LOAD_PATH.push File.expand_path('../../../lib', __FILE__)
 
+require 'simplecov'
 require 'ipaddr'
 require 'resolv'
 require_relative 'platform_info'

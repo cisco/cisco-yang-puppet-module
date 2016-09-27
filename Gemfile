@@ -29,5 +29,6 @@ gem 'rake', '>= 10.5.0', require: false
 gem 'metadata-json-lint'
 gem 'grpc', '~> 0.15.0'
 gem 'net-telnet', '>= 0.1.1'
+gem 'simplecov', require: false, group: test
 
 # vim:ft=ruby
