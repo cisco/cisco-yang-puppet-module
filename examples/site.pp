@@ -1,5 +1,5 @@
 node 'default' {
-  file { "/root/temp/vrfs.json": source => "puppet:///modules/ciscoyang/models/defaults/vrfs.json"}
+  file { '/root/temp/vrfs.json': source => 'puppet:///modules/ciscoyang/models/defaults/vrfs.json'}
 
   # Configure two vrfs (VOIP & INTERNET)
   cisco_yang { '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs": [null]}':
@@ -7,8 +7,9 @@ node 'default' {
     source => '/root/temp/vrfs.json',
   }
 
-/*
-  file { "/root/temp/vrf-voip.json": source => "puppet:///modules/ciscoyang/models/defaults/vrf-voip.json"}
+  # other examples
+
+  file { '/root/temp/vrf-voip.json': source => 'puppet:///modules/ciscoyang/models/defaults/vrf-voip.json'}
 
   # Add a single vrf (VOIP)
   cisco_yang { '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs": [null]}':
@@ -26,6 +27,4 @@ node 'default' {
   cisco_yang { '{"Cisco-IOS-XR-infra-rsi-cfg:vrfs": [null]}':
       ensure => absent
   }
-*/
-
 }
