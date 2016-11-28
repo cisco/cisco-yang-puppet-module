@@ -183,8 +183,7 @@ The model data in YANG XML Netconf format, or a reference to a local file contai
 
 Minimum Requirements:
 * Open source Puppet version 4.3.2+ or Puppet Enterprise 2015.3.2+
-* Cisco IOS XRv 9000, OS Version TODO, Environments: native (Bash-shell)
-* Cisco Network Convergence System (NCS) 55xx, OS Version TODO, Environments: native (Bash-shell)
+* Cisco XRv 9000, IOS XRv, NCS5K, NCS5500, OS Version 6.1.2+, 6.2.x
 
 ## Learning Resources
 
