@@ -68,6 +68,8 @@ config
 !
 ssh server v2
 ssh server netconf vrf default
+! next line might be needed if you receive connection reset errors
+ssh server rate-limit 120
 netconf-yang agent
  ssh
 !
