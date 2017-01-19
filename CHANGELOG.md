@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.0.2 - 2017-01-19
+### Changed
+- Tweaked Puppet requirements in metadata.json
+
 ## 1.0.1 - 2017-01-18
 ### Changed
 - Added Puppet requirements to metadata.json
