@@ -36,13 +36,19 @@ Puppet Server must be installed on the Puppet Master workstation. Please see [In
 
 Next, the `ciscoyang` module must be installed on the Puppet Master workstation. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
 
-To manually install the `ciscoyang` module from the github source, perform the following commands on the Puppet Master workstation:
+The easiest way to install the module (assuming you have external internet access) is to perform the following command on the Puppet Master workstation:
+
+~~~bash
+$ puppet module install ciscoeng-ciscoyang
+~~~
+
+Alternately, you can manually install the `ciscoyang` module from the github source by performing the following commands on the Puppet Master:
 
 ~~~bash
 $ git clone https://github.com/cisco/cisco-yang-puppet-module.git
 $ cd cisco-yang-puppet-module
 $ puppet module build
-$ sudo puppet module install pkg/cisco-ciscoyang-1.0.0.tar.gz
+$ sudo puppet module install pkg/ciscoeng-ciscoyang-1.0.2.tar.gz
 ~~~
 
 ### Puppet Agent
