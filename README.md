@@ -48,7 +48,7 @@ Alternately, you can manually install the `ciscoyang` module from the github sou
 $ git clone https://github.com/cisco/cisco-yang-puppet-module.git
 $ cd cisco-yang-puppet-module
 $ puppet module build
-$ sudo puppet module install pkg/ciscoeng-ciscoyang-1.0.2.tar.gz
+$ sudo puppet module install pkg/ciscoeng-ciscoyang-1.0.3.tar.gz
 ~~~
 
 ### Puppet Agent
