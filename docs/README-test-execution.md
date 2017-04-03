@@ -58,8 +58,8 @@ Each minitest file/class uses either the `grpc` client options or the `netconf` 
 You can execute a single test file by name:
 
 ```bash
-$ ruby tests/test_yang.rb
-$ ruby tests/test_netconf_yang.rb -v
+$ ruby tests/minitest/test_yang.rb
+$ ruby tests/minitest/test_netconf_yang.rb -v
 ```
 
 ### <a name="minitest-single-testcase">Running a single testcase</a>
@@ -67,13 +67,13 @@ $ ruby tests/test_netconf_yang.rb -v
 You can execute a single testcase in a file using the '-n' or '--name' option:
 
 ```bash
-$ ruby tests/test_yang.rb -n test_merge
+$ ruby tests/minitest/test_yang.rb -n test_merge
 ```
 
 ### <a name="minitest-all">Running all minitest tests</a>
 
 
-Using rake, you can execute all tests:
+Using rake, you can execute all tests in all files:
 
 ```bash
 $ rake test
